@@ -1,10 +1,12 @@
 ﻿using Amazon;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
+using Common.Dynamo;
+using Common.Dynamo.Models;
+using Common.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Net.Http;
-using System.Threading.Tasks;
 
 namespace RecipeBookApi.Controllers
 {
@@ -45,24 +47,39 @@ namespace RecipeBookApi.Controllers
             {
                 var context = new DynamoDBContext(new AmazonDynamoDBClient("", "", RegionEndpoint.USEast1));
 
-                var data = Task.Run(() => context.LoadAsync<Recipe>("")).Result;
+                var repo = new DynamoStorageRepository<Recipe>(context);
 
-                return data.CreateDate;
+                var recipes = repo.ReadAll().Result;
+
+                return recipes.ToJson();
+
+                //var userId = Guid.NewGuid().ToString();
+                //var now = DateTime.Now;
+
+                //var newRecipe = new Recipe
+                //{
+                //    Name = "Recipe name",
+                //    Description = "Recipe description",
+                //    Ingredients = "Recipe ingredients",
+                //    Instructions = "Recipe instructions",
+                //    CreateDate = now,
+                //    UpdateDate = now,
+                //    CreatedById = userId,
+                //    UpdatedById = userId,
+                //    Id = Guid.NewGuid().ToString()
+                //};
+
+                //context.SaveAsync(newRecipe);
+
+                //var data = Task.Run(() => context.LoadAsync<Recipe>(newRecipe.Id)).Result;
+                //return JsonConvert.SerializeObject(data);
+
+                //return "disabled";
             }
             catch (Exception ex)
             {
                 return $"DB connection error: {ex.Message}";
             }
         }
-    }
-
-    [DynamoDBTable("Recipe")]
-    public class Recipe
-    {
-        [DynamoDBHashKey]
-        public string Id { get; set; }
-
-        [DynamoDBProperty("CreateDate")]
-        public string CreateDate { get; set; }
     }
 }
