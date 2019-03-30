@@ -1,10 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
+using Amazon.Lambda.AspNetCoreServer;
 using Microsoft.AspNetCore.Hosting;
-using System.IO;
 
 namespace RecipeBookApi
 {
@@ -14,10 +9,7 @@ namespace RecipeBookApi
     /// 
     /// RecipeBookApi::RecipeBookApi.LambdaEntryPoint::FunctionHandlerAsync
     /// </summary>
-    public class LambdaEntryPoint :
-        // When using an ELB's Application Load Balancer as the event source change 
-        // the base class to Amazon.Lambda.AspNetCoreServer.ApplicationLoadBalancerFunction
-        Amazon.Lambda.AspNetCoreServer.APIGatewayProxyFunction
+    public class LambdaEntryPoint : APIGatewayProxyFunction
     {
         /// <summary>
         /// The builder has configuration, logging and Amazon API Gateway already configured. The startup class
@@ -26,8 +18,7 @@ namespace RecipeBookApi
         /// <param name="builder"></param>
         protected override void Init(IWebHostBuilder builder)
         {
-            builder
-                .UseStartup<Startup>();
+            builder.UseStartup<Startup>();
         }
     }
 }
