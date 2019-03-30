@@ -6,18 +6,18 @@ namespace Common.Dynamo.Models
     public abstract class DynamoDocument
     {
         [DynamoDBHashKey]
-        public string Id { set; get; }
+        public string Id { get; set; }
 
         [DynamoDBProperty]
-        public string CreatedById { set; get; }
+        public string CreatedById { get; set; }
 
         [DynamoDBProperty]
-        public DateTime CreateDate { set; get; }
+        public DateTime CreateDate { get; set; }
 
         [DynamoDBProperty]
-        public string UpdatedById { set; get; }
+        public string UpdatedById { get; set; }
 
         [DynamoDBProperty]
-        public DateTime UpdateDate { set; get; }
+        public DateTime UpdateDate { get; set; }
     }
 }

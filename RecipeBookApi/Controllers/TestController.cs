@@ -1,7 +1,4 @@
-﻿using Amazon;
-using Amazon.DynamoDBv2;
-using Amazon.DynamoDBv2.DataModel;
-using Common.Dynamo;
+﻿using Common.Dynamo.Contracts;
 using Common.Dynamo.Models;
 using Common.Extensions;
 using Microsoft.AspNetCore.Mvc;
@@ -13,6 +10,13 @@ namespace RecipeBookApi.Controllers
     [Route("api/[controller]")]
     public class TestController : ControllerBase
     {
+        private readonly IDynamoStorageRepository<Recipe> _recipeStorage;
+
+        public TestController(IDynamoStorageRepository<Recipe> recipeStorage)
+        {
+            _recipeStorage = recipeStorage;
+        }
+
         [HttpGet]
         [Route("get")]
         public string Get()
@@ -45,36 +49,9 @@ namespace RecipeBookApi.Controllers
         {
             try
             {
-                var context = new DynamoDBContext(new AmazonDynamoDBClient("", "", RegionEndpoint.USEast1));
-
-                var repo = new DynamoStorageRepository<Recipe>(context);
-
-                var recipes = repo.ReadAll().Result;
+                var recipes = _recipeStorage.ReadAll().Result;
 
                 return recipes.ToJson();
-
-                //var userId = Guid.NewGuid().ToString();
-                //var now = DateTime.Now;
-
-                //var newRecipe = new Recipe
-                //{
-                //    Name = "Recipe name",
-                //    Description = "Recipe description",
-                //    Ingredients = "Recipe ingredients",
-                //    Instructions = "Recipe instructions",
-                //    CreateDate = now,
-                //    UpdateDate = now,
-                //    CreatedById = userId,
-                //    UpdatedById = userId,
-                //    Id = Guid.NewGuid().ToString()
-                //};
-
-                //context.SaveAsync(newRecipe);
-
-                //var data = Task.Run(() => context.LoadAsync<Recipe>(newRecipe.Id)).Result;
-                //return JsonConvert.SerializeObject(data);
-
-                //return "disabled";
             }
             catch (Exception ex)
             {

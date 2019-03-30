@@ -8,10 +8,5 @@ namespace Common.Extensions
         {
             return JsonConvert.SerializeObject(obj);
         }
-
-        public static T JsonDeserialize<T>(this string data)
-        {
-            return JsonConvert.DeserializeObject<T>(data);
-        }
     }
 }

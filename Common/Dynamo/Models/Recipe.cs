@@ -6,15 +6,15 @@ namespace Common.Dynamo.Models
     public class Recipe : DynamoDocument
     {
         [DynamoDBProperty]
-        public string Name { set; get; }
+        public string Name { get; set; }
 
         [DynamoDBProperty]
-        public string Description { set; get; }
+        public string Description { get; set; }
 
         [DynamoDBProperty]
-        public string Ingredients { set; get; }
+        public string Ingredients { get; set; }
 
         [DynamoDBProperty]
-        public string Instructions { set; get; }
+        public string Instructions { get; set; }
     }
 }

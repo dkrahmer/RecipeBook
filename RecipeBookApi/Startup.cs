@@ -1,3 +1,9 @@
+using Amazon;
+using Amazon.DynamoDBv2;
+using Amazon.DynamoDBv2.DataModel;
+using Common.Dynamo;
+using Common.Dynamo.Contracts;
+using Common.Dynamo.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -24,6 +30,17 @@ namespace RecipeBookApi
             {
                 s.SwaggerDoc("v1", new Info { Title = "Recipe Book API", Version = "v1" });
             });
+
+            var awsOptions = Configuration.GetAWSOptions();
+
+            services.AddScoped<IDynamoDBContext, DynamoDBContext>((s) => {
+                var awsAccessKey = Configuration.GetValue<string>("AWSAccessKey");
+                var awsSecretAccessKey = Configuration.GetValue<string>("AWSSecretAccessKey");
+
+                return new DynamoDBContext(new AmazonDynamoDBClient(awsAccessKey, awsSecretAccessKey, awsOptions.Region));
+            });
+
+            services.AddScoped<IDynamoStorageRepository<Recipe>, DynamoStorageRepository<Recipe>>();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
