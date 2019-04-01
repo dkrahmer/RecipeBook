@@ -20,7 +20,7 @@ namespace RecipeBookApi.Controllers
         [AllowAnonymous]
         [HttpGet]
         [Route("")]
-        public async Task<IActionResult> GetAllRecipesAsync()
+        public async Task<IActionResult> GetAllRecipes()
         {
             var recipes = await _recipeStorage.ReadAll();
 
@@ -30,7 +30,7 @@ namespace RecipeBookApi.Controllers
         [AllowAnonymous]
         [HttpGet]
         [Route("{recipeId}")]
-        public async Task<IActionResult> GetRecipeByIdAsync(string recipeId)
+        public async Task<IActionResult> GetRecipeById(string recipeId)
         {
             var recipe = await _recipeStorage.Read(recipeId);
             if (recipe == null)

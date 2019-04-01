@@ -1,4 +1,3 @@
-using Amazon;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
 using Common.Dynamo;
@@ -26,14 +25,25 @@ namespace RecipeBookApi
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            services.AddSwaggerGen(s =>
+            services.AddSwaggerGen(options =>
             {
-                s.SwaggerDoc("v1", new Info { Title = "Recipe Book API", Version = "v1" });
+                options.SwaggerDoc("v1", new Info { Title = "Recipe Book API", Version = "v1" });
+            });
+
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(builder =>
+                {
+                    builder.WithOrigins("http://localhost:3000")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod();
+                });
             });
 
             var awsOptions = Configuration.GetAWSOptions();
 
-            services.AddScoped<IDynamoDBContext, DynamoDBContext>((s) => {
+            services.AddScoped<IDynamoDBContext, DynamoDBContext>(serviceProvider =>
+            {
                 var awsAccessKey = Configuration.GetValue<string>("AWSAccessKey");
                 var awsSecretAccessKey = Configuration.GetValue<string>("AWSSecretAccessKey");
 
@@ -55,11 +65,12 @@ namespace RecipeBookApi
             }
 
             app.UseSwagger();
-            app.UseSwaggerUI(s =>
+            app.UseSwaggerUI(options =>
             {
-                s.SwaggerEndpoint("/swagger/v1/swagger.json", "Recipe Book API");
+                options.SwaggerEndpoint("/swagger/v1/swagger.json", "Recipe Book API");
             });
 
+            app.UseCors();
             app.UseHttpsRedirection();
             app.UseMvc();
         }
