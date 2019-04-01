@@ -2,6 +2,8 @@
 using Common.Dynamo.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RecipeBookApi.Models;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace RecipeBookApi.Controllers
@@ -23,8 +25,9 @@ namespace RecipeBookApi.Controllers
         public async Task<IActionResult> GetAllRecipes()
         {
             var recipes = await _recipeStorage.ReadAll();
+            var model = recipes.Select(r => new RecipeModel(r)).ToList();
 
-            return Ok(recipes);
+            return Ok(model);
         }
 
         [AllowAnonymous]
@@ -38,7 +41,8 @@ namespace RecipeBookApi.Controllers
                 return NotFound();
             }
 
-            return Ok(recipe);
+            var model = new RecipeModel(recipe);
+            return Ok(model);
         }
     }
 }

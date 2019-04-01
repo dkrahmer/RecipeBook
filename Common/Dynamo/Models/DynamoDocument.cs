@@ -8,16 +8,12 @@ namespace Common.Dynamo.Models
         [DynamoDBHashKey]
         public string Id { get; set; }
 
-        [DynamoDBProperty]
         public string CreatedById { get; set; }
 
-        [DynamoDBProperty]
         public DateTime CreateDate { get; set; }
 
-        [DynamoDBProperty]
         public string UpdatedById { get; set; }
 
-        [DynamoDBProperty]
         public DateTime UpdateDate { get; set; }
     }
 }
