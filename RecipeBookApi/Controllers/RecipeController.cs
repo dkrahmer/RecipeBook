@@ -1,9 +1,9 @@
-﻿using Common.Dynamo.Contracts;
-using Common.Dynamo.Models;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RecipeBookApi.Logic.Contracts;
 using RecipeBookApi.Models;
-using System.Linq;
+using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace RecipeBookApi.Controllers
@@ -12,20 +12,20 @@ namespace RecipeBookApi.Controllers
     [ApiController]
     public class RecipeController : ControllerBase
     {
-        private readonly IDynamoStorageRepository<Recipe> _recipeStorage;
+        private readonly IRecipeLogic _recipeLogic;
 
-        public RecipeController(IDynamoStorageRepository<Recipe> recipeStorage)
+        public RecipeController(IRecipeLogic recipeLogic)
         {
-            _recipeStorage = recipeStorage;
+            _recipeLogic = recipeLogic;
         }
 
         [AllowAnonymous]
         [HttpGet]
         [Route("")]
+        [ProducesResponseType(typeof(IEnumerable<RecipeViewModel>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetAllRecipes()
         {
-            var recipes = await _recipeStorage.ReadAll();
-            var model = recipes.Select(r => new RecipeModel(r)).ToList();
+            var model = await _recipeLogic.GetAll();
 
             return Ok(model);
         }
@@ -33,15 +33,16 @@ namespace RecipeBookApi.Controllers
         [AllowAnonymous]
         [HttpGet]
         [Route("{recipeId}")]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(RecipeViewModel), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetRecipeById(string recipeId)
         {
-            var recipe = await _recipeStorage.Read(recipeId);
-            if (recipe == null)
+            var model = await _recipeLogic.GetById(recipeId);
+            if (model == null)
             {
                 return NotFound();
             }
 
-            var model = new RecipeModel(recipe);
             return Ok(model);
         }
     }

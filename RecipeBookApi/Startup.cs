@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using RecipeBookApi.Logic;
+using RecipeBookApi.Logic.Contracts;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace RecipeBookApi
@@ -51,7 +53,9 @@ namespace RecipeBookApi
                 return new DynamoDBContext(new AmazonDynamoDBClient(awsAccessKey, awsSecretAccessKey, awsOptions.Region));
             });
 
+            services.AddScoped<IDynamoStorageRepository<AppUser>, DynamoStorageRepository<AppUser>>();
             services.AddScoped<IDynamoStorageRepository<Recipe>, DynamoStorageRepository<Recipe>>();
+            services.AddScoped<IRecipeLogic, DynamoRecipeLogic>();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
