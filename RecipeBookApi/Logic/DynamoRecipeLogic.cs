@@ -43,31 +43,31 @@ namespace RecipeBookApi.Logic
             return CreateRecipeViewModel(recipe, owner);
         }
 
-        public async Task<string> Create(RecipePostModel recipePostModel)
+        public async Task<string> Create(RecipePostPutModel model)
         {
             var newRecipe = new Recipe
             {
-                Description = recipePostModel.Description,
-                Ingredients = recipePostModel.Ingredients,
-                Instructions = recipePostModel.Instructions,
-                Name = recipePostModel.Name
+                Description = model.Description,
+                Ingredients = model.Ingredients,
+                Instructions = model.Instructions,
+                Name = model.Name
             };
 
-            return await _recipeStorage.Create(newRecipe, recipePostModel.CreatedById);
+            return await _recipeStorage.Create(newRecipe, model.ExecutedById);
         }
 
-        public async Task Update(RecipePutModel recipePutModel)
+        public async Task Update(string id, RecipePostPutModel model)
         {
-            var originalRecipe = await _recipeStorage.Read(recipePutModel.Id);
+            var originalRecipe = await _recipeStorage.Read(id);
             var updatedRecipe = new Recipe
             {
-                Description = recipePutModel.Description,
-                Ingredients = recipePutModel.Ingredients,
-                Instructions = recipePutModel.Instructions,
-                Name = recipePutModel.Name
+                Description = model.Description,
+                Ingredients = model.Ingredients,
+                Instructions = model.Instructions,
+                Name = model.Name
             };
 
-            await _recipeStorage.Update(originalRecipe, updatedRecipe, recipePutModel.Id, recipePutModel.UpdatedById);
+            await _recipeStorage.Update(originalRecipe, updatedRecipe, id, model.ExecutedById);
         }
 
         public async Task Delete(string id)

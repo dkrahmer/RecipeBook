@@ -55,6 +55,7 @@ namespace RecipeBookApi
 
             services.AddScoped<IDynamoStorageRepository<AppUser>, DynamoStorageRepository<AppUser>>();
             services.AddScoped<IDynamoStorageRepository<Recipe>, DynamoStorageRepository<Recipe>>();
+            services.AddScoped<IAppUserLogic, DynamoAppUserLogic>();
             services.AddScoped<IRecipeLogic, DynamoRecipeLogic>();
         }
 

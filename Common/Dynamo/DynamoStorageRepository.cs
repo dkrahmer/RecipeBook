@@ -1,8 +1,10 @@
 ﻿using Amazon.DynamoDBv2.DataModel;
 using Common.Dynamo.Contracts;
 using Common.Dynamo.Models;
+using Common.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Common.Dynamo
@@ -16,7 +18,7 @@ namespace Common.Dynamo
             _context = context;
         }
 
-        public async Task<IList<T>> ReadAll()
+        public async Task<IList<T>> ReadAll(Func<T, bool> predicate = null)
         {
             var masterResults = new List<T>();
 
@@ -24,6 +26,12 @@ namespace Common.Dynamo
             while (!query.IsDone)
             {
                 var currentResults = await query.GetNextSetAsync();
+
+                if (predicate != null)
+                {
+                    currentResults = currentResults.Where(predicate).ToList();
+                }
+
                 masterResults.AddRange(currentResults);
             }
 
@@ -38,8 +46,8 @@ namespace Common.Dynamo
         public async Task<string> Create(T obj, string createdById)
         {
             obj.Id = Guid.NewGuid().ToString();
-            obj.CreateDate = DateTime.Now;
-            obj.UpdateDate = DateTime.Now;
+            obj.CreateDate = DateTime.Now.ToEasternStandardTime();
+            obj.UpdateDate = DateTime.Now.ToEasternStandardTime();
             obj.CreatedById = createdById;
             obj.UpdatedById = createdById;
 
@@ -52,7 +60,7 @@ namespace Common.Dynamo
         {
             newObj.Id = id;
             newObj.CreateDate = oldObj.CreateDate;
-            newObj.UpdateDate = DateTime.Now;
+            newObj.UpdateDate = DateTime.Now.ToEasternStandardTime();
             newObj.CreatedById = oldObj.CreatedById;
             newObj.UpdatedById = updatedbyId;
 

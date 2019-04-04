@@ -6,10 +6,10 @@ namespace RecipeBookApi.Logic.Contracts
 {
     public interface IRecipeLogic
     {
-        Task<string> Create(RecipePostModel recipePostModel);
+        Task<string> Create(RecipePostPutModel model);
         Task Delete(string id);
         Task<IEnumerable<RecipeViewModel>> GetAll();
         Task<RecipeViewModel> GetById(string id);
-        Task Update(RecipePutModel recipePutModel);
+        Task Update(string id, RecipePostPutModel model);
     }
 }
