@@ -9,7 +9,7 @@
     "profile"     : "serverless-agent",
     "region"      : "us-east-1",
     "configuration" : "Release",
-    "framework"     : "netcoreapp2.2",
+    "framework"     : "netcoreapp2.1",
     "s3-prefix"     : "RecipeBookApi/",
     "template"      : "serverless.template",
     "template-parameters" : "\"ShouldCreateBucket\"=\"true\";\"BucketName\"=\"\"",
