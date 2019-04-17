@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using RecipeBookApi.Logic.Contracts;
 using RecipeBookApi.Models;
+using RecipeBookApi.Services.Contracts;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
@@ -9,14 +10,14 @@ using System.Threading.Tasks;
 namespace RecipeBookApi.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
-    public class RecipeController : ControllerBase
+    public class RecipeController : BaseApiController
     {
-        private readonly IRecipeLogic _recipeLogic;
+        private readonly IRecipeService _recipeService;
 
-        public RecipeController(IRecipeLogic recipeLogic)
+        public RecipeController(IAuthService authService, IRecipeService recipeService)
+            : base(authService)
         {
-            _recipeLogic = recipeLogic;
+            _recipeService = recipeService;
         }
 
         [AllowAnonymous]
@@ -25,7 +26,7 @@ namespace RecipeBookApi.Controllers
         [ProducesResponseType(typeof(IEnumerable<RecipeViewModel>), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetAllRecipes()
         {
-            var allRecipes = await _recipeLogic.GetAll();
+            var allRecipes = await _recipeService.GetAll();
 
             return Ok(allRecipes);
         }
@@ -37,7 +38,7 @@ namespace RecipeBookApi.Controllers
         [ProducesResponseType(typeof(RecipeViewModel), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetRecipeById(string recipeId)
         {
-            var foundRecipe = string.IsNullOrWhiteSpace(recipeId) ? null : await _recipeLogic.GetById(recipeId);
+            var foundRecipe = string.IsNullOrWhiteSpace(recipeId) ? null : await _recipeService.GetById(recipeId);
             if (foundRecipe == null)
             {
                 return NotFound();
@@ -48,6 +49,7 @@ namespace RecipeBookApi.Controllers
 
         [HttpPost]
         [Route("")]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(Dictionary<string, string[]>), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(string), (int)HttpStatusCode.Created)]
         public async Task<IActionResult> CreateRecipe([FromBody]RecipePostPutModel data)
@@ -62,13 +64,22 @@ namespace RecipeBookApi.Controllers
                 return BadRequest(ModelState);
             }
 
-            var createdId = await _recipeLogic.Create(data);
-            return Ok(createdId);
+            try
+            {
+                var createdId = await _recipeService.Create(data, CurrentUser.Id);
+                return Ok(createdId);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Issue creating a new recipe: {ex.Message}");
+            }
         }
 
         [HttpPut]
         [Route("{recipeId}")]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(Dictionary<string, string[]>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> UpdateRecipe(string recipeId, [FromBody]RecipePostPutModel data)
         {
@@ -87,24 +98,41 @@ namespace RecipeBookApi.Controllers
                 return BadRequest(ModelState);
             }
 
-            await _recipeLogic.Update(recipeId, data);
-            return Ok();
+            try
+            {
+                await _recipeService.Update(recipeId, data, CurrentUser.Id);
+                return Ok();
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest($"Issue updating a recipe: {ex.Message}");
+            }
         }
 
         [HttpDelete]
         [Route("{recipeId}")]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         public async Task<IActionResult> DeleteRecipe(string recipeId)
         {
-            var recipeToDelete = string.IsNullOrWhiteSpace(recipeId) ? null : await _recipeLogic.GetById(recipeId);
-            if (recipeToDelete == null)
+            try
+            {
+                await _recipeService.Delete(recipeId, CurrentUser.Id);
+                return Ok();
+            }
+            catch (KeyNotFoundException)
             {
                 return NotFound();
             }
-
-            await _recipeLogic.Delete(recipeId);
-            return Ok();
+            catch (Exception ex)
+            {
+                return BadRequest($"Issue deleting a recipe: {ex.Message}");
+            }
         }
     }
 }

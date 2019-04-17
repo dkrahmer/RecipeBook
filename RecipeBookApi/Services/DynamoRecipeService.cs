@@ -1,19 +1,20 @@
 ﻿using Common.Dynamo.Contracts;
 using Common.Dynamo.Models;
-using RecipeBookApi.Logic.Contracts;
 using RecipeBookApi.Models;
+using RecipeBookApi.Services.Contracts;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace RecipeBookApi.Logic
+namespace RecipeBookApi.Services
 {
-    public class DynamoRecipeLogic : IRecipeLogic
+    public class DynamoRecipeService : IRecipeService
     {
         private readonly IDynamoStorageRepository<Recipe> _recipeStorage;
         private readonly IDynamoStorageRepository<AppUser> _appUserStorage;
 
-        public DynamoRecipeLogic(IDynamoStorageRepository<Recipe> recipeStorage, IDynamoStorageRepository<AppUser> appUserStorage)
+        public DynamoRecipeService(IDynamoStorageRepository<Recipe> recipeStorage, IDynamoStorageRepository<AppUser> appUserStorage)
         {
             _recipeStorage = recipeStorage;
             _appUserStorage = appUserStorage;
@@ -43,7 +44,7 @@ namespace RecipeBookApi.Logic
             return CreateRecipeViewModel(recipe, owner);
         }
 
-        public async Task<string> Create(RecipePostPutModel model)
+        public async Task<string> Create(RecipePostPutModel model, string executedById)
         {
             var newRecipe = new Recipe
             {
@@ -53,12 +54,22 @@ namespace RecipeBookApi.Logic
                 Name = model.Name
             };
 
-            return await _recipeStorage.Create(newRecipe, model.ExecutedById);
+            return await _recipeStorage.Create(newRecipe, executedById);
         }
 
-        public async Task Update(string id, RecipePostPutModel model)
+        public async Task Update(string id, RecipePostPutModel model, string executedById)
         {
             var originalRecipe = await _recipeStorage.Read(id);
+            if (originalRecipe == null)
+            {
+                throw new KeyNotFoundException();
+            }
+
+            if (originalRecipe.CreatedById != executedById)
+            {
+                throw new Exception("You cannot update someone else's recipe");
+            }
+
             var updatedRecipe = new Recipe
             {
                 Description = model.Description,
@@ -67,11 +78,22 @@ namespace RecipeBookApi.Logic
                 Name = model.Name
             };
 
-            await _recipeStorage.Update(originalRecipe, updatedRecipe, id, model.ExecutedById);
+            await _recipeStorage.Update(originalRecipe, updatedRecipe, id, executedById);
         }
 
-        public async Task Delete(string id)
+        public async Task Delete(string id, string executedById)
         {
+            var recipe = await _recipeStorage.Read(id);
+            if (recipe == null)
+            {
+                throw new KeyNotFoundException();
+            }
+
+            if (recipe.CreatedById != executedById)
+            {
+                throw new Exception("You cannot delete someone else's recipe");
+            }
+
             await _recipeStorage.Delete(id);
         }
 
