@@ -85,15 +85,15 @@ namespace RecipeBookApi.Services
             var claims = new List<Claim>
             {
                 new Claim(nameof(appUser.Id), CryptoFactory.Encrypt(googleAuthSecret, appUser.Id)),
-                new Claim(nameof(appUser.EmailAddress), googleAuthSecret, appUser.EmailAddress),
-                new Claim(nameof(appUser.FirstName), googleAuthSecret, appUser.FirstName),
-                new Claim(nameof(appUser.LastName), googleAuthSecret, appUser.LastName)
+                new Claim(nameof(appUser.EmailAddress), appUser.EmailAddress),
+                new Claim(nameof(appUser.FirstName), appUser.FirstName),
+                new Claim(nameof(appUser.LastName), appUser.LastName)
             };
 
             var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(googleAuthSecret));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            var token = new JwtSecurityToken(null, null, claims, null, DateTime.Now.AddHours(1), credentials);
+            var token = new JwtSecurityToken(null, null, claims, null, DateTime.Now.ToEasternStandardTime().AddHours(1), credentials);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
