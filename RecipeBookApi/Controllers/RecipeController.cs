@@ -51,7 +51,7 @@ namespace RecipeBookApi.Controllers
         [Route("")]
         [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(Dictionary<string, string[]>), (int)HttpStatusCode.BadRequest)]
-        [ProducesResponseType(typeof(string), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(string), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> CreateRecipe([FromBody]RecipePostPutModel data)
         {
             if (data == null)
