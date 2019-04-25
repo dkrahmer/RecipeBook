@@ -17,7 +17,7 @@ namespace RecipeBookApi.Controllers
 
         [AllowAnonymous]
         [HttpPost]
-        [Route("login")]
+        [Route("Login")]
         [ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(AuthModel), (int)HttpStatusCode.OK)]
         public async Task<IActionResult> GetAuthToken([FromBody]AuthModel authModel)

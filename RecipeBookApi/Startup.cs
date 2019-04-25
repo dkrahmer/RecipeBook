@@ -82,19 +82,21 @@ namespace RecipeBookApi
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            var swaggerOptionsEndpoint = "/swagger/v1/swagger.json";
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
             else
             {
+                swaggerOptionsEndpoint = $"/Prod{swaggerOptionsEndpoint}";
                 app.UseHsts();
             }
 
             app.UseSwagger();
             app.UseSwaggerUI(options =>
             {
-                options.SwaggerEndpoint("/swagger/v1/swagger.json", "Recipe Book API");
+                options.SwaggerEndpoint(swaggerOptionsEndpoint, "Recipe Book API");
             });
 
             app.UseAuthentication();
