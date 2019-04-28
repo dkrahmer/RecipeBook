@@ -93,7 +93,7 @@ namespace RecipeBookApi.Services
             var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(googleAuthSecret));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            var token = new JwtSecurityToken(null, null, claims, null, DateTime.Now.ToEasternStandardTime().AddHours(1), credentials);
+            var token = new JwtSecurityToken(null, null, claims, null, DateTime.UtcNow.AddHours(1), credentials);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }

@@ -7,7 +7,7 @@ namespace Common.Extensions
         public static DateTime ToEasternStandardTime(this DateTime dateTime)
         {
             var utcTime = TimeZoneInfo.ConvertTimeToUtc(dateTime);
-            return TimeZoneInfo.ConvertTimeFromUtc(utcTime, TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time"));
+            return TimeZoneInfo.ConvertTimeFromUtc(utcTime, TimeZoneInfo.FindSystemTimeZoneById("America/New_York"));
         }
     }
 }
