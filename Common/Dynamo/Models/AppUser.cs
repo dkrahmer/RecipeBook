@@ -14,6 +14,8 @@ namespace Common.Dynamo.Models
 
         public DateTime? LastLoggedInDate { get; set; }
 
+        public bool IsAdmin { get; set; }
+
         [DynamoDBIgnore]
         public string FullName => $"{FirstName} {LastName}";
     }

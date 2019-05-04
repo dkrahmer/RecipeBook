@@ -100,7 +100,8 @@ namespace RecipeBookApi.Controllers
 
             try
             {
-                await _recipeService.Update(recipeId, data, CurrentUser.Id);
+                await _recipeService.Update(recipeId, data, CurrentUser.Id, CurrentUser.IsAdmin);
+
                 return Ok();
             }
             catch (KeyNotFoundException)
@@ -122,7 +123,8 @@ namespace RecipeBookApi.Controllers
         {
             try
             {
-                await _recipeService.Delete(recipeId, CurrentUser.Id);
+                await _recipeService.Delete(recipeId, CurrentUser.Id, CurrentUser.IsAdmin);
+
                 return Ok();
             }
             catch (KeyNotFoundException)
