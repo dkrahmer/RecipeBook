@@ -57,7 +57,7 @@ namespace RecipeBookApi.Services
             return await _recipeStorage.Create(newRecipe, executedById);
         }
 
-        public async Task Update(string id, RecipePostPutModel model, string executedById)
+        public async Task Update(string id, RecipePostPutModel model, string executedById, bool isAdmin)
         {
             var originalRecipe = await _recipeStorage.Read(id);
             if (originalRecipe == null)
@@ -65,7 +65,7 @@ namespace RecipeBookApi.Services
                 throw new KeyNotFoundException();
             }
 
-            if (originalRecipe.CreatedById != executedById)
+            if (!isAdmin && originalRecipe.CreatedById != executedById)
             {
                 throw new Exception("You cannot update someone else's recipe");
             }
@@ -81,7 +81,7 @@ namespace RecipeBookApi.Services
             await _recipeStorage.Update(originalRecipe, updatedRecipe, id, executedById);
         }
 
-        public async Task Delete(string id, string executedById)
+        public async Task Delete(string id, string executedById, bool isAdmin)
         {
             var recipe = await _recipeStorage.Read(id);
             if (recipe == null)
@@ -89,7 +89,7 @@ namespace RecipeBookApi.Services
                 throw new KeyNotFoundException();
             }
 
-            if (recipe.CreatedById != executedById)
+            if (!isAdmin && recipe.CreatedById != executedById)
             {
                 throw new Exception("You cannot delete someone else's recipe");
             }

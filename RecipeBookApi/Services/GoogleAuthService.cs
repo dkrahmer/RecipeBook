@@ -49,14 +49,14 @@ namespace RecipeBookApi.Services
                 EmailAddress = userClaims.FindFirst(nameof(AppUserClaimModel.EmailAddress)).Value,
                 FirstName = userClaims.FindFirst(nameof(AppUserClaimModel.FirstName)).Value,
                 LastName = userClaims.FindFirst(nameof(AppUserClaimModel.LastName)).Value,
+                IsAdmin = Convert.ToBoolean(userClaims.FindFirst(nameof(AppUserClaimModel.IsAdmin)).Value)
             };
         }
 
         private async Task<AppUser> UpdateStorageWithUserPayload(GoogleJsonWebSignature.Payload googleAuthPayload)
         {
-            var appUsers = await _appUserStorage.ReadAll();
-            var user = appUsers.SingleOrDefault(u => u.EmailAddress.ToLower() == googleAuthPayload.Email.ToLower());
-
+            var user = (await _appUserStorage.ReadAll(u => u.EmailAddress.ToLower() == googleAuthPayload.Email.ToLower())).SingleOrDefault();
+            
             if (user == null)
             {
                 user = new AppUser
@@ -84,10 +84,11 @@ namespace RecipeBookApi.Services
             var googleAuthSecret = _configurationService.GetValue<string>("GoogleAuthSecret");
             var claims = new List<Claim>
             {
-                new Claim(nameof(appUser.Id), CryptoFactory.Encrypt(googleAuthSecret, appUser.Id)),
-                new Claim(nameof(appUser.EmailAddress), appUser.EmailAddress),
-                new Claim(nameof(appUser.FirstName), appUser.FirstName),
-                new Claim(nameof(appUser.LastName), appUser.LastName)
+                new Claim(nameof(AppUserClaimModel.Id), CryptoFactory.Encrypt(googleAuthSecret, appUser.Id)),
+                new Claim(nameof(AppUserClaimModel.EmailAddress), appUser.EmailAddress),
+                new Claim(nameof(AppUserClaimModel.FirstName), appUser.FirstName),
+                new Claim(nameof(AppUserClaimModel.LastName), appUser.LastName),
+                new Claim(nameof(AppUserClaimModel.IsAdmin), appUser.IsAdmin.ToString())
             };
 
             var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(googleAuthSecret));
