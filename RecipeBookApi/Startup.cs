@@ -1,5 +1,6 @@
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
+using Amazon.S3;
 using Common.Dynamo;
 using Common.Dynamo.Contracts;
 using Common.Dynamo.Models;
@@ -9,7 +10,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using RecipeBookApi.Options;
 using RecipeBookApi.Services;
 using RecipeBookApi.Services.Contracts;
 using Swashbuckle.AspNetCore.Swagger;
@@ -19,89 +22,91 @@ namespace RecipeBookApi
 {
     public class Startup
     {
-        public static IConfiguration Configuration { get; private set; }
+        private readonly IConfiguration _configuration;
 
-        public Startup(IConfiguration configuration)
+        public Startup(IHostingEnvironment env)
         {
-            Configuration = configuration;
+            var configurationBuilder = new ConfigurationBuilder()
+                .SetBasePath(env.ContentRootPath)
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+                .AddEnvironmentVariables();
+
+            if (env.IsDevelopment())
+            {
+                configurationBuilder.AddUserSecrets<Startup>();
+            }
+
+            _configuration = configurationBuilder.Build();
         }
 
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            services.AddSwaggerGen(options =>
+            services.Configure<AppCorsOptions>(_configuration.GetSection("Cors"));
+            services.Configure<AppGoogleOptions>(_configuration.GetSection("Authentication:Google"));
+            
+            services.AddCors();
+
+            services.AddSwaggerGen(swaggerGenOptions =>
             {
-                options.SwaggerDoc("v1", new Info { Title = "Recipe Book API", Version = "v1" });
+                swaggerGenOptions.SwaggerDoc("v1", new Info { Title = "Recipe Book API", Version = "v1" });
             });
 
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
+            services.PostConfigure<AppGoogleOptions>(appGoogleOptions =>
+            {
+                services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(jwtOptions =>
                 {
-                    var googleAuthSecret = Configuration.GetValue<string>("GoogleAuthSecret");
+                    jwtOptions.RequireHttpsMetadata = false;
+                    jwtOptions.SaveToken = true;
 
-                    options.RequireHttpsMetadata = false;
-                    options.SaveToken = true;
-
-                    options.TokenValidationParameters = new TokenValidationParameters
+                    jwtOptions.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateAudience = false,
                         ValidateIssuer = false,
                         ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(googleAuthSecret))
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(appGoogleOptions.ClientSecret))
                     };
                 });
-
-            services.AddCors(options =>
-            {
-                options.AddDefaultPolicy(builder =>
-                {
-                    var corsOrigin = Configuration.GetValue<string>("CorsOrigin");
-
-                    builder.WithOrigins(corsOrigin)
-                        .AllowAnyHeader()
-                        .AllowAnyMethod()
-                        .AllowCredentials();
-                });
             });
 
-            services.AddScoped<IDynamoDBContext, DynamoDBContext>(serviceProvider =>
-            {
-                var awsOptions = Configuration.GetAWSOptions();
-                var awsAccessKey = Configuration.GetValue<string>("AWSAccessKey");
-                var awsSecretAccessKey = Configuration.GetValue<string>("AWSSecretAccessKey");
+            services.AddDefaultAWSOptions(_configuration.GetAWSOptions());
+            services.AddAWSService<IAmazonS3>();
+            services.AddAWSService<IAmazonDynamoDB>();
 
-                return new DynamoDBContext(new AmazonDynamoDBClient(awsAccessKey, awsSecretAccessKey, awsOptions.Region));
-            });
-
-            services.AddScoped<IDynamoStorageRepository<AppUser>, DynamoStorageRepository<AppUser>>();
-            services.AddScoped<IDynamoStorageRepository<Recipe>, DynamoStorageRepository<Recipe>>();
-            services.AddScoped<IAuthService, GoogleAuthService>();
-            services.AddScoped<IRecipeService, DynamoRecipeService>();
+            services.AddTransient<IDynamoDBContext, DynamoDBContext>();
+            services.AddTransient<IDynamoStorageRepository<AppUser>, DynamoStorageRepository<AppUser>>();
+            services.AddTransient<IDynamoStorageRepository<Recipe>, DynamoStorageRepository<Recipe>>();
+            services.AddTransient<IAuthService, GoogleAuthService>();
+            services.AddTransient<IRecipeService, DynamoRecipeService>();
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IOptions<AppCorsOptions> startupOptions)
         {
-            var swaggerOptionsEndpoint = "/swagger/v1/swagger.json";
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
-            else
-            {
-                swaggerOptionsEndpoint = $"/Prod{swaggerOptionsEndpoint}";
-                app.UseHsts();
-            }
 
             app.UseSwagger();
-            app.UseSwaggerUI(options =>
+            app.UseSwaggerUI(swaggerUiOptions =>
             {
-                options.SwaggerEndpoint(swaggerOptionsEndpoint, "Recipe Book API");
+                swaggerUiOptions.SwaggerEndpoint($"{(env.IsDevelopment() ? "" : "/Prod")}/swagger/v1/swagger.json", "Recipe Book API");
             });
 
-            app.UseAuthentication();
-            app.UseCors();
+            app.UseCors(corsBuilder =>
+            {
+                corsBuilder.WithOrigins(startupOptions.Value.AllowedOrigins)
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowCredentials();
+            });
+
+            app.UseHsts();
             app.UseHttpsRedirection();
+            app.UseAuthentication();
             app.UseMvc();
         }
     }
