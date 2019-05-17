@@ -13,11 +13,13 @@ namespace RecipeBookApi.Services
     {
         private readonly IDynamoStorageRepository<Recipe> _recipeStorage;
         private readonly IDynamoStorageRepository<AppUser> _appUserStorage;
+        private readonly IDateTimeService _dateTimeService;
 
-        public DynamoRecipeService(IDynamoStorageRepository<Recipe> recipeStorage, IDynamoStorageRepository<AppUser> appUserStorage)
+        public DynamoRecipeService(IDynamoStorageRepository<Recipe> recipeStorage, IDynamoStorageRepository<AppUser> appUserStorage, IDateTimeService dateTimeService)
         {
             _recipeStorage = recipeStorage;
             _appUserStorage = appUserStorage;
+            _dateTimeService = dateTimeService;
         }
 
         public async Task<IEnumerable<RecipeViewModel>> GetAll()
@@ -51,10 +53,14 @@ namespace RecipeBookApi.Services
                 Description = model.Description,
                 Ingredients = model.Ingredients,
                 Instructions = model.Instructions,
-                Name = model.Name
+                Name = model.Name,
+                CreateDate = _dateTimeService.GetEasternNow(),
+                UpdateDate = _dateTimeService.GetEasternNow(),
+                CreatedById = executedById,
+                UpdatedById = executedById
             };
 
-            return await _recipeStorage.Create(newRecipe, executedById);
+            return await _recipeStorage.Create(newRecipe);
         }
 
         public async Task Update(string id, RecipePostPutModel model, string executedById, bool isAdmin)
@@ -70,15 +76,14 @@ namespace RecipeBookApi.Services
                 throw new Exception("You cannot update someone else's recipe");
             }
 
-            var updatedRecipe = new Recipe
-            {
-                Description = model.Description,
-                Ingredients = model.Ingredients,
-                Instructions = model.Instructions,
-                Name = model.Name
-            };
+            originalRecipe.Description = model.Description;
+            originalRecipe.Ingredients = model.Ingredients;
+            originalRecipe.Instructions = model.Instructions;
+            originalRecipe.Name = model.Name;
+            originalRecipe.UpdatedById = executedById;
+            originalRecipe.UpdateDate = _dateTimeService.GetEasternNow();
 
-            await _recipeStorage.Update(originalRecipe, updatedRecipe, id, executedById);
+            await _recipeStorage.Update(originalRecipe);
         }
 
         public async Task Delete(string id, string executedById, bool isAdmin)

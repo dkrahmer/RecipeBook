@@ -1,6 +1,5 @@
 ﻿using Common.Dynamo.Contracts;
 using Common.Dynamo.Models;
-using Common.Extensions;
 using Common.Factories;
 using Google.Apis.Auth;
 using Microsoft.Extensions.Options;
@@ -21,11 +20,13 @@ namespace RecipeBookApi.Services
     public class GoogleAuthService : IAuthService
     {
         private readonly AppGoogleOptions _googleOptions;
+        private readonly IDateTimeService _dateTimeService;
         private readonly IDynamoStorageRepository<AppUser> _appUserStorage;
 
-        public GoogleAuthService(IOptions<AppGoogleOptions> appGoogleOptions, IDynamoStorageRepository<AppUser> appUserStorage)
+        public GoogleAuthService(IOptions<AppGoogleOptions> appGoogleOptions, IDateTimeService dateTimeService, IDynamoStorageRepository<AppUser> appUserStorage)
         {
             _googleOptions = appGoogleOptions.Value;
+            _dateTimeService = dateTimeService;
             _appUserStorage = appUserStorage;
         }
 
@@ -60,16 +61,18 @@ namespace RecipeBookApi.Services
                     EmailAddress = googleAuthPayload.Email,
                     FirstName = googleAuthPayload.GivenName,
                     LastName = googleAuthPayload.FamilyName,
-                    LastLoggedInDate = DateTime.Now.ToEasternStandardTime()
+                    LastLoggedInDate = _dateTimeService.GetEasternNow(),
+                    CreateDate = _dateTimeService.GetEasternNow(),
+                    UpdateDate = _dateTimeService.GetEasternNow()
                 };
 
-                user.Id = await _appUserStorage.Create(user, null);
+                user.Id = await _appUserStorage.Create(user);
             }
             else
             {
-                user.LastLoggedInDate = DateTime.Now.ToEasternStandardTime();
+                user.LastLoggedInDate = _dateTimeService.GetEasternNow();
 
-                await _appUserStorage.Update(user, user, user.Id, null);
+                await _appUserStorage.Update(user);
             }
 
             return user;
@@ -89,7 +92,7 @@ namespace RecipeBookApi.Services
             var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_googleOptions.ClientSecret));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            var token = new JwtSecurityToken(null, null, claims, null, DateTime.UtcNow.AddHours(1), credentials);
+            var token = new JwtSecurityToken(null, null, claims, null, _dateTimeService.GetTokenExpireTime(1), credentials);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }

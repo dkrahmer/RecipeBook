@@ -23,16 +23,19 @@ namespace RecipeBookApi
     public class Startup
     {
         private readonly IConfiguration _configuration;
+        private readonly IHostingEnvironment _currentEnvironment;
 
         public Startup(IHostingEnvironment env)
         {
+            _currentEnvironment = env;
+
             var configurationBuilder = new ConfigurationBuilder()
-                .SetBasePath(env.ContentRootPath)
+                .SetBasePath(_currentEnvironment.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+                .AddJsonFile($"appsettings.{_currentEnvironment.EnvironmentName}.json", optional: true, reloadOnChange: true)
                 .AddEnvironmentVariables();
 
-            if (env.IsDevelopment())
+            if (_currentEnvironment.IsDevelopment())
             {
                 configurationBuilder.AddUserSecrets<Startup>();
             }
@@ -46,19 +49,31 @@ namespace RecipeBookApi
 
             services.Configure<AppCorsOptions>(_configuration.GetSection("Cors"));
             services.Configure<AppGoogleOptions>(_configuration.GetSection("Authentication:Google"));
+            services.Configure<AppDateOptions>(_configuration.GetSection("DateSettings"));
             
-            services.AddCors();
-
             services.AddSwaggerGen(swaggerGenOptions =>
             {
                 swaggerGenOptions.SwaggerDoc("v1", new Info { Title = "Recipe Book API", Version = "v1" });
             });
 
-            services.PostConfigure<AppGoogleOptions>(appGoogleOptions =>
+            services.AddCors(corsOptions =>
             {
-                services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                corsOptions.AddDefaultPolicy(corsPolicyBuilder =>
+                {
+                    var appCorsOptions = services.BuildServiceProvider().GetService<IOptions<AppCorsOptions>>();
+
+                    corsPolicyBuilder.WithOrigins(appCorsOptions.Value.AllowedOrigins)
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials();
+                });
+            });
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(jwtOptions =>
                 {
+                    var appGoogleOptions = services.BuildServiceProvider().GetService<IOptions<AppGoogleOptions>>();
+
                     jwtOptions.RequireHttpsMetadata = false;
                     jwtOptions.SaveToken = true;
 
@@ -67,10 +82,9 @@ namespace RecipeBookApi
                         ValidateAudience = false,
                         ValidateIssuer = false,
                         ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(appGoogleOptions.ClientSecret))
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(appGoogleOptions.Value.ClientSecret))
                     };
                 });
-            });
 
             services.AddDefaultAWSOptions(_configuration.GetAWSOptions());
             services.AddAWSService<IAmazonS3>();
@@ -79,13 +93,14 @@ namespace RecipeBookApi
             services.AddTransient<IDynamoDBContext, DynamoDBContext>();
             services.AddTransient<IDynamoStorageRepository<AppUser>, DynamoStorageRepository<AppUser>>();
             services.AddTransient<IDynamoStorageRepository<Recipe>, DynamoStorageRepository<Recipe>>();
+            services.AddTransient<IDateTimeService, DateTimeService>();
             services.AddTransient<IAuthService, GoogleAuthService>();
             services.AddTransient<IRecipeService, DynamoRecipeService>();
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IOptions<AppCorsOptions> startupOptions)
+        public void Configure(IApplicationBuilder app, IOptions<AppCorsOptions> appCorsOptions)
         {
-            if (env.IsDevelopment())
+            if (_currentEnvironment.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
@@ -93,20 +108,13 @@ namespace RecipeBookApi
             app.UseSwagger();
             app.UseSwaggerUI(swaggerUiOptions =>
             {
-                swaggerUiOptions.SwaggerEndpoint($"{(env.IsDevelopment() ? "" : "/Prod")}/swagger/v1/swagger.json", "Recipe Book API");
-            });
-
-            app.UseCors(corsBuilder =>
-            {
-                corsBuilder.WithOrigins(startupOptions.Value.AllowedOrigins)
-                    .AllowAnyHeader()
-                    .AllowAnyMethod()
-                    .AllowCredentials();
+                swaggerUiOptions.SwaggerEndpoint($"{(_currentEnvironment.IsDevelopment() ? "" : "/Prod")}/swagger/v1/swagger.json", "Recipe Book API");
             });
 
             app.UseHsts();
             app.UseHttpsRedirection();
             app.UseAuthentication();
+            app.UseCors();
             app.UseMvc();
         }
     }

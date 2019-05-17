@@ -1,5 +1,4 @@
 ﻿using Amazon.DynamoDBv2.DataModel;
-using System;
 
 namespace Common.Dynamo.Models
 {
@@ -7,13 +6,5 @@ namespace Common.Dynamo.Models
     {
         [DynamoDBHashKey]
         public string Id { get; set; }
-
-        public string CreatedById { get; set; }
-
-        public DateTime CreateDate { get; set; }
-
-        public string UpdatedById { get; set; }
-
-        public DateTime UpdateDate { get; set; }
     }
 }

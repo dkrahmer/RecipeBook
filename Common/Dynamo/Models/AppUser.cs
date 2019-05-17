@@ -16,6 +16,10 @@ namespace Common.Dynamo.Models
 
         public bool IsAdmin { get; set; }
 
+        public DateTime CreateDate { get; set; }
+
+        public DateTime UpdateDate { get; set; }
+
         [DynamoDBIgnore]
         public string FullName => $"{FirstName} {LastName}";
     }

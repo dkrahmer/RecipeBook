@@ -9,7 +9,7 @@ namespace RecipeBookApi.Controllers
     [ApiController]
     public abstract class BaseApiController : ControllerBase
     {
-        protected readonly IAuthService AuthService;
+        protected IAuthService AuthService { get; }
 
         protected AppUserClaimModel CurrentUser => AuthService.GetUserFromClaims(User);
 
