@@ -1,11 +1,11 @@
 ﻿using Common.Dynamo.Contracts;
 using Common.Dynamo.Models;
-using Common.Extensions;
 using Common.Factories;
 using Google.Apis.Auth;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using RecipeBookApi.Models;
+using RecipeBookApi.Options;
 using RecipeBookApi.Services.Contracts;
 using System;
 using System.Collections.Generic;
@@ -19,21 +19,21 @@ namespace RecipeBookApi.Services
 {
     public class GoogleAuthService : IAuthService
     {
-        private readonly IConfiguration _configurationService;
+        private readonly AppOptions _appOptions;
+        private readonly IDateTimeService _dateTimeService;
         private readonly IDynamoStorageRepository<AppUser> _appUserStorage;
 
-        public GoogleAuthService(IConfiguration configurationService, IDynamoStorageRepository<AppUser> appUserStorage)
+        public GoogleAuthService(IOptions<AppOptions> appOptions, IDateTimeService dateTimeService, IDynamoStorageRepository<AppUser> appUserStorage)
         {
-            _configurationService = configurationService;
+            _appOptions = appOptions.Value;
+            _dateTimeService = dateTimeService;
             _appUserStorage = appUserStorage;
         }
 
         public async Task<string> Authenticate(string token)
         {
             var googleAuthPayload = await GoogleJsonWebSignature.ValidateAsync(token, new GoogleJsonWebSignature.ValidationSettings());
-
             var user = await UpdateStorageWithUserPayload(googleAuthPayload);
-
             var userToken = CreateUserToken(user);
 
             return userToken;
@@ -41,11 +41,9 @@ namespace RecipeBookApi.Services
 
         public AppUserClaimModel GetUserFromClaims(ClaimsPrincipal userClaims)
         {
-            var googleAuthSecret = _configurationService.GetValue<string>("GoogleAuthSecret");
-
             return new AppUserClaimModel
             {
-                Id = CryptoFactory.Decrypt(googleAuthSecret, userClaims.FindFirst(nameof(AppUserClaimModel.Id)).Value),
+                Id = CryptoFactory.Decrypt(_appOptions.GoogleClientSecret, userClaims.FindFirst(nameof(AppUserClaimModel.Id)).Value),
                 EmailAddress = userClaims.FindFirst(nameof(AppUserClaimModel.EmailAddress)).Value,
                 FirstName = userClaims.FindFirst(nameof(AppUserClaimModel.FirstName)).Value,
                 LastName = userClaims.FindFirst(nameof(AppUserClaimModel.LastName)).Value,
@@ -55,8 +53,7 @@ namespace RecipeBookApi.Services
 
         private async Task<AppUser> UpdateStorageWithUserPayload(GoogleJsonWebSignature.Payload googleAuthPayload)
         {
-            var user = (await _appUserStorage.ReadAll(u => u.EmailAddress.ToLower() == googleAuthPayload.Email.ToLower())).SingleOrDefault();
-            
+            var user = (await _appUserStorage.ReadAll(u => u.EmailAddress.ToLower() == googleAuthPayload.Email.ToLower())).SingleOrDefault();            
             if (user == null)
             {
                 user = new AppUser
@@ -64,37 +61,38 @@ namespace RecipeBookApi.Services
                     EmailAddress = googleAuthPayload.Email,
                     FirstName = googleAuthPayload.GivenName,
                     LastName = googleAuthPayload.FamilyName,
-                    LastLoggedInDate = DateTime.Now.ToEasternStandardTime()
+                    LastLoggedInDate = _dateTimeService.GetEasternNow(),
+                    CreateDate = _dateTimeService.GetEasternNow(),
+                    UpdateDate = _dateTimeService.GetEasternNow()
                 };
 
-                user.Id = await _appUserStorage.Create(user, null);
+                user.Id = await _appUserStorage.Create(user);
             }
             else
             {
-                user.LastLoggedInDate = DateTime.Now.ToEasternStandardTime();
+                user.LastLoggedInDate = _dateTimeService.GetEasternNow();
 
-                await _appUserStorage.Update(user, user, user.Id, null);
+                await _appUserStorage.Update(user);
             }
 
             return user;
         }
 
         private string CreateUserToken(AppUser appUser)
-        {
-            var googleAuthSecret = _configurationService.GetValue<string>("GoogleAuthSecret");
+        {           
             var claims = new List<Claim>
             {
-                new Claim(nameof(AppUserClaimModel.Id), CryptoFactory.Encrypt(googleAuthSecret, appUser.Id)),
+                new Claim(nameof(AppUserClaimModel.Id), CryptoFactory.Encrypt(_appOptions.GoogleClientSecret, appUser.Id)),
                 new Claim(nameof(AppUserClaimModel.EmailAddress), appUser.EmailAddress),
                 new Claim(nameof(AppUserClaimModel.FirstName), appUser.FirstName),
                 new Claim(nameof(AppUserClaimModel.LastName), appUser.LastName),
                 new Claim(nameof(AppUserClaimModel.IsAdmin), appUser.IsAdmin.ToString())
             };
 
-            var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(googleAuthSecret));
+            var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_appOptions.GoogleClientSecret));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            var token = new JwtSecurityToken(null, null, claims, null, DateTime.UtcNow.AddHours(1), credentials);
+            var token = new JwtSecurityToken(null, null, claims, null, _dateTimeService.GetTokenExpireTime(1), credentials);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }

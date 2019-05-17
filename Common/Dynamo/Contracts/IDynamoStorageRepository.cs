@@ -7,10 +7,10 @@ namespace Common.Dynamo.Contracts
 {
     public interface IDynamoStorageRepository<T> where T : DynamoDocument
     {
-        Task<string> Create(T obj, string createdById);
+        Task<string> Create(T obj);
         Task Delete(string id);
         Task<T> Read(string id);
         Task<IList<T>> ReadAll(Func<T, bool> predicate = null);
-        Task Update(T oldObj, T newObj, string id, string updatedbyId);
+        Task Update(T obj);
     }
 }

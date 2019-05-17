@@ -1,7 +1,6 @@
 ﻿using Amazon.DynamoDBv2.DataModel;
 using Common.Dynamo.Contracts;
 using Common.Dynamo.Models;
-using Common.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,28 +42,18 @@ namespace Common.Dynamo
             return await _context.LoadAsync<T>(id);
         }
 
-        public async Task<string> Create(T obj, string createdById)
+        public async Task<string> Create(T obj)
         {
             obj.Id = Guid.NewGuid().ToString();
-            obj.CreateDate = DateTime.Now.ToEasternStandardTime();
-            obj.UpdateDate = DateTime.Now.ToEasternStandardTime();
-            obj.CreatedById = createdById;
-            obj.UpdatedById = createdById;
 
             await _context.SaveAsync(obj);
 
             return obj.Id;
         }
 
-        public async Task Update(T oldObj, T newObj, string id, string updatedbyId)
+        public async Task Update(T obj)
         {
-            newObj.Id = id;
-            newObj.CreateDate = oldObj.CreateDate;
-            newObj.UpdateDate = DateTime.Now.ToEasternStandardTime();
-            newObj.CreatedById = oldObj.CreatedById;
-            newObj.UpdatedById = updatedbyId;
-
-            await _context.SaveAsync(newObj);
+            await _context.SaveAsync(obj);
         }
 
         public async Task Delete(string id)
