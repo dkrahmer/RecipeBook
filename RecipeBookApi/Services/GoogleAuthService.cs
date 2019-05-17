@@ -19,13 +19,13 @@ namespace RecipeBookApi.Services
 {
     public class GoogleAuthService : IAuthService
     {
-        private readonly AppGoogleOptions _googleOptions;
+        private readonly AppOptions _appOptions;
         private readonly IDateTimeService _dateTimeService;
         private readonly IDynamoStorageRepository<AppUser> _appUserStorage;
 
-        public GoogleAuthService(IOptions<AppGoogleOptions> appGoogleOptions, IDateTimeService dateTimeService, IDynamoStorageRepository<AppUser> appUserStorage)
+        public GoogleAuthService(IOptions<AppOptions> appOptions, IDateTimeService dateTimeService, IDynamoStorageRepository<AppUser> appUserStorage)
         {
-            _googleOptions = appGoogleOptions.Value;
+            _appOptions = appOptions.Value;
             _dateTimeService = dateTimeService;
             _appUserStorage = appUserStorage;
         }
@@ -43,7 +43,7 @@ namespace RecipeBookApi.Services
         {
             return new AppUserClaimModel
             {
-                Id = CryptoFactory.Decrypt(_googleOptions.ClientSecret, userClaims.FindFirst(nameof(AppUserClaimModel.Id)).Value),
+                Id = CryptoFactory.Decrypt(_appOptions.GoogleClientSecret, userClaims.FindFirst(nameof(AppUserClaimModel.Id)).Value),
                 EmailAddress = userClaims.FindFirst(nameof(AppUserClaimModel.EmailAddress)).Value,
                 FirstName = userClaims.FindFirst(nameof(AppUserClaimModel.FirstName)).Value,
                 LastName = userClaims.FindFirst(nameof(AppUserClaimModel.LastName)).Value,
@@ -82,14 +82,14 @@ namespace RecipeBookApi.Services
         {           
             var claims = new List<Claim>
             {
-                new Claim(nameof(AppUserClaimModel.Id), CryptoFactory.Encrypt(_googleOptions.ClientSecret, appUser.Id)),
+                new Claim(nameof(AppUserClaimModel.Id), CryptoFactory.Encrypt(_appOptions.GoogleClientSecret, appUser.Id)),
                 new Claim(nameof(AppUserClaimModel.EmailAddress), appUser.EmailAddress),
                 new Claim(nameof(AppUserClaimModel.FirstName), appUser.FirstName),
                 new Claim(nameof(AppUserClaimModel.LastName), appUser.LastName),
                 new Claim(nameof(AppUserClaimModel.IsAdmin), appUser.IsAdmin.ToString())
             };
 
-            var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_googleOptions.ClientSecret));
+            var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_appOptions.GoogleClientSecret));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(null, null, claims, null, _dateTimeService.GetTokenExpireTime(1), credentials);

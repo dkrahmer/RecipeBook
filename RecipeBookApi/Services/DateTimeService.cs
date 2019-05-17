@@ -7,22 +7,23 @@ namespace RecipeBookApi.Services
 {
     public class DateTimeService : IDateTimeService
     {
-        private readonly AppDateOptions _appDateOptions;
+        private readonly AppOptions _appOptions;
 
-        public DateTimeService(IOptions<AppDateOptions> appDateOptions)
+        public DateTimeService(IOptions<AppOptions> appOptions)
         {
-            _appDateOptions = appDateOptions.Value;
+            _appOptions = appOptions.Value;
         }
 
         public DateTime GetEasternNow()
         {
-            return TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById(_appDateOptions.EasternTimeZoneId));
+            var utcTime = TimeZoneInfo.ConvertTimeToUtc(DateTime.Now);
+            return TimeZoneInfo.ConvertTimeFromUtc(utcTime, TimeZoneInfo.FindSystemTimeZoneById(_appOptions.EasternTimeZoneId));
         }
 
         public DateTime GetTokenExpireTime(int hoursUntilExpire)
         {
             var now = DateTime.UtcNow;
-            if (!_appDateOptions.UseUtcForTokenExpire)
+            if (!_appOptions.UseUtcForTokenExpire)
             {
                 now = GetEasternNow();
             }

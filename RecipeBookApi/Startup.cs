@@ -47,10 +47,9 @@ namespace RecipeBookApi
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            services.Configure<AppCorsOptions>(_configuration.GetSection("Cors"));
-            services.Configure<AppGoogleOptions>(_configuration.GetSection("Authentication:Google"));
-            services.Configure<AppDateOptions>(_configuration.GetSection("DateSettings"));
-            
+            services.Configure<AppOptions>(_configuration);
+            var appOptions = services.BuildServiceProvider().GetService<IOptions<AppOptions>>();
+
             services.AddSwaggerGen(swaggerGenOptions =>
             {
                 swaggerGenOptions.SwaggerDoc("v1", new Info { Title = "Recipe Book API", Version = "v1" });
@@ -60,9 +59,7 @@ namespace RecipeBookApi
             {
                 corsOptions.AddDefaultPolicy(corsPolicyBuilder =>
                 {
-                    var appCorsOptions = services.BuildServiceProvider().GetService<IOptions<AppCorsOptions>>();
-
-                    corsPolicyBuilder.WithOrigins(appCorsOptions.Value.AllowedOrigins)
+                    corsPolicyBuilder.WithOrigins(appOptions.Value.AllowedOrigins)
                         .AllowAnyHeader()
                         .AllowAnyMethod()
                         .AllowCredentials();
@@ -72,8 +69,6 @@ namespace RecipeBookApi
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(jwtOptions =>
                 {
-                    var appGoogleOptions = services.BuildServiceProvider().GetService<IOptions<AppGoogleOptions>>();
-
                     jwtOptions.RequireHttpsMetadata = false;
                     jwtOptions.SaveToken = true;
 
@@ -82,7 +77,7 @@ namespace RecipeBookApi
                         ValidateAudience = false,
                         ValidateIssuer = false,
                         ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(appGoogleOptions.Value.ClientSecret))
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(appOptions.Value.GoogleClientSecret))
                     };
                 });
 
@@ -98,7 +93,7 @@ namespace RecipeBookApi
             services.AddTransient<IRecipeService, DynamoRecipeService>();
         }
 
-        public void Configure(IApplicationBuilder app, IOptions<AppCorsOptions> appCorsOptions)
+        public void Configure(IApplicationBuilder app)
         {
             if (_currentEnvironment.IsDevelopment())
             {
