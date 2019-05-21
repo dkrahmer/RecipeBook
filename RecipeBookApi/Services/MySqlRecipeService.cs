@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace RecipeBookApi.Services
 {
-	public class MySqlRecipeService : IRecipeService
+	public class MySqlRecipeService : IRecipesService
 	{
 		public MySqlRecipeService()
 		{

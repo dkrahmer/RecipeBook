@@ -10,13 +10,13 @@ using System.Net;
 namespace RecipeBookApi.Controllers
 {
 	[Route("api/[controller]")]
-	public class RecipeController : ControllerBase
+	public class RecipesController : ControllerBase
 	{
-		private readonly IRecipeService _recipeService;
+		private readonly IRecipesService _recipesService;
 
-		public RecipeController(IRecipeService recipeService)
+		public RecipesController(IRecipesService recipesService)
 		{
-			_recipeService = recipeService;
+			_recipesService = recipesService;
 		}
 
 		[AllowAnonymous]
@@ -25,7 +25,7 @@ namespace RecipeBookApi.Controllers
 		[ProducesResponseType(typeof(IEnumerable<RecipeViewModel>), (int)HttpStatusCode.OK)]
 		public IActionResult GetAllRecipes()
 		{
-			var allRecipes = _recipeService.GetAll();
+			var allRecipes = _recipesService.GetAll();
 
 			return Ok(allRecipes);
 		}
@@ -37,7 +37,7 @@ namespace RecipeBookApi.Controllers
 		[ProducesResponseType(typeof(RecipeViewModel), (int)HttpStatusCode.OK)]
 		public IActionResult GetRecipe(int recipeId)
 		{
-			var recipe = _recipeService.Get(recipeId);
+			var recipe = _recipesService.Get(recipeId);
 			if (recipe == null)
 			{
 				return NotFound();
@@ -65,7 +65,7 @@ namespace RecipeBookApi.Controllers
 
 			try
 			{
-				var createdId = _recipeService.Create(data);
+				var createdId = _recipesService.Create(data);
 				return Ok(createdId);
 			}
 			catch (Exception ex)
@@ -99,7 +99,7 @@ namespace RecipeBookApi.Controllers
 
 			try
 			{
-				_recipeService.Update(data);
+				_recipesService.Update(data);
 
 				return Ok();
 			}
@@ -122,7 +122,7 @@ namespace RecipeBookApi.Controllers
 		{
 			try
 			{
-				_recipeService.Delete(recipeId);
+				_recipesService.Delete(recipeId);
 
 				return Ok();
 			}

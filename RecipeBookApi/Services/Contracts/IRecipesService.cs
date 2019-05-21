@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace RecipeBookApi.Services.Contracts
 {
-	public interface IRecipeService
+	public interface IRecipesService
 	{
 		int Create(Recipe model);
 		void Delete(int recipeId);

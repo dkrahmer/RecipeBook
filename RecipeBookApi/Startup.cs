@@ -93,7 +93,7 @@ namespace RecipeBookApi
 			//services.AddTransient<IDateTimeService, DateTimeService>();
 			//services.AddTransient<IAuthService, GoogleAuthService>();
 			//services.AddTransient<IRecipeService, DynamoRecipeService>();
-			services.AddTransient<IRecipeService, MySqlRecipeService>();
+			services.AddTransient<IRecipesService, MySqlRecipeService>();
 		}
 
 		public void Configure(IApplicationBuilder app)
