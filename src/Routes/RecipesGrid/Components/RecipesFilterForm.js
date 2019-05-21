@@ -38,7 +38,7 @@ export function RecipesFilterForm(props) {
           value={props.nameQuery}
           onChange={handleSearchQueryChange}
           label="Recipe Name"
-          placeholder="Nom nom nom..."
+          placeholder="Search..."
           margin="normal"
           variant="outlined" />
       </Collapse>

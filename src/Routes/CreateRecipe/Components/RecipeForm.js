@@ -14,15 +14,15 @@ import {
 } from "@material-ui/core";
 
 export function RecipeForm(props) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsCancelModalOpen] = useState(false);
   const recipeForm = useRecipeForm(props.recipe);
 
   function onNameChange(e) {
     recipeForm.handleNameChange(e.target.value);
   }
 
-  function onDescriptionChange(e) {
-    recipeForm.handleDescriptionChange(e.target.value);
+  function onNotesChange(e) {
+    recipeForm.handleNotesChange(e.target.value);
   }
 
   function onIngredientsChange(e) {
@@ -33,17 +33,18 @@ export function RecipeForm(props) {
     recipeForm.handleInstructionsChange(e.target.value);
   }
 
-  function onYesModal() {
-    setIsModalOpen(false);
+  function onCancelModalYes() {
+    setIsCancelModalOpen(false);
     recipeForm.reset();
+    props.onCancel();
   }
 
-  function onNoModal() {
-    setIsModalOpen(false);
+  function onCancelModalNo() {
+    setIsCancelModalOpen(false);
   }
 
   function onCancelClick() {
-    setIsModalOpen(true);
+    setIsCancelModalOpen(true);
   }
 
   function onSaveClick() {
@@ -61,7 +62,7 @@ export function RecipeForm(props) {
           recipe={recipeForm.recipe}
           errors={recipeForm.errors}
           onNameChange={onNameChange}
-          onDescriptionChange={onDescriptionChange}
+          onNotesChange={onNotesChange}
           onIngredientsChange={onIngredientsChange}
           onInstructionsChange={onInstructionsChange} />
         <Divider className="rb-divider" />
@@ -73,8 +74,8 @@ export function RecipeForm(props) {
           isOpen={isModalOpen}
           title="Cancel Changes"
           question="Are you sure you want to cancel all changes?"
-          onYes={onYesModal}
-          onNo={onNoModal} />
+          onYes={onCancelModalYes}
+          onNo={onCancelModalNo} />
       </Paper>
     </React.Fragment>
   );

@@ -21,7 +21,7 @@ export function RecipesGrid(props) {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   function createRecipe() {
-    props.history.push("/recipe/create");
+    props.history.push("/recipes/create");
   }
 
   return (

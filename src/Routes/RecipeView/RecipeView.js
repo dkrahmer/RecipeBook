@@ -19,7 +19,7 @@ export function RecipeView(props) {
 
   useEffect(() => {
     setIsLoading(true);
-    recipeService.getRecipeById(props.match.params.id, (response) => {
+    recipeService.getRecipeById(props.match.params.recipeId, (response) => {
       setRecipe(response.data);
       setIsLoading(false);
     }, (error) => {
@@ -38,12 +38,12 @@ export function RecipeView(props) {
   }
 
   function editRecipe() {
-    props.history.push(`/recipe/${recipe.id}/edit`);
+    props.history.push(`/recipes/${recipe.recipeId}/edit`);
   }
 
   function onDeleteConfirmed() {
     setIsModalOpen(false);
-    recipeService.deleteRecipe(recipe.id, (response) => {
+    recipeService.deleteRecipe(recipe.recipeId, (response) => {
       if (response && response.status === 200) {
         props.history.push("/");
       } else {

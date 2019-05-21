@@ -13,9 +13,6 @@ export function RecipeInfo({ recipe, ...props }) {
         title="Instructions"
         body={recipe.instructions} />
       <RecipeInfoSection
-        title="Description"
-        body={recipe.description} />
-      <RecipeInfoSection
         title="Notes"
         body={recipe.notes} />
     </React.Fragment>

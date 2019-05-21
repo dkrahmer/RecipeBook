@@ -23,7 +23,7 @@ export function RecipeGridCard({ recipe }) {
   return (
     <React.Fragment>
       <Card>
-        <RouterLink to={`/recipe/${recipe.recipeId}`}>
+        <RouterLink to={`/recipes/${recipe.recipeId}`}>
 		  <CardHeader
             title={recipe.name}
             subheader={`${dateString}`} />

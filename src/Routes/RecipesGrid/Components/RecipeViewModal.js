@@ -34,7 +34,7 @@ function RecipeViewModal({ recipe, ...props }) {
         <Button size="small" color="primary" onClick={props.onCloseModal}>
           Close
         </Button>
-        <RouterLink to={`/recipe/${recipe.id}`} target="_blank">
+        <RouterLink to={`/recipes/${recipe.recipeId}`} target="_blank">
           <Button size="small" color="primary">
             Open in new Tab
           </Button>

@@ -8,6 +8,7 @@ import { EditRecipe } from "./Routes/EditRecipe/EditRecipe";
 import { Login } from "./Routes/Login/Login";
 import { Logout } from "./Routes/Logout/Logout";
 import { RouteNotFound } from "./Shared/RouteNotFound";
+import { Redirect } from 'react-router';
 import "typeface-roboto";
 import React from "react";
 import {
@@ -25,11 +26,12 @@ export default function App() {
       <UserContextProvider>
         <Menu />
         <main id="main-content">
-          <Switch>
-            <Route exact path="/" component={RecipesGrid} />
-            <Route exact path="/recipe/create" component={CreateRecipe} />
-            <Route exact path="/recipe/:id" component={RecipeView} />
-            <Route exact path="/recipe/:id/edit" component={EditRecipe} />
+          <Switch> 
+            <Route exact path="/" render={() => (<Redirect to="/recipes"/>)} />
+            <Route exact path="/recipes" component={RecipesGrid} />
+            <Route exact path="/recipes/create" component={CreateRecipe} />
+            <Route exact path="/recipes/:recipeId" component={RecipeView} />
+            <Route exact path="/recipes/:recipeId/edit" component={EditRecipe} />
             <Route exact path="/login" component={Login} />
             <Route exact path="/logout" component={Logout} />
             <Route component={RouteNotFound} />

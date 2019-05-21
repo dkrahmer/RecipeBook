@@ -5,7 +5,7 @@ import React, {
   useState
 } from "react";
 
-export function CreateRecipe() {
+export function CreateRecipe(props) {
   const recipeService = useRecipeService();
   const [recipe, setRecipe] = useState(setInitialRecipe());
   const [toastOpen, setToastOpen] = useState(false);
@@ -39,12 +39,17 @@ export function CreateRecipe() {
     });
   }
 
+  function cancelCreateRecipe() {
+    props.history.replace("/recipes");
+  }
+
   return (
     <React.Fragment>
       <RecipeForm
         pageTitle="Create a new Recipe"
         recipe={recipe}
         onSaveClick={createRecipe}
+        onCancel={cancelCreateRecipe}
         isSaveExecuting={isExecuting} />
       <RecipeSavedSnackbar
         toastOpen={toastOpen}
@@ -57,8 +62,8 @@ export function CreateRecipe() {
 function setInitialRecipe() {
   return {
     name: "",
-    description: "",
     ingredients: "",
-    instructions: ""
+    instructions: "",
+    notes: ""
   };
 }

@@ -19,7 +19,7 @@ export function useRecipeService() {
 }
 
 function createRecipeService(user) {
-  const api = createAxiosApi("Recipe", user);
+  const api = createAxiosApi("Recipes", user);
 
   function getAllRecipes(handleResponse, handleError) {
     api.get("/")

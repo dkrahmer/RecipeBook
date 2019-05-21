@@ -53,18 +53,16 @@ export function useRecipeForm(initialRecipe) {
     markFieldDirty("name");
   }
 
-  function handleDescriptionChange(value) {
-    setRecipe({ ...recipe, description: value });
-  }
-
   function handleIngredientsChange(value) {
     setRecipe({ ...recipe, ingredients: value });
-    markFieldDirty("ingredients");
   }
 
   function handleInstructionsChange(value) {
     setRecipe({ ...recipe, instructions: value });
-    markFieldDirty("instructions");
+  }
+
+  function handleNotesChange(value) {
+    setRecipe({ ...recipe, notes: value });
   }
 
   return {
@@ -73,9 +71,9 @@ export function useRecipeForm(initialRecipe) {
     isValid,
     reset: resetCallback,
     handleNameChange,
-    handleDescriptionChange,
     handleIngredientsChange,
-    handleInstructionsChange
+    handleInstructionsChange,
+    handleNotesChange
   };
 }
 
@@ -85,16 +83,6 @@ function getBlankErrors() {
       isDirty: false,
       isValid: true,
       message: "Name is required"
-    },
-    ingredients: {
-      isDirty: false,
-      isValid: true,
-      message: "Ingredients are required"
-    },
-    instructions: {
-      isDirty: false,
-      isValid: true,
-      message: "Instructions are required"
     }
   };
 }

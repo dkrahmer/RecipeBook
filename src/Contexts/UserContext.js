@@ -24,18 +24,26 @@ export function UserContextProvider(props) {
 function getUserFromToken() {
   const token = Cookies.get(AuthTokenKey);
   const userInfo = {
-    isLoggedIn: !!token
+    isLoggedIn: true//!!token
   };
 
   if (userInfo.isLoggedIn) {
-    const decodedToken = jwt.decode(token);
+    //const decodedToken = jwt.decode(token);
     
-    userInfo.id = decodedToken.Id;
-    userInfo.email = decodedToken.EmailAddress;
-    userInfo.firstName = decodedToken.FirstName;
-    userInfo.lastName = decodedToken.LastName;
-    userInfo.isAdmin = decodedToken.IsAdmin;
-    userInfo.authToken = token;
+    //userInfo.id = decodedToken.Id;
+    //userInfo.email = decodedToken.EmailAddress;
+    //userInfo.firstName = decodedToken.FirstName;
+    //userInfo.lastName = decodedToken.LastName;
+    //userInfo.isAdmin = decodedToken.IsAdmin;
+    //userInfo.authToken = token;
+
+    userInfo.id = 1;
+    //userInfo.email = decodedToken.EmailAddress;
+    userInfo.firstName = "Doug";
+    userInfo.lastName = "Krahmer";
+    userInfo.isAdmin = true;
+    //userInfo.authToken = token;
+
   }
 
   return userInfo;
