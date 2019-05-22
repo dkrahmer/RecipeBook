@@ -9,7 +9,7 @@ using System.Net;
 
 namespace RecipeBookApi.Controllers
 {
-	[Route("api/[controller]")]
+	[Route("[controller]")]
 	public class RecipesController : ControllerBase
 	{
 		private readonly IRecipesService _recipesService;

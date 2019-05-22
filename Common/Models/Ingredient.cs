@@ -1,4 +1,4 @@
-﻿using Fractions;
+﻿using Common.Structs;
 using System.Text.RegularExpressions;
 
 namespace Common.Models
@@ -6,10 +6,7 @@ namespace Common.Models
 	public class Ingredient
 	{
 		protected static readonly Regex IngredientLineRegEx =
-			new Regex(@"(?i)^((?<Amount>(([0-9]+\s+)?[0-9]+\/[1-9]+[0-9]*)|([0-9]*\.?[0-9]*))\s?)?(?<IngredientName>.+)$", RegexOptions.Compiled);
-		// 4 1/2 ingredient
-		// 4.5 ingredient
-		// 45 ingredient
+			new Regex(@"(?i)^((?<Amount>(([0-9]+\s+)?[0-9]+\/[1-9]+[0-9]*)|([0-9]*\.?[0-9]*))\s?)?(?<IngredientName>(?<UnitName>[^\s]*).*)$", RegexOptions.Compiled);
 
 		public static Ingredient Parse(string ingredientLine)
 		{
@@ -31,18 +28,20 @@ namespace Common.Models
 				return ingredient;
 			}
 
+			ingredient.UnitName = matches.Groups["UnitName"].Value;
 			ingredient.IngredientName = matches.Groups["IngredientName"].Value;
-			string amount = matches.Groups["Amount"].Value;
-			if (string.IsNullOrWhiteSpace(amount))
-				return ingredient;
-
-			//if (Fraction.TryParse(amount, out Fraction amountFraction))
-			//	ingredient.Amount = amountFraction;
+			string amountStr = matches.Groups["Amount"].Value;
+			if (!string.IsNullOrWhiteSpace(amountStr))
+			{
+				if (Amount.TryParse(amountStr, out Amount amount))
+					ingredient.Amount = amount;
+			}
 
 			return ingredient;
 		}
 
 		public Amount Amount { get; set; }
+		public string UnitName { get; private set; }
 		public string IngredientName { get; set; }
 		public bool IsHeading { get; set; }
 	}

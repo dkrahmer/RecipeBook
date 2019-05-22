@@ -20,6 +20,7 @@ namespace Common.Models
 		}
 
 		private Ingredients _ingredientsList;
+		/*
 		public Ingredients IngredientsList
 		{
 			get
@@ -32,7 +33,7 @@ namespace Common.Models
 				return _ingredientsList;
 			}
 		}
-
+		*/
 		public string Instructions { get; set; }
 
 		public string Notes { get; set; }
