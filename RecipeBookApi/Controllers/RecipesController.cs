@@ -44,7 +44,7 @@ namespace RecipeBookApi.Controllers
 				return NotFound();
 			}
 
-			if (scale != null && Amount.TryParse(scale, out Amount scaleAmount) && scaleAmount.ToString() != "1")
+			if (!string.IsNullOrEmpty(scale) && Amount.TryParse(scale, out Amount scaleAmount) && scaleAmount.ToString() != "1")
 			{
 				foreach (var ingredient in recipe.IngredientsList)
 				{
