@@ -2,7 +2,6 @@ import { useUserContext } from "../Hooks/useUserContext";
 import React from "react";
 import {
   Typography,
-  Divider,
   Button
 } from "@material-ui/core";
 

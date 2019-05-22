@@ -15,11 +15,8 @@ export function Footer() {
         color="inherit"
         component="p">
         <span>
-          {`© ${today.getFullYear()} Andrew Ladd `}
+          {`© ${today.getFullYear()} Doug Krahmer `}
         </span>
-        <Link href="mailto:aladd04@gmail.com" style={{ color: "#9e9e9e" }}>
-          Contact
-        </Link>
       </Typography>
     </footer>
   );
