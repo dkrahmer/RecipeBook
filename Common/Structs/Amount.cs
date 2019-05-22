@@ -10,12 +10,15 @@ namespace Common.Structs
 	{
 		private decimal? _decimal;
 		private Rational? _fraction;
-		private static int _decimalDigitsConvertToFractionThreshold = 3;
-		private static readonly decimal _fractionTolerance = 0.001m;
+
+		private const int DIGITS_CONVERT_TO_FRACTION_THRESHOLD = 3;
+		private const decimal FRACTION_TOLERANCE = 0.01m;
+
+		public bool IsDecimal => _decimal.HasValue;
 
 		public bool IsFraction => _fraction.HasValue;
 
-		public bool IsDecimal => _decimal.HasValue;
+		public bool IsEmpty => !IsDecimal && !IsFraction;
 
 		public Amount(decimal value) : this()
 		{
@@ -36,12 +39,12 @@ namespace Common.Structs
 			_fraction = amount._fraction;
 		}
 
-		public Amount ToDecimalAmount()
+		public Amount ToDecimalAmount(int decimals = 2)
 		{
 			if (IsDecimal)
 				return this;
 
-			return new Amount() { _decimal = (decimal)_fraction.Value.Numerator / (decimal)_fraction.Value.Denominator };
+			return new Amount() { _decimal = decimal.Round((decimal)_fraction.Value.Numerator / (decimal)_fraction.Value.Denominator, 2) };
 		}
 
 		public Amount ToFractionAmount()
@@ -49,7 +52,7 @@ namespace Common.Structs
 			if (IsFraction)
 				return this;
 
-			return new Amount() { _fraction = Rational.ParseDecimal(_decimal.ToString(), _fractionTolerance) };
+			return new Amount() { _fraction = Rational.ParseDecimal(_decimal.ToString(), FRACTION_TOLERANCE) };
 		}
 
 		public static Amount Parse(string value)
@@ -69,7 +72,7 @@ namespace Common.Structs
 			{
 				var amount = new Amount() { _decimal = decimal.Parse(decimal.Parse(value).ToString("G29")) };
 				int digitsAfterDecimal = BitConverter.GetBytes(decimal.GetBits(amount._decimal.Value)[3])[2];
-				if (digitsAfterDecimal >= _decimalDigitsConvertToFractionThreshold)
+				if (digitsAfterDecimal >= DIGITS_CONVERT_TO_FRACTION_THRESHOLD)
 					amount = amount.ToFractionAmount();
 
 				return amount;
@@ -102,7 +105,7 @@ namespace Common.Structs
 				{
 					amount = new Amount() { _decimal = decimal.Parse(number.ToString("G29")) };
 					int digitsAfterDecimal = BitConverter.GetBytes(decimal.GetBits(amount._decimal.Value)[3])[2];
-					if (digitsAfterDecimal >= _decimalDigitsConvertToFractionThreshold)
+					if (digitsAfterDecimal >= DIGITS_CONVERT_TO_FRACTION_THRESHOLD)
 						amount = amount.ToFractionAmount();
 					return true;
 				}
@@ -114,67 +117,70 @@ namespace Common.Structs
 
 		public static Amount operator +(Amount x, Amount y)
 		{
+			if (x.IsEmpty || y.IsEmpty)
+				return new Amount();
+
 			if (x.IsDecimal && y.IsDecimal)
 				return new Amount(x._decimal.Value + y._decimal.Value);
 
 			if (x.IsDecimal)
-				return new Amount(Rational.ParseDecimal(x._decimal.ToString(), _fractionTolerance) + y._fraction.Value);
+				return new Amount(Rational.ParseDecimal(x._decimal.ToString(), FRACTION_TOLERANCE) + y._fraction.Value);
 
 			if (y.IsDecimal)
-				return new Amount(x._fraction.Value + Rational.ParseDecimal(y._decimal.ToString(), _fractionTolerance));
+				return new Amount(x._fraction.Value + Rational.ParseDecimal(y._decimal.ToString(), FRACTION_TOLERANCE));
 
 			return new Amount(x._fraction.Value + y._fraction.Value);
 		}
 
 		public static Amount operator -(Amount x, Amount y)
 		{
+			if (x.IsEmpty || y.IsEmpty)
+				return new Amount();
+
 			if (x.IsDecimal && y.IsDecimal)
 				return new Amount(x._decimal.Value - y._decimal.Value);
 
 			if (x.IsDecimal)
-				return new Amount(Rational.ParseDecimal(x._decimal.ToString(), _fractionTolerance) - y._fraction.Value);
+				return new Amount(Rational.ParseDecimal(x._decimal.ToString(), FRACTION_TOLERANCE) - y._fraction.Value);
 
 			if (y.IsDecimal)
-				return new Amount(x._fraction.Value - Rational.ParseDecimal(y._decimal.ToString(), _fractionTolerance));
+				return new Amount(x._fraction.Value - Rational.ParseDecimal(y._decimal.ToString(), FRACTION_TOLERANCE));
 
 			return new Amount(x._fraction.Value - y._fraction.Value);
 		}
 
 		public static Amount operator *(Amount x, Amount y)
 		{
+			if (x.IsEmpty || y.IsEmpty)
+				return new Amount();
+
 			if (x.IsDecimal && y.IsDecimal)
 				return new Amount(x._decimal.Value * y._decimal.Value);
 
 			if (x.IsDecimal)
-				return new Amount(Rational.ParseDecimal(x._decimal.ToString(), _fractionTolerance) * y._fraction.Value);
+				return new Amount(Rational.ParseDecimal(x._decimal.ToString(), FRACTION_TOLERANCE) * y._fraction.Value);
 
 			if (y.IsDecimal)
-				return new Amount(x._fraction.Value * Rational.ParseDecimal(y._decimal.ToString(), _fractionTolerance));
+				return new Amount(x._fraction.Value * Rational.ParseDecimal(y._decimal.ToString(), FRACTION_TOLERANCE));
 
 			return new Amount(x._fraction.Value * y._fraction.Value);
 		}
 
 		public static Amount operator /(Amount x, Amount y)
 		{
+			if (x.IsEmpty || y.IsEmpty)
+				return new Amount();
+
 			if (x.IsDecimal && y.IsDecimal)
 				return new Amount(x._decimal.Value / y._decimal.Value);
 
 			if (x.IsDecimal)
-				return new Amount(Rational.ParseDecimal(x._decimal.ToString(), _fractionTolerance) / y._fraction.Value);
+				return new Amount(Rational.ParseDecimal(x._decimal.ToString(), FRACTION_TOLERANCE) / y._fraction.Value);
 
 			if (y.IsDecimal)
-				return new Amount(x._fraction.Value / Rational.ParseDecimal(y._decimal.ToString(), _fractionTolerance));
+				return new Amount(x._fraction.Value / Rational.ParseDecimal(y._decimal.ToString(), FRACTION_TOLERANCE));
 
 			return new Amount(x._fraction.Value / y._fraction.Value);
-		}
-
-		// unary minus
-		public static Amount operator -(Amount x)
-		{
-			if (x.IsDecimal)
-				return new Amount(-x._decimal.Value);
-
-			return new Amount((-x._fraction).Value);
 		}
 
 		public override string ToString()

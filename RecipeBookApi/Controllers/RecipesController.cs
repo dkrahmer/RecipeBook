@@ -1,4 +1,5 @@
 ﻿using Common.Models;
+using Common.Structs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RecipeBookApi.Models;
@@ -35,7 +36,7 @@ namespace RecipeBookApi.Controllers
 		[Route("{recipeId}")]
 		[ProducesResponseType((int)HttpStatusCode.NotFound)]
 		[ProducesResponseType(typeof(RecipeViewModel), (int)HttpStatusCode.OK)]
-		public IActionResult GetRecipe(int recipeId)
+		public IActionResult GetRecipe(int recipeId, [FromQuery] string scale)
 		{
 			var recipe = _recipesService.Get(recipeId);
 			if (recipe == null)
@@ -43,8 +44,24 @@ namespace RecipeBookApi.Controllers
 				return NotFound();
 			}
 
+			if (scale != null && Amount.TryParse(scale, out Amount scaleAmount) && scaleAmount.ToString() != "1")
+			{
+				foreach (var ingredient in recipe.IngredientsList)
+				{
+					if (ingredient.Amount.IsEmpty)
+						continue;
+
+					ingredient.Amount *= scaleAmount;
+
+					if (_alwaysDecimalUnits.Contains(ingredient.Unit))
+						ingredient.Amount = ingredient.Amount.ToDecimalAmount();
+				}
+			}
+
 			return Ok(recipe);
 		}
+
+		HashSet<string> _alwaysDecimalUnits = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase) { "g", "mg", "kg", "l", "ml" };
 
 		[HttpPost]
 		[Route("")]
