@@ -8,9 +8,12 @@ import {
 export function RecipeInstructionsSection(props) {
   let instructionNumber = 1;
   let tableRows = props.instructions.split('\n').map((item, key) => {
+    if (item.trim() === "")
+      return null;
+
     if (item.startsWith("[") && item.endsWith("]"))
     {
-      instructionNumber = 1;
+      instructionNumber = 1; // Restart numbering for the next section
       return <tr key={key}><td colSpan="2" className="rb-recipe-instruction-list-heading">{item.substr(1, item.length - 2)}</td></tr>
     }
     else

@@ -167,3 +167,11 @@ main#main-content {
 .scale-label-changed a {
   color: #ff0000;
 }
+
+.disableAnimation {
+  transition: none !important;
+
+  * {
+    transition: none !important;
+  }
+}
