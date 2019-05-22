@@ -1,5 +1,6 @@
 import { useUserContext } from "../Hooks/useUserContext";
 import { NavigationDrawer } from "./NavigationDrawer";
+import { RouterLink } from "../Shared/RouterLink";
 import React, {
   useState
 } from "react";
@@ -58,9 +59,11 @@ export function Menu() {
           <IconButton color="inherit" onClick={toggleDrawer}>
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" color="inherit" style={{ flexGrow: 1 }}>
-            Recipe Book
-          </Typography>
+            <Typography variant="h6" color="inherit" style={{ flexGrow: 1 }}>
+              <RouterLink to="/" className="inherit-style" >
+                Recipe Book
+              </RouterLink>
+            </Typography>
           {!user.isLoggedIn ? null : (
             <Typography variant="h6" color="inherit">
               Hello, {user.firstName}!
