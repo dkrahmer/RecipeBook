@@ -7,8 +7,6 @@ import {
   DialogTitle,
   DialogContentText
 } from "@material-ui/core";
-import withMobileDialog from "@material-ui/core/withMobileDialog";
-import PropTypes from "prop-types";
 
 function YesNoModal({ isOpen, onYes, onNo, title, question, ...props}) {
   return (
@@ -33,8 +31,4 @@ function YesNoModal({ isOpen, onYes, onNo, title, question, ...props}) {
   );
 }
 
-YesNoModal.propTypes = {
-  fullScreen: PropTypes.bool.isRequired
-};
-
-export default withMobileDialog({breakpoint: "sm"})(YesNoModal);
+export default YesNoModal;

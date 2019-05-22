@@ -8,8 +8,6 @@ import {
   DialogContentText,
   TextField
 } from "@material-ui/core";
-import withMobileDialog from "@material-ui/core/withMobileDialog";
-import PropTypes from "prop-types";
 
 function ScaleEntryModal({ isOpen, onApply, onCancel, scale, onScaleChange, ...props}) {
   const setDefaultFocus = el => {
@@ -59,8 +57,4 @@ function ScaleEntryModal({ isOpen, onApply, onCancel, scale, onScaleChange, ...p
   );
 }
 
-ScaleEntryModal.propTypes = {
-  fullScreen: PropTypes.bool.isRequired
-};
-
-export default withMobileDialog({breakpoint: "sm"})(ScaleEntryModal);
+export default ScaleEntryModal;
