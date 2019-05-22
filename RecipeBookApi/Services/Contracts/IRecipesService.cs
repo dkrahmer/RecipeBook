@@ -9,7 +9,7 @@ namespace RecipeBookApi.Services.Contracts
 	{
 		int Create(Recipe model);
 		void Delete(int recipeId);
-		IEnumerable<Recipe> GetAll();
+		IEnumerable<RecipeSummary> GetAll();
 		Recipe Get(int recipeId);
 		void Update(Recipe model);
 	}

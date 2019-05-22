@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Common.Models
 {
@@ -6,7 +7,7 @@ namespace Common.Models
 	{
 		public int RecipeId { get; set; }
 		public string Name { get; set; }
-		public string Description { get; set; }
+		//public string Description { get; set; }
 
 		private string _ingredients;
 		public string Ingredients
@@ -20,7 +21,7 @@ namespace Common.Models
 		}
 
 		private Ingredients _ingredientsList;
-		/*
+		[NotMapped]
 		public Ingredients IngredientsList
 		{
 			get
@@ -33,7 +34,7 @@ namespace Common.Models
 				return _ingredientsList;
 			}
 		}
-		*/
+
 		public string Instructions { get; set; }
 
 		public string Notes { get; set; }

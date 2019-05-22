@@ -1,4 +1,5 @@
 ﻿using Common.Structs;
+using Newtonsoft.Json;
 using System.Text.RegularExpressions;
 
 namespace Common.Models
@@ -6,7 +7,7 @@ namespace Common.Models
 	public class Ingredient
 	{
 		protected static readonly Regex IngredientLineRegEx =
-			new Regex(@"(?i)^((?<Amount>(([0-9]+\s+)?[0-9]+\/[1-9]+[0-9]*)|([0-9]*\.?[0-9]*))\s?)?(?<IngredientName>(?<UnitName>[^\s]*).*)$", RegexOptions.Compiled);
+			new Regex(@"(?i)^((?<Amount>(([0-9]+\s+)?[0-9]+\/[1-9]+[0-9]*)|([0-9]*\.?[0-9]*))\s?)?(?<Name>(?<Unit>[^\s]*).*)$", RegexOptions.Compiled);
 
 		public static Ingredient Parse(string ingredientLine)
 		{
@@ -16,7 +17,7 @@ namespace Common.Models
 			if (ingredientLine.StartsWith('[') && ingredientLine.EndsWith(']'))
 			{
 				ingredient.IsHeading = true;
-				ingredient.IngredientName = ingredientLine.Trim('[', ']');
+				ingredient.Name = ingredientLine.Trim('[', ']');
 				return ingredient;
 			}
 
@@ -24,12 +25,12 @@ namespace Common.Models
 			if (!matches.Success)
 			{
 				// This should never happen. The RegEx should always match but save the raw line
-				ingredient.IngredientName = ingredientLine;
+				ingredient.Name = ingredientLine;
 				return ingredient;
 			}
 
-			ingredient.UnitName = matches.Groups["UnitName"].Value;
-			ingredient.IngredientName = matches.Groups["IngredientName"].Value;
+			ingredient.Unit = matches.Groups["Unit"].Value;
+			ingredient.Name = matches.Groups["Name"].Value;
 			string amountStr = matches.Groups["Amount"].Value;
 			if (!string.IsNullOrWhiteSpace(amountStr))
 			{
@@ -41,8 +42,9 @@ namespace Common.Models
 		}
 
 		public Amount Amount { get; set; }
-		public string UnitName { get; private set; }
-		public string IngredientName { get; set; }
+		[JsonIgnore]
+		public string Unit { get; private set; }
+		public string Name { get; set; }
 		public bool IsHeading { get; set; }
 	}
 }

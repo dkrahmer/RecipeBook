@@ -1,9 +1,11 @@
-﻿using Rationals;
+﻿using Newtonsoft.Json;
+using Rationals;
 using System;
 using System.Text.RegularExpressions;
 
 namespace Common.Structs
 {
+	[JsonConverter(typeof(AmountJsonConverter))]
 	public struct Amount
 	{
 		private decimal? _decimal;

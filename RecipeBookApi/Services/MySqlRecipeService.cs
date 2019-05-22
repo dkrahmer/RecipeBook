@@ -12,11 +12,11 @@ namespace RecipeBookApi.Services
 		{
 		}
 
-		public IEnumerable<Recipe> GetAll()
+		public IEnumerable<RecipeSummary> GetAll()
 		{
 			using (var db = new MySqlDbContext())
 			{
-				return db.Recipes.Select(r => new Recipe()
+				return db.Recipes.Select(r => new RecipeSummary()
 				{
 					RecipeId = r.RecipeId,
 					Name = r.Name,

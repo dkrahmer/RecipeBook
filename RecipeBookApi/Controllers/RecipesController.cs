@@ -23,7 +23,7 @@ namespace RecipeBookApi.Controllers
 		[HttpGet]
 		[Route("")]
 		[ProducesResponseType(typeof(IEnumerable<RecipeViewModel>), (int)HttpStatusCode.OK)]
-		public IActionResult GetAllRecipes()
+		public IActionResult GetRecipeList()
 		{
 			var allRecipes = _recipesService.GetAll();
 
