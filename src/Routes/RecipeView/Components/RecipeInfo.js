@@ -11,7 +11,8 @@ export function RecipeInfo({ recipe, scale, ...props }) {
       <RecipeIngredientsSection
         title="Ingredients"
         scale={scale}
-        ingredientsList={recipe.ingredientsList} />
+        ingredientsList={recipe.ingredientsList}
+        updateRecipe={props.updateRecipe} />
       <RecipeInstructionsSection
         title="Instructions"
         instructions={recipe.instructions} />

@@ -1,11 +1,15 @@
-import React from "react";
+import React, {
+  useState
+} from "react";
 import {
   Typography,
   Divider,
   Table
 } from "@material-ui/core";
+import ScaleEntryModal from "./ScaleEntryModal";
 
 export function RecipeIngredientsSection(props) {
+  const [isScaleModalOpen, setIsScaleModalOpen] = useState(false);
   let tableRows = props.ingredientsList.map((item, key) => {
     if (item.isHeading)
     {
@@ -26,7 +30,28 @@ export function RecipeIngredientsSection(props) {
   if (scale !== "1")
     scaleClassName += " scale-label-changed";
 
-  let scaleLabel = <span className={scaleClassName}>(<a href="#">{`scale: x${scale}`}</a>)</span>
+  let newScale = null;
+
+  function showScaleDialog() {
+    setIsScaleModalOpen(true);
+  }
+
+  function onScaleEntryModalApply() {
+    if (newScale)
+      props.updateRecipe(newScale);
+    setIsScaleModalOpen(false);
+  }
+
+  function onScaleEntryModalCancel() {
+    setIsScaleModalOpen(false);
+  }
+   
+  function onScaleChange(e) {
+    newScale = e.target.value;
+    return newScale;
+  }
+     
+  let scaleLabel = <span className={scaleClassName}>(<a href="javascript:void(0)" onClick={showScaleDialog}>{`scale: x ${scale}`}</a>)</span>
 
   return (
     <div className="rb-recipe-info">
@@ -39,6 +64,12 @@ export function RecipeIngredientsSection(props) {
         </tbody>
       </Table>
       <Divider style={{ marginTop: 12 }} />
+      <ScaleEntryModal
+          isOpen={isScaleModalOpen}
+          scale={scale}
+          onApply={onScaleEntryModalApply}
+          onCancel={onScaleEntryModalCancel}
+          onScaleChange={onScaleChange} />
     </div>
   );
 }
