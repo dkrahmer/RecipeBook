@@ -6,18 +6,20 @@ namespace Common.MySql
 {
 	public class MySqlDbContext : DbContext
 	{
+		private readonly string _connectionString;
+
 		public DbSet<Recipe> Recipes { get; set; }
 
 		//public DbSet<AppUser> AppUsers { get; set; }
 
-		public MySqlDbContext() : base()
+		public MySqlDbContext(string connectionString) : base()
 		{
-			// Database.EnsureCreated();
+			_connectionString = connectionString;
 		}
 
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{
-			optionsBuilder.UseMySQL("");
+			optionsBuilder.UseMySQL(_connectionString);
 		}
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)

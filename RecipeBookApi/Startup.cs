@@ -1,18 +1,14 @@
-using Amazon.DynamoDBv2.DataModel;
 using Common.MySql;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using RecipeBookApi.Options;
 using RecipeBookApi.Services;
 using RecipeBookApi.Services.Contracts;
 using Swashbuckle.AspNetCore.Swagger;
-using System.Text;
 
 namespace RecipeBookApi
 {
@@ -62,7 +58,7 @@ namespace RecipeBookApi
 				});
 			});
 
-			using (var db = new MySqlDbContext())
+			using (var db = new MySqlDbContext(appOptions.Value.MySqlConnectionString))
 			{
 				db.Database.EnsureCreated();
 			}
@@ -85,14 +81,9 @@ namespace RecipeBookApi
 			*/
 			//services.AddDefaultAWSOptions(_configuration.GetAWSOptions());
 			//services.AddAWSService<IAmazonS3>();
-			//services.AddAWSService<IAmazonDynamoDB>();
 
-			//services.AddTransient<IDynamoDBContext, DynamoDBContext>();
-			//services.AddTransient<IDynamoStorageRepository<AppUser>, DynamoStorageRepository<AppUser>>();
-			//services.AddTransient<IDynamoStorageRepository<Recipe>, DynamoStorageRepository<Recipe>>();
 			//services.AddTransient<IDateTimeService, DateTimeService>();
 			//services.AddTransient<IAuthService, GoogleAuthService>();
-			//services.AddTransient<IRecipeService, DynamoRecipeService>();
 			services.AddTransient<IRecipesService, MySqlRecipeService>();
 		}
 
