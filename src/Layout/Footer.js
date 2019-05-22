@@ -1,7 +1,6 @@
 import React from "react";
 import {
-  Typography,
-  Link
+  Typography
 } from "@material-ui/core";
 
 export function Footer() {

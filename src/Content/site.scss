@@ -130,6 +130,7 @@ main#main-content {
       font-weight: bold;
       width: 1px;
       padding-right: 4px;
+      white-space: nowrap; 
     }
     
     .rb-recipe-ingredient-list-heading {
@@ -153,4 +154,16 @@ main#main-content {
   display: flex;
   flex-direction: row;
   align-items: center;
+}
+
+.scale-label {
+  font-size: small;
+  color: #575757;
+
+  a {
+    color: #575757;
+  }
+}
+.scale-label-changed a {
+  color: #ff0000;
 }

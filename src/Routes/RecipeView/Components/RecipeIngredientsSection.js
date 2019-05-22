@@ -9,18 +9,29 @@ export function RecipeIngredientsSection(props) {
   let tableRows = props.ingredientsList.map((item, key) => {
     if (item.isHeading)
     {
-      return <tr><td colSpan="2" className="rb-recipe-ingredient-list-heading">{item.name}</td></tr>
+      return <tr key={key}><td colSpan="2" className="rb-recipe-ingredient-list-heading">{item.name}</td></tr>
     }
     else
     {
-      return <tr><td>{item.amount}</td><td>{item.name}</td></tr>
+      return <tr key={key}><td>{item.amount}</td><td>{item.name}</td></tr>
     }
   });
+
+  let scale = props.scale;
+
+  if (!scale)
+    scale = "1";
+
+  let scaleClassName = "scale-label";
+  if (scale !== "1")
+    scaleClassName += " scale-label-changed";
+
+  let scaleLabel = <span className={scaleClassName}>(<a href="#">{`scale: x${scale}`}</a>)</span>
 
   return (
     <div className="rb-recipe-info">
       <Typography variant="h6" color="primary">
-        {props.title}
+        {props.title} {scaleLabel}
       </Typography>
       <Table className="rb-recipe-info-body rb-recipe-ingredient-list">
         <tbody>

@@ -11,11 +11,11 @@ export function RecipeInstructionsSection(props) {
     if (item.startsWith("[") && item.endsWith("]"))
     {
       instructionNumber = 1;
-      return <tr><td colSpan="2" className="rb-recipe-instruction-list-heading">{item.substr(1, item.length - 2)}</td></tr>
+      return <tr key={key}><td colSpan="2" className="rb-recipe-instruction-list-heading">{item.substr(1, item.length - 2)}</td></tr>
     }
     else
     {
-      return <tr><td>{instructionNumber++}.</td><td>{item}</td></tr>
+      return <tr key={key}><td>{instructionNumber++}.</td><td>{item}</td></tr>
     }
   });
 

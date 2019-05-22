@@ -3,13 +3,14 @@ import { RecipeInstructionsSection } from "./RecipeInstructionsSection";
 import { RecipeInfoSection } from "./RecipeInfoSection";
 import React from "react";
 
-export function RecipeInfo({ recipe, ...props }) {
+export function RecipeInfo({ recipe, scale, ...props }) {
   props.setOwnerBlurb(generateOwnerBlurb(recipe.ownerName, recipe.updateDateTime));
   
   return (
     <React.Fragment>
       <RecipeIngredientsSection
         title="Ingredients"
+        scale={scale}
         ingredientsList={recipe.ingredientsList} />
       <RecipeInstructionsSection
         title="Instructions"
@@ -22,6 +23,7 @@ export function RecipeInfo({ recipe, ...props }) {
 }
 
 function generateOwnerBlurb(ownerName, updateDateTime) {
+  /*
   const dateString = new Intl.DateTimeFormat("en-US", {
     timeZone: "UTC",
     year: "numeric",
@@ -36,6 +38,9 @@ function generateOwnerBlurb(ownerName, updateDateTime) {
     minute: "numeric",
     hour12: "true"
   }).format(new Date(updateDateTime));
+*/
+  const dateString = "---";
+  const timeString = "---";
 
   const dateTimeString = `${dateString} at ${timeString}`;
 

@@ -9,6 +9,7 @@ import React, {
   useEffect
 } from "react";
 import { Paper } from "@material-ui/core";
+import queryString from 'query-string'
 
 export function RecipeView(props) {
   const recipeService = useRecipeService();
@@ -16,10 +17,12 @@ export function RecipeView(props) {
   const [recipe, setRecipe] = useState({ name: "" });
   const [ownerBlurb, setOwnerBlurb] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const queryStringValues = queryString.parse(props.location.search);
+  const scale = queryStringValues.scale;
 
   useEffect(() => {
     setIsLoading(true);
-    recipeService.getRecipeById(props.match.params.recipeId, (response) => {
+    recipeService.getRecipeById(props.match.params.recipeId, scale, (response) => {
       setRecipe(response.data);
       setIsLoading(false);
     }, (error) => {
@@ -65,7 +68,7 @@ export function RecipeView(props) {
       <PageHeader text={recipe.name} subText={ownerBlurb} />
       <LoadingWrapper isLoading={isLoading}>
         <Paper style={{ padding: 12 }}>
-          <RecipeInfo recipe={recipe} setOwnerBlurb={setOwnerBlurb} />
+          <RecipeInfo recipe={recipe} scale={scale} setOwnerBlurb={setOwnerBlurb} />
           <RecipeViewActions
             editRecipe={editRecipe}
             deleteRecipe={confirmDeleteRequest} />
