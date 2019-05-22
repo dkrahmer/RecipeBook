@@ -56,7 +56,7 @@ export function PageableRecipesGrid({ recipes }) {
   return (
     <React.Fragment>
       {recipes.length > 0 ? state.dataToDisplay.map(r => (
-        <Grid item md={4} sm={6} xs={12} key={r.id}>
+        <Grid item md={4} sm={6} xs={12} key={r.recipeId}>
           <RecipeGridCard recipe={r} />
         </Grid>
       )) : (
