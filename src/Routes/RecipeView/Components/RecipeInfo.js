@@ -1,3 +1,5 @@
+import { RecipeIngredientsSection } from "./RecipeIngredientsSection";
+import { RecipeInstructionsSection } from "./RecipeInstructionsSection";
 import { RecipeInfoSection } from "./RecipeInfoSection";
 import React from "react";
 
@@ -6,12 +8,12 @@ export function RecipeInfo({ recipe, ...props }) {
   
   return (
     <React.Fragment>
-      <RecipeInfoSection
+      <RecipeIngredientsSection
         title="Ingredients"
-        body={recipe.ingredients} />
-      <RecipeInfoSection
+        ingredientsList={recipe.ingredientsList} />
+      <RecipeInstructionsSection
         title="Instructions"
-        body={recipe.instructions} />
+        instructions={recipe.instructions} />
       <RecipeInfoSection
         title="Notes"
         body={recipe.notes} />

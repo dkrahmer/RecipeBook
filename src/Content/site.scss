@@ -55,7 +55,7 @@ main#main-content {
 }
 
 .rb-divider {
-  margin: 16px 0 !important;
+  margin: 4px 0 !important;
 }
 
 .rb-page-header-container {
@@ -103,6 +103,42 @@ main#main-content {
   .rb-recipe-info-body {
     margin-left: 16px;
     white-space: pre-wrap;
+    font-size: inherit;
+  }
+  
+  .rb-recipe-instruction-list {
+    td:nth-child(1) {
+      text-align: right;
+      width: 1px;
+      padding-right: 4px;
+      vertical-align: top;
+    }
+    
+    .rb-recipe-instruction-list-heading {
+      text-align: left !important;
+      font-weight: bold;
+      font-size: larger;
+      padding-top: 10px;
+      position: relative;
+      right: 5px;
+    }
+  }
+
+  .rb-recipe-ingredient-list {
+    td:nth-child(1) {
+      text-align: right;
+      font-weight: bold;
+      width: 1px;
+      padding-right: 4px;
+    }
+    
+    .rb-recipe-ingredient-list-heading {
+      text-align: left !important;
+      font-size: larger;
+      padding-top: 10px;
+      position: relative;
+      right: 5px;
+    }
   }
 }
 

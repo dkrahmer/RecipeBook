@@ -12,7 +12,7 @@ export function PageHeader(props) {
   return (
     <div className="rb-page-header-container">
       <div className="rb-page-header-primary">
-        <Typography variant="h4" color="textSecondary">
+        <Typography variant="h4">
           {props.text}
         </Typography>
         {!!props.actionClick ? (
@@ -29,7 +29,7 @@ export function PageHeader(props) {
           {props.subText}
         </Typography>
       ) : (null)}
-      <Divider className="rb-divider" />
+      <div className="rb-divider" />
     </div>
   );
 }
