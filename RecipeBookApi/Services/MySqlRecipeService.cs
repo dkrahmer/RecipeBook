@@ -3,6 +3,7 @@ using Common.MySql;
 using Microsoft.Extensions.Options;
 using RecipeBookApi.Options;
 using RecipeBookApi.Services.Contracts;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -24,8 +25,8 @@ namespace RecipeBookApi.Services
 				{
 					RecipeId = r.RecipeId,
 					Name = r.Name,
-					CreateDateTime = r.CreateDateTime,
-					UpdateDateTime = r.UpdateDateTime
+					CreateDateTime = DateTime.SpecifyKind(r.CreateDateTime, DateTimeKind.Utc),
+					UpdateDateTime = DateTime.SpecifyKind(r.UpdateDateTime, DateTimeKind.Utc)
 				}).ToArray();
 			}
 		}
@@ -34,12 +35,21 @@ namespace RecipeBookApi.Services
 		{
 			using (var db = new MySqlDbContext(_options.MySqlConnectionString))
 			{
-				return db.Recipes.Where(p => p.RecipeId == recipeId).FirstOrDefault();
+				var recipe = db.Recipes.Where(p => p.RecipeId == recipeId).FirstOrDefault();
+
+				if (recipe != null)
+				{
+					recipe.CreateDateTime = DateTime.SpecifyKind(recipe.CreateDateTime, DateTimeKind.Utc);
+					recipe.UpdateDateTime = DateTime.SpecifyKind(recipe.UpdateDateTime, DateTimeKind.Utc);
+				}
+
+				return recipe;
 			}
 		}
 
 		public int Create(Recipe recipe)
 		{
+			recipe.CreateDateTime = recipe.UpdateDateTime = DateTime.UtcNow;
 			using (var db = new MySqlDbContext(_options.MySqlConnectionString))
 			{
 				var addedRecipe = db.Add(recipe);
@@ -48,11 +58,12 @@ namespace RecipeBookApi.Services
 			}
 		}
 
-		public void Update(Recipe receipe)
+		public void Update(Recipe recipe)
 		{
+			recipe.UpdateDateTime = DateTime.UtcNow;
 			using (var db = new MySqlDbContext(_options.MySqlConnectionString))
 			{
-				var updatededRecipe = db.Update(receipe);
+				var updatededRecipe = db.Update(recipe);
 				db.SaveChanges();
 			}
 		}
