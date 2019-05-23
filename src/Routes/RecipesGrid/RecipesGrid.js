@@ -1,6 +1,5 @@
 import { useRecipeService } from "../../Hooks/useRecipeService";
 import { LoadingWrapper } from "../../Shared/LoadingWrapper";
-import { PageHeader } from "../../Shared/PageHeader";
 import { FilterableRecipesGrid } from "./Components/FilterableRecipesGrid";
 import React, {
   useState,

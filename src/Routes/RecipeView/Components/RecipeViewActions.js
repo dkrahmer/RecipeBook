@@ -3,9 +3,7 @@ import { RouterLink } from "../../../Shared/RouterLink";
 import { PaperActions } from "../../../Shared/PaperActions";
 import React from "react";
 import {
-  Button,
-  Fab,
-  Tooltip
+  Button
 } from "@material-ui/core";
 import EditIcon from "@material-ui/icons/Edit";
 import DeleteIcon from "@material-ui/icons/Delete";
