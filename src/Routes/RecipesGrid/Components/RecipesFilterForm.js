@@ -2,22 +2,21 @@ import React from "react";
 import {
   TextField
 } from "@material-ui/core";
+import { Debounce } from 'react-throttle';
 
 export function RecipesFilterForm(props) {
-  function handleSearchQueryChange(e) {
-    props.handleSearchQueryChange(e.target.value);
-  }
-
   return (
     <React.Fragment>
-      <TextField
-        fullWidth
-        value={props.nameQuery}
-        onChange={handleSearchQueryChange}
-        label="Find Recipe"
-        placeholder="Recipe Name..."
-        margin="normal"
-        variant="outlined" />
+      <Debounce time="200" handler="onChange">
+        <TextField
+          fullWidth
+          defaultValue={props.nameQuery}
+          onChange={(e) => { props.setNameQuery(e.target.value); }}
+          label="Find Recipe"
+          placeholder="Recipe Name..."
+          margin="normal"
+          variant="outlined" />
+      </Debounce>
     </React.Fragment>
   );
 }

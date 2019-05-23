@@ -31,17 +31,13 @@ export function FilterableRecipesGrid(props) {
     setMatchingRecipes(workingRecipes);
   }, [nameQuery, props.allRecipes]);
 
-  function handleSearchQueryChange(newNameQuery) {
-    setNameQuery(newNameQuery);
-  }
-
   return (
     <Grid container spacing={24}>
       <Grid item xs={12}>
         <Paper style={{ padding: 12 }}>
           <RecipesFilterForm
             nameQuery={nameQuery}
-            handleSearchQueryChange={handleSearchQueryChange} />
+            setNameQuery={setNameQuery} />
         </Paper>
       </Grid>
       <PageableRecipesGrid recipes={matchingRecipes} />

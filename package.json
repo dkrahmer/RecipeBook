@@ -17,6 +17,7 @@
     "react-google-login": "^5.0.4",
     "react-router-dom": "^5.0.0",
     "react-scripts": "^3.0.0",
+    "react-throttle": "^0.3.0",
     "typeface-roboto": "0.0.54"
   },
   "scripts": {
