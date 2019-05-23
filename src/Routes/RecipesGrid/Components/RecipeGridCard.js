@@ -2,23 +2,13 @@ import { RouterLink } from "../../../Shared/RouterLink";
 import React from "react";
 import {
   Card,
-  CardHeader,
-  CardContent,
-  CardActions,
-  Button,
-  Typography
+  CardHeader
 } from "@material-ui/core";
+import 'intl';
+import moment from 'moment'
 
 export function RecipeGridCard({ recipe }) {
-  const dateString = new Intl.DateTimeFormat("en-US", {
-    timeZone: "UTC",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    hour: "numeric",
-    minute: "numeric",
-    hour12: "true"
-  }).format(new Date(recipe.updateDateTime));
+  const dateTimeString = moment(recipe.updateDateTime).format("MMM D, YYYY h:mm:ss a");
 
   return (
     <React.Fragment>
@@ -26,7 +16,7 @@ export function RecipeGridCard({ recipe }) {
         <RouterLink to={`/recipes/${recipe.recipeId}`}>
 		  <CardHeader
             title={recipe.name}
-            subheader={`${dateString}`} />
+            subheader={`${dateTimeString}`} />
         </RouterLink>
       </Card>
     </React.Fragment>

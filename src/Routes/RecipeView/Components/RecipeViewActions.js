@@ -21,7 +21,7 @@ export function RecipeViewActions(props) {
             title="Edit"
             placement="bottom"
             disableHoverListener={!user.isLoggedIn}>
-            <span style={{ marginRight: 10 }}>
+            <span style={{ marginRight: 30 }}>
               <Fab
                 color="primary"
                 size="small"

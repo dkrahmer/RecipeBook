@@ -25,7 +25,9 @@ export function FilterableRecipesGrid(props) {
       });
     }
 
-    sortRecipesByName(workingRecipes);
+    sortRecipesByUpdateDateTime(workingRecipes);
+    //sortRecipesByName(workingRecipes);
+
     setMatchingRecipes(workingRecipes);
   }, [nameQuery, props.allRecipes]);
 
@@ -53,5 +55,12 @@ function sortRecipesByName(recipes) {
     var nameB = b.name.toLowerCase();
 
     return (nameA < nameB ? -1 : (nameA > nameB ? 1 : 0));
+  });
+}
+
+function sortRecipesByUpdateDateTime(recipes) {
+  // Descending order
+  recipes.sort((a, b) => {
+    return (a.updateDateTime > b.updateDateTime ? -1 : (a.updateDateTime < b.updateDateTime ? 1 : 0));
   });
 }

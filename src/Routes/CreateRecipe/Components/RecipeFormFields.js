@@ -20,7 +20,7 @@ export function RecipeFormFields(props) {
         value={props.recipe.ingredients}
         onChange={props.onIngredientsChange}
         label="Ingredients"
-        helperText="Separate ingredients with a newline"
+        helperText="One ingredient per line. Use brackets for Ingredient Groups. Example: [For Crust] and [For Filling]"
         placeholder=""
         margin="normal"
         variant="outlined" />
@@ -30,7 +30,7 @@ export function RecipeFormFields(props) {
         value={props.recipe.instructions}
         onChange={props.onInstructionsChange}
         label="Instructions"
-        helperText="Separate instructions with a newline"
+        helperText="Use brackets for Instruction Groups. Example: [For Crust] and [For Filling]"
         placeholder=""
         margin="normal"
         variant="outlined" />
