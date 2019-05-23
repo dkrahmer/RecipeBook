@@ -12,9 +12,10 @@ import {
 } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
 import FastFoodIcon from "@material-ui/icons/Fastfood";
-import SettingsIcon from "@material-ui/icons/Settings";
-import ArrowForward from "@material-ui/icons/ArrowForward";
-import ArrowBack from "@material-ui/icons/ArrowBack";
+//import SettingsIcon from "@material-ui/icons/Settings";
+import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
+import ArrowBackIcon from "@material-ui/icons/ArrowBack";
+import CreateIcon from "@material-ui/icons/Create";
 
 export function Menu() {
   const [isOpenDrawer, setIsOpenDrawer] = useState(false);
@@ -24,22 +25,27 @@ export function Menu() {
     text: "Recipes",
     url: "/",
     icon: <FastFoodIcon />
+  },
+  {
+    text: "Create Recipe",
+    url: "/recipes/create",
+    icon: <CreateIcon />
   }];
 
   const signedOutActions = [{
     text: "Login",
     url: "/login",
-    icon: <ArrowForward />
+    icon: <ArrowForwardIcon />
   }];
 
-  const signedInActions = [{
+  const signedInActions = [/*{
     text: "Settings",
     url: "/settings",
     icon: <SettingsIcon />
-  }, {
+  }, */{
     text: "Logout",
     url: "/logout",
-    icon: <ArrowBack />
+    icon: <ArrowBackIcon />
   }];
 
   function toggleDrawer() {

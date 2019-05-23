@@ -20,16 +20,8 @@ export function RecipesGrid(props) {
     });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  function createRecipe() {
-    props.history.push("/recipes/create");
-  }
-
   return (
     <React.Fragment>
-      <PageHeader
-        text="Recipes"
-        actionText="Create a new Recipe"
-        actionClick={createRecipe} />
       <LoadingWrapper isLoading={isLoading}>
         <FilterableRecipesGrid allRecipes={allRecipes} />
       </LoadingWrapper>

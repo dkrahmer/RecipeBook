@@ -17,34 +17,19 @@ export function RecipeViewActions(props) {
     <PaperActions
       left={
         <React.Fragment>
-          <Tooltip
-            title="Edit"
-            placement="bottom"
-            disableHoverListener={!user.isLoggedIn}>
-            <span style={{ marginRight: 30 }}>
-              <Fab
-                color="primary"
-                size="small"
-                onClick={props.editRecipe}
-                disabled={!user.isLoggedIn}>
-                <EditIcon />
-              </Fab>
-            </span>
-          </Tooltip>
-          <Tooltip
-            title="Delete"
-            placement="bottom"
-            disableHoverListener={!user.isLoggedIn}>
-            <span>
-              <Fab
-                color="secondary"
-                size="small"
-                onClick={props.deleteRecipe}
-                disabled={!user.isLoggedIn}>
-                <DeleteIcon />
-              </Fab>
-            </span>
-          </Tooltip>
+          <Button
+            style={{ marginRight: 20 }}
+            variant="contained"
+            color="primary"
+            disabled={!user.isLoggedIn}
+            onClick={props.editRecipe}>
+            <EditIcon style={{ marginRight: 10 }} />Edit
+          </Button>
+          <Button
+            variant="contained"
+            onClick={props.deleteRecipe}>
+            <DeleteIcon style={{ marginRight: 10 }} /> Delete
+          </Button>
         </React.Fragment>
       }
       right={
