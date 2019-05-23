@@ -1,47 +1,23 @@
-import React, {
-  useState
-} from "react";
+import React from "react";
 import {
-  TextField,
-  Typography,
-  Divider,
-  IconButton,
-  Collapse
+  TextField
 } from "@material-ui/core";
-import FilterListIcon from "@material-ui/icons/FilterList";
 
 export function RecipesFilterForm(props) {
-  const [isFilterShown, setIsFilterShown] = useState(true);
-
   function handleSearchQueryChange(e) {
     props.handleSearchQueryChange(e.target.value);
   }
 
-  function toggleFilterVisibility() {
-    setIsFilterShown(!isFilterShown);
-  }
-
   return (
     <React.Fragment>
-      <div className="rb-recipe-filter-header">
-        <IconButton onClick={toggleFilterVisibility}>
-          <FilterListIcon />
-        </IconButton>
-        <Typography variant="subtitle1" style={{ paddingLeft: 5 }}>
-          Filter Recipes
-        </Typography>
-      </div>
-      <Collapse in={isFilterShown}>
-        <Divider style={{ marginTop: 5 }} />
-        <TextField
-          fullWidth
-          value={props.nameQuery}
-          onChange={handleSearchQueryChange}
-          label="Recipe Name"
-          placeholder="Search..."
-          margin="normal"
-          variant="outlined" />
-      </Collapse>
+      <TextField
+        fullWidth
+        value={props.nameQuery}
+        onChange={handleSearchQueryChange}
+        label="Find Recipe"
+        placeholder="Recipe Name..."
+        margin="normal"
+        variant="outlined" />
     </React.Fragment>
   );
 }

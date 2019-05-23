@@ -55,18 +55,22 @@ export function PageableRecipesGrid({ recipes }) {
 
   return (
     <React.Fragment>
-      {recipes.length > 0 ? state.dataToDisplay.map(r => (
-        <Grid item md={4} sm={6} xs={12} key={r.recipeId}>
-          <RecipeGridCard recipe={r} />
+      <Grid item xs={12}>
+        <Grid container spacing={8}>
+          {recipes.length > 0 ? state.dataToDisplay.map(r => (
+            <Grid item md={4} sm={6} xs={12} key={r.recipeId}>
+              <RecipeGridCard recipe={r} />
+            </Grid>
+          )) : (
+              <Grid item xs={12} className="rb-no-recipe-results-container">
+                <MoodBadIcon fontSize="large" />
+                <Typography variant="subtitle1">
+                  No recipes found!
+                </Typography>
+              </Grid>
+            )}
         </Grid>
-      )) : (
-        <Grid item xs={12} className="rb-no-recipe-results-container">
-          <MoodBadIcon fontSize="large" />
-          <Typography variant="subtitle1">
-            No recipes found!
-          </Typography>
-        </Grid>
-      )}
+      </Grid>
       <Grid item xs={12}>
         {paginatorHtml}
       </Grid>

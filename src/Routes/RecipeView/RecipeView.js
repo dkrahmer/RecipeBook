@@ -17,15 +17,15 @@ export function RecipeView(props) {
   const [recipe, setRecipe] = useState({ name: "" });
   const [ownerBlurb, setOwnerBlurb] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const queryStringValues = queryString.parse(props.location.search);
-  let scale = queryStringValues.scale;
 
-  function getRecipe(newScale) {
-    if (newScale) {
-      scale = newScale;
+  const queryStringValues = queryString.parse(props.location.search);
+  var [scale, setScale] = useState(queryStringValues.scale);
+
+  useEffect(() => {
+    if (scale) {
       props.history.replace({
-        search: `scale=${newScale}`
-      })  
+        search: `scale=${scale}` // update the URL QS
+      })
     }
 
     setIsLoading(true);
@@ -37,9 +37,7 @@ export function RecipeView(props) {
         props.history.push("/notfound");
       }
     });
-  }
-
-  useEffect(getRecipe, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [scale]); // eslint-disable-line react-hooks/exhaustive-deps
 
   function confirmDeleteRequest() {
     setIsModalOpen(true);
@@ -77,7 +75,7 @@ export function RecipeView(props) {
       <PageHeader text={recipe.name} subText={ownerBlurb} />
       <LoadingWrapper isLoading={isLoading}>
         <Paper style={{ padding: 12 }}>
-          <RecipeInfo recipe={recipe} scale={scale} updateRecipe={getRecipe} setOwnerBlurb={setOwnerBlurb} />
+          <RecipeInfo recipe={recipe} scale={scale} setScale={setScale} setOwnerBlurb={setOwnerBlurb} />
           <RecipeViewActions
             editRecipe={editRecipe}
             deleteRecipe={confirmDeleteRequest} />

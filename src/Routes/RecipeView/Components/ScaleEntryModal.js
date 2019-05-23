@@ -38,7 +38,7 @@ function ScaleEntryModal({ isOpen, onApply, onCancel, scale, onScaleChange, ...p
         </DialogContentText>
         <TextField
           defaultValue={scale}
-          type="number"
+          inputProps={{inputMode:"decimal", pattern:"^(?<Amount>(?<Fraction>(([0-9]+\\s+)?[0-9]+\\/[1-9]+[0-9]*))|(?<Decimal>([0-9]+\\.[0-9]*)|([0-9]*\\.[0-9]+)|[0-9]+))$"}}
           label="Scale factor"
           margin="normal"
           variant="outlined"

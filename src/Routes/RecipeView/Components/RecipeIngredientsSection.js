@@ -38,7 +38,7 @@ export function RecipeIngredientsSection(props) {
 
   function onScaleEntryModalApply() {
     if (newScale)
-      props.updateRecipe(newScale);
+      props.setScale(newScale);
     setIsScaleModalOpen(false);
   }
 

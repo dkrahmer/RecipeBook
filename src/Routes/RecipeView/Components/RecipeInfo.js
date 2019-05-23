@@ -4,7 +4,7 @@ import { RecipeInfoSection } from "./RecipeInfoSection";
 import React from "react";
 import moment from 'moment'
 
-export function RecipeInfo({ recipe, scale, ...props }) {
+export function RecipeInfo({ recipe, scale, setScale, ...props }) {
   props.setOwnerBlurb(generateOwnerBlurb(recipe.ownerName, recipe.updateDateTime));
   
   return (
@@ -13,7 +13,7 @@ export function RecipeInfo({ recipe, scale, ...props }) {
         title="Ingredients"
         scale={scale}
         ingredientsList={recipe.ingredientsList}
-        updateRecipe={props.updateRecipe} />
+        setScale={setScale} />
       <RecipeInstructionsSection
         title="Instructions"
         instructions={recipe.instructions} />
