@@ -79,10 +79,7 @@ namespace RecipeBookApi
 					};
 				});
 			*/
-			//services.AddDefaultAWSOptions(_configuration.GetAWSOptions());
-			//services.AddAWSService<IAmazonS3>();
 
-			//services.AddTransient<IDateTimeService, DateTimeService>();
 			//services.AddTransient<IAuthService, GoogleAuthService>();
 			services.AddTransient<IRecipesService, MySqlRecipeService>();
 		}

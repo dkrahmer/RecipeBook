@@ -6,8 +6,13 @@ namespace Common.Models
 {
 	public class Ingredient
 	{
+		const string FRACTION_REGEX_PARTIAL = @"(?<Fraction>(([0-9]+\s+)?[0-9]+\/[1-9]+[0-9]*))";
+		const string DECIMAL_REGEX_PARTIAL = @"(?<Decimal>([0-9]+\.[0-9]*)|([0-9]*\.[0-9]+)|[0-9]+)";
+		const string AMOUNT_REGEX_PARTIAL = "(?<Amount>" + FRACTION_REGEX_PARTIAL + "|" + DECIMAL_REGEX_PARTIAL + ")";
+		const string RECIPE_UNIT_NAME_REGEX_PARTIAL = @"(?<Name>(?<Unit>[^\s]*).*)";
+
 		protected static readonly Regex IngredientLineRegEx =
-			new Regex(@"(?i)^((?<Amount>(([0-9]+\s+)?[0-9]+\/[1-9]+[0-9]*)|([0-9]*\.?[0-9]*))\s?)?(?<Name>(?<Unit>[^\s]*).*)$", RegexOptions.Compiled);
+			new Regex($"^({AMOUNT_REGEX_PARTIAL}\\s*)?{RECIPE_UNIT_NAME_REGEX_PARTIAL}$", RegexOptions.Compiled);
 
 		public static Ingredient Parse(string ingredientLine)
 		{
