@@ -11,12 +11,10 @@ import ScaleEntryModal from "./ScaleEntryModal";
 export function RecipeIngredientsSection(props) {
   const [isScaleModalOpen, setIsScaleModalOpen] = useState(false);
   let tableRows = props.ingredientsList.map((item, key) => {
-    if (item.isHeading)
-    {
+    if (item.isHeading) {
       return <tr key={key}><td colSpan="2" className="rb-recipe-ingredient-list-heading">{item.name}</td></tr>
     }
-    else
-    {
+    else {
       return <tr key={key}><td>{item.amount}</td><td>{item.name}</td></tr>
     }
   });
@@ -45,13 +43,13 @@ export function RecipeIngredientsSection(props) {
   function onScaleEntryModalCancel() {
     setIsScaleModalOpen(false);
   }
-   
+
   function onScaleChange(e) {
     newScale = e.target.value;
     return newScale;
   }
-     
-  let scaleLabel = <span className={scaleClassName}>(<a href="javascript:void(0)" onClick={showScaleDialog}>{`scale: x ${scale}`}</a>)</span>
+
+  let scaleLabel = <span className={scaleClassName}>(<button className="link-button" onClick={showScaleDialog}>{`scale: x ${scale}`}</button>)</span>
 
   return (
     <div className="rb-recipe-info">
@@ -65,11 +63,11 @@ export function RecipeIngredientsSection(props) {
       </Table>
       <Divider style={{ marginTop: 12 }} />
       <ScaleEntryModal
-          isOpen={isScaleModalOpen}
-          scale={scale}
-          onApply={onScaleEntryModalApply}
-          onCancel={onScaleEntryModalCancel}
-          onScaleChange={onScaleChange} />
+        isOpen={isScaleModalOpen}
+        scale={scale}
+        onApply={onScaleEntryModalApply}
+        onCancel={onScaleEntryModalCancel}
+        onScaleChange={onScaleChange} />
     </div>
   );
 }

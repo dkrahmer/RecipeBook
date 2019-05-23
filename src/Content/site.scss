@@ -156,15 +156,23 @@ main#main-content {
   align-items: center;
 }
 
+.link-button {
+  background: none!important;
+  border: none;
+  padding: 0!important;
+  font: inherit;
+  cursor: pointer;}
+
 .scale-label {
   font-size: small;
   color: #575757;
 
-  a {
+  * {
     color: #575757;
   }
 }
-.scale-label-changed a {
+
+.scale-label-changed * {
   color: #ff0000;
 }
 
