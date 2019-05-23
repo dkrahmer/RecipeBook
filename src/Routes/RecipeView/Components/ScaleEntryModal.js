@@ -38,6 +38,7 @@ function ScaleEntryModal({ isOpen, onApply, onCancel, scale, onScaleChange, ...p
         </DialogContentText>
         <TextField
           defaultValue={scale}
+          type="number"
           label="Scale factor"
           margin="normal"
           variant="outlined"
