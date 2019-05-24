@@ -24,6 +24,7 @@ export function RecipeViewActions(props) {
           </Button>
           <Button
             variant="contained"
+            disabled={!user.isLoggedIn}
             onClick={props.deleteRecipe}>
             <DeleteIcon style={{ marginRight: 10 }} /> Delete
           </Button>

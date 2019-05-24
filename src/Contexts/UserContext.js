@@ -5,7 +5,7 @@ import React, {
 import Cookies from "js-cookie";
 import jwt from "jsonwebtoken";
 
-export const UserContext = React.createContext([{}, () => {}]);
+export const UserContext = React.createContext([{}, () => { }]);
 
 export function UserContextProvider(props) {
   const [user, setUser] = useState(() => getUserFromToken());
@@ -22,28 +22,35 @@ export function UserContextProvider(props) {
 }
 
 function getUserFromToken() {
-  const token = Cookies.get(AuthTokenKey);
-  const userInfo = {
-    isLoggedIn: true//!!token
-  };
+  const debugMode = false;
 
-  if (userInfo.isLoggedIn) {
-    //const decodedToken = jwt.decode(token);
-    
-    //userInfo.id = decodedToken.Id;
-    //userInfo.email = decodedToken.EmailAddress;
-    //userInfo.firstName = decodedToken.FirstName;
-    //userInfo.lastName = decodedToken.LastName;
-    //userInfo.isAdmin = decodedToken.IsAdmin;
-    //userInfo.authToken = token;
+  let userInfo;
 
-    userInfo.id = 1;
-    //userInfo.email = decodedToken.EmailAddress;
-    userInfo.firstName = "Doug";
-    userInfo.lastName = "Krahmer";
-    userInfo.isAdmin = true;
-    //userInfo.authToken = token;
+  if (debugMode) {
+    userInfo = {
+      isLoggedIn: true,
+      id: 1,
+      firstName: "Test",
+      lastName: "User",
+      isAdmin: true,
+    };
+  }
+  else {
+    const token = Cookies.get(AuthTokenKey);
+    userInfo = {
+      isLoggedIn: !!token
+    };
 
+    if (userInfo.isLoggedIn) {
+      const decodedToken = jwt.decode(token);
+
+      userInfo.id = decodedToken.Id;
+      userInfo.email = decodedToken.EmailAddress;
+      userInfo.firstName = decodedToken.FirstName;
+      userInfo.lastName = decodedToken.LastName;
+      userInfo.isAdmin = decodedToken.IsAdmin;
+      userInfo.authToken = token;
+    }
   }
 
   return userInfo;

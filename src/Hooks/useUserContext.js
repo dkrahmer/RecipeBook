@@ -21,7 +21,8 @@ export function useUserContext() {
           setUserToken(response.data.token);
           triggerResetUserFromToken();
           handleResponse(true);
-        } else {
+        }
+        else {
           logout();
           handleResponse(false);
         }
@@ -49,7 +50,7 @@ export function useUserContext() {
 function setUserToken(token) {
   const decodedToken = jwt.decode(token);
   const expireDate = DateTime.fromMillis(decodedToken.exp * 1000);
-  
+
   Cookies.set(AuthTokenKey, token, { expires: expireDate.toJSDate() });
 }
 

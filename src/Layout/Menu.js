@@ -23,14 +23,10 @@ export function Menu() {
 
   const alwaysActions = [{
     text: "Recipes",
-    url: "/",
+    url: "/recipes",
     icon: <FastFoodIcon />
   },
-  {
-    text: "Create Recipe",
-    url: "/recipes/create",
-    icon: <CreateIcon />
-  }];
+];
 
   const signedOutActions = [{
     text: "Login",
@@ -42,7 +38,12 @@ export function Menu() {
     text: "Settings",
     url: "/settings",
     icon: <SettingsIcon />
-  }, */{
+  }, */ {
+    text: "Create Recipe",
+    url: "/recipes/create",
+    icon: <CreateIcon />
+  },
+  {
     text: "Logout",
     url: "/logout",
     icon: <ArrowBackIcon />
