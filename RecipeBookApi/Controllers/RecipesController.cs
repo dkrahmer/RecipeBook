@@ -1,7 +1,7 @@
 ﻿using Common.Models;
 using Common.Structs;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RecipeBookApi.Attributes;
 using RecipeBookApi.Models;
 using RecipeBookApi.Services.Contracts;
 using System;
@@ -11,16 +11,17 @@ using System.Net;
 namespace RecipeBookApi.Controllers
 {
 	[Route("[controller]")]
-	public class RecipesController : ControllerBase
+	public class RecipesController : BaseApiController
 	{
 		private readonly IRecipesService _recipesService;
 
-		public RecipesController(IRecipesService recipesService)
+		public RecipesController(IAuthService authService, IRecipesService recipesService)
+					: base(authService)
 		{
 			_recipesService = recipesService;
 		}
 
-		[AllowAnonymous]
+		[RequirePermission("CanViewRecipe")]
 		[HttpGet]
 		[Route("")]
 		[ProducesResponseType(typeof(IEnumerable<RecipeViewModel>), (int)HttpStatusCode.OK)]
@@ -31,7 +32,7 @@ namespace RecipeBookApi.Controllers
 			return Ok(allRecipes);
 		}
 
-		[AllowAnonymous]
+		[RequirePermission("CanViewRecipe")]
 		[HttpGet]
 		[Route("{recipeId}")]
 		[ProducesResponseType((int)HttpStatusCode.NotFound)]
@@ -61,8 +62,9 @@ namespace RecipeBookApi.Controllers
 			return Ok(recipe);
 		}
 
-		HashSet<string> _alwaysDecimalUnits = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase) { "g", "mg", "kg", "l", "ml" };
+		private HashSet<string> _alwaysDecimalUnits = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase) { "g", "mg", "kg", "l", "ml" };
 
+		[RequirePermission("CanEditRecipe")]
 		[HttpPost]
 		[Route("")]
 		[ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
@@ -87,10 +89,11 @@ namespace RecipeBookApi.Controllers
 			}
 			catch (Exception ex)
 			{
-				return BadRequest($"Issue creating a new recipe: {ex.Message}");
+				return BadRequest($"Issue creating a new recipe: {ex.ToString()}");
 			}
 		}
 
+		[RequirePermission("CanEditRecipe")]
 		[HttpPut]
 		[Route("{recipeId}")]
 		[ProducesResponseType(typeof(string), (int)HttpStatusCode.BadRequest)]
@@ -126,7 +129,7 @@ namespace RecipeBookApi.Controllers
 			}
 			catch (Exception ex)
 			{
-				return BadRequest($"Issue updating a recipe: {ex.Message}");
+				return BadRequest($"Issue updating a recipe: {ex.ToString()}");
 			}
 		}
 
@@ -149,7 +152,7 @@ namespace RecipeBookApi.Controllers
 			}
 			catch (Exception ex)
 			{
-				return BadRequest($"Issue deleting a recipe: {ex.Message}");
+				return BadRequest($"Issue deleting a recipe: {ex.ToString()}");
 			}
 		}
 	}

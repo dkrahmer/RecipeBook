@@ -10,7 +10,7 @@ namespace Common.MySql
 
 		public DbSet<Recipe> Recipes { get; set; }
 
-		//public DbSet<AppUser> AppUsers { get; set; }
+		public DbSet<AppUser> AppUsers { get; set; }
 
 		public MySqlDbContext(string connectionString) : base()
 		{
@@ -36,13 +36,17 @@ namespace Common.MySql
 				entity.Property(e => e.UpdateDateTime).IsRequired();
 			});
 
-			//modelBuilder.Entity<AppUser>(entity =>
-			//{
-			//	entity.HasKey(e => e.AppUserId);
-			//	entity.Property(e => e.Username).IsRequired();
-			//	//entity.HasOne(d => d.Publisher)
-			//	//  .WithMany(p => p.Books);
-			//});
+			modelBuilder.Entity<AppUser>(entity =>
+			{
+				entity.HasKey(e => e.AppUserId);
+				entity.Property(e => e.AppUserId).UseMySQLAutoIncrementColumn("INT");
+
+				entity.Property(e => e.Username).IsRequired();
+
+				entity.Property(e => e.CanViewRecipe).HasConversion<int>();
+				entity.Property(e => e.CanEditRecipe).HasConversion<int>();
+				entity.Property(e => e.IsAdmin).HasConversion<int>();
+			});
 		}
 	}
 }

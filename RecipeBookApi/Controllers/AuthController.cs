@@ -1,5 +1,4 @@
-﻿/*
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RecipeBookApi.Models;
 using RecipeBookApi.Services.Contracts;
@@ -9,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace RecipeBookApi.Controllers
 {
-	[Route("api/[controller]")]
+	[Route("[controller]")]
 	public class AuthController : BaseApiController
 	{
 		public AuthController(IAuthService authService)
@@ -34,9 +33,8 @@ namespace RecipeBookApi.Controllers
 			}
 			catch (Exception ex)
 			{
-				return BadRequest($"Issue authenticating: ${ex.Message}");
+				return BadRequest($"Issue authenticating: ${ex.ToString()}");
 			}
 		}
 	}
 }
-*/

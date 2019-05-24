@@ -9,10 +9,10 @@ using System.Linq;
 
 namespace RecipeBookApi.Services
 {
-	public class MySqlRecipeService : IRecipesService
+	public class MySqlRecipesService : IRecipesService
 	{
 		private AppOptions _options;
-		public MySqlRecipeService(IOptions<AppOptions> options)
+		public MySqlRecipesService(IOptions<AppOptions> options)
 		{
 			_options = options.Value;
 		}
@@ -35,7 +35,7 @@ namespace RecipeBookApi.Services
 		{
 			using (var db = new MySqlDbContext(_options.MySqlConnectionString))
 			{
-				var recipe = db.Recipes.Where(p => p.RecipeId == recipeId).FirstOrDefault();
+				var recipe = db.Recipes.Where(r => r.RecipeId == recipeId).FirstOrDefault();
 
 				if (recipe != null)
 				{

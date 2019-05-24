@@ -1,14 +1,17 @@
 using Common.MySql;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using RecipeBookApi.Options;
 using RecipeBookApi.Services;
 using RecipeBookApi.Services.Contracts;
 using Swashbuckle.AspNetCore.Swagger;
+using System.Text;
 
 namespace RecipeBookApi
 {
@@ -63,7 +66,6 @@ namespace RecipeBookApi
 				db.Database.EnsureCreated();
 			}
 
-			/*
 			services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 				.AddJwtBearer(jwtOptions =>
 				{
@@ -78,10 +80,10 @@ namespace RecipeBookApi
 						IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(appOptions.Value.GoogleClientSecret))
 					};
 				});
-			*/
 
-			//services.AddTransient<IAuthService, GoogleAuthService>();
-			services.AddTransient<IRecipesService, MySqlRecipeService>();
+			services.AddTransient<IAuthService, GoogleAuthService>();
+			services.AddTransient<IAppUsersService, MySqlAppUsersService>();
+			services.AddTransient<IRecipesService, MySqlRecipesService>();
 		}
 
 		public void Configure(IApplicationBuilder app)
@@ -99,7 +101,7 @@ namespace RecipeBookApi
 
 			app.UseHsts();
 			app.UseHttpsRedirection();
-			//app.UseAuthentication();
+			app.UseAuthentication();
 			app.UseCors();
 			app.UseMvc();
 		}
