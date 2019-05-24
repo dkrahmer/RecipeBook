@@ -95,7 +95,8 @@ main#main-content {
 
 .rb-recipe-info {
   margin-bottom: 12px;
-  
+  margin-right: 16px;
+
   &:last-child {
     margin-bottom: 0;
   }
@@ -131,6 +132,7 @@ main#main-content {
       width: 1px;
       padding-right: 4px;
       white-space: nowrap; 
+      vertical-align: top;
     }
     
     .rb-recipe-ingredient-list-heading {
@@ -139,8 +141,32 @@ main#main-content {
       padding-top: 10px;
       position: relative;
       right: 5px;
+      color: #000000;
     }
   }
+}
+
+.rb-scale-enabled {
+  td:nth-child(1) {
+    color: #aa0000;
+  }
+}
+
+.rb-scale-presets {
+  text-align: center;
+}
+.rb-scale-presets button {
+    color: #010185;
+  text-decoration: underline;
+}
+
+.rb-scale-presets button {
+  color: #010185;
+  text-decoration: underline;
+}
+
+.rb-recipe-card * {
+  font-weight: normal !important;
 }
 
 .rb-validation-summary {
@@ -173,7 +199,7 @@ main#main-content {
 }
 
 .scale-label-changed * {
-  color: #ff0000;
+  color: #aa0000;
 }
 
 .disableAnimation {

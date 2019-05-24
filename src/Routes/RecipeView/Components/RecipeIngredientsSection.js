@@ -44,8 +44,8 @@ export function RecipeIngredientsSection(props) {
     setIsScaleModalOpen(false);
   }
 
-  function onScaleChange(e) {
-    newScale = e.target.value;
+  function onScaleChange(value) {
+    newScale = value;
     return newScale;
   }
 
@@ -56,7 +56,7 @@ export function RecipeIngredientsSection(props) {
       <Typography variant="h6" color="primary">
         {props.title} {scaleLabel}
       </Typography>
-      <Table className="rb-recipe-info-body rb-recipe-ingredient-list">
+      <Table className={"rb-recipe-info-body rb-recipe-ingredient-list" + (scale === "1" ? "" : " rb-scale-enabled")}>
         <tbody>
           {tableRows}
         </tbody>

@@ -9,23 +9,32 @@ import {
   TextField
 } from "@material-ui/core";
 
-function ScaleEntryModal({ isOpen, onApply, onCancel, scale, onScaleChange, ...props}) {
-  const setDefaultFocus = el => {
-    if (el)
-    {
-      el.focus();
-      el.select();
-    }
-  };
+function ScaleEntryModal({ isOpen, onApply, onCancel, scale, onScaleChange, ...props }) {
+  //const setDefaultFocus = el => {
+  //  if (el) {
+  //    el.focus();
+  //    el.select();
+  //  }
+  //};
 
   function onScaleKeyPress(e) {
-    if(e.key === 'Enter'){
+    if (e.key === 'Enter') {
       onApply();
     }
-    if(e.key === 'Esc'){
-      onCancel();
-    }
   }
+
+  function onScaleChangeLocal(e) {
+    let newScale = e.target.value;
+    onScaleChange(newScale)
+    return newScale;
+  }
+
+  function presetScale(newScale) {
+    onScaleChange(newScale);
+    onApply();
+  }
+
+  const scalePresents = ["1/4", "1/3", "1/2", "1", "2", "3", "4"];
 
   return (
     <Dialog open={isOpen} onClose={onCancel} {...props}>
@@ -33,17 +42,20 @@ function ScaleEntryModal({ isOpen, onApply, onCancel, scale, onScaleChange, ...p
         Recipe scale factor
       </DialogTitle>
       <DialogContent>
-        <DialogContentText>
-          Enter a number to scale the recipe (decimal or fraction)
+        <DialogContentText className="rb-scale-presets">
+          {scalePresents.map((s, key) => {
+            return (
+              <button key={key} className="link-button" style={{ marginRight: 15 }} onClick={() => { presetScale(s) }}>{s}</button>);
+          })}
         </DialogContentText>
         <TextField
           defaultValue={scale}
-          inputProps={{inputMode:"decimal", pattern:"^(?<Amount>(?<Fraction>(([0-9]+\\s+)?[0-9]+\\/[1-9]+[0-9]*))|(?<Decimal>([0-9]+\\.[0-9]*)|([0-9]*\\.[0-9]+)|[0-9]+))$"}}
+          //inputProps={{inputMode:"decimal", pattern:"^(?<Amount>(?<Fraction>(([0-9]+\\s+)?[0-9]+\\/[1-9]+[0-9]*))|(?<Decimal>([0-9]+\\.[0-9]*)|([0-9]*\\.[0-9]+)|[0-9]+))$"}}
           label="Scale factor"
           margin="normal"
           variant="outlined"
-          onChange={onScaleChange}
-          inputRef={setDefaultFocus}
+          onChange={onScaleChangeLocal}
+          //inputRef={setDefaultFocus}
           onKeyPress={onScaleKeyPress} />
       </DialogContent>
       <DialogActions>

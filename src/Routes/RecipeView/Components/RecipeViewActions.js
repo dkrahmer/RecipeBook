@@ -1,5 +1,4 @@
 import { useUserContext } from "../../../Hooks/useUserContext";
-import { RouterLink } from "../../../Shared/RouterLink";
 import { PaperActions } from "../../../Shared/PaperActions";
 import React from "react";
 import {
@@ -29,13 +28,6 @@ export function RecipeViewActions(props) {
             <DeleteIcon style={{ marginRight: 10 }} /> Delete
           </Button>
         </React.Fragment>
-      }
-      right={
-        <RouterLink to="/">
-          <Button size="small" color="primary">
-            To All Recipes
-          </Button>
-        </RouterLink>
       } />
   );
 }

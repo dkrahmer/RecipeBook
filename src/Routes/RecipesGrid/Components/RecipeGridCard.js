@@ -16,7 +16,8 @@ export function RecipeGridCard({ recipe }) {
         <Grid item>
           <Card>
             <CardHeader
-              titleTypographyProps={{ variant: 'body2' }}
+              titleTypographyProps={{ variant: 'h6' }}
+              className="rb-recipe-card"
               title={recipe.name} />
           </Card>
         </Grid>
