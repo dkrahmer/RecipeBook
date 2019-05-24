@@ -11,7 +11,8 @@ export function createAxiosApi(resource, user) {
     
     api.defaults.withCredentials = true;
     api.defaults.headers.common["Authorization"] = bearerAuthToken;
-  } else {
+  } 
+  else {
     api.defaults.withCredentials = false;
     api.defaults.headers.common["Authorization"] = null;
   }

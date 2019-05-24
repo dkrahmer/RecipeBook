@@ -3,6 +3,8 @@ export const GoogleClientId =
 
 export const AuthTokenKey = "auth_token";
 
-export const ApiUrl = "http://localhost:51301/api";
+export const DebugMode = false;
+
+export const ApiUrl = "http://localhost:51301";
 // export const ApiUrl =
 //   "https://humjtzo6s3.execute-api.us-east-1.amazonaws.com/Prod/api";

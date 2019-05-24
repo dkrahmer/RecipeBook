@@ -1,4 +1,5 @@
 import { AuthTokenKey } from "../config";
+import { DebugMode } from "../config";
 import React, {
   useState
 } from "react";
@@ -22,34 +23,42 @@ export function UserContextProvider(props) {
 }
 
 function getUserFromToken() {
-  const debugMode = false;
-
   let userInfo;
 
-  if (debugMode) {
+  if (DebugMode) {
     userInfo = {
       isLoggedIn: true,
       id: 1,
-      firstName: "Test",
+      firstName: "Developer",
       lastName: "User",
-      isAdmin: true,
+      canViewRecipe: true,
+      canEditRecipe: true,
+      isAdmin: true
     };
   }
   else {
     const token = Cookies.get(AuthTokenKey);
     userInfo = {
-      isLoggedIn: !!token
-    };
+      isLoggedIn: !!token,
+      canViewRecipe: false,
+      canEditRecipe: false,
+      isAdmin: false
+    }
 
     if (userInfo.isLoggedIn) {
       const decodedToken = jwt.decode(token);
 
-      userInfo.id = decodedToken.Id;
-      userInfo.email = decodedToken.EmailAddress;
-      userInfo.firstName = decodedToken.FirstName;
-      userInfo.lastName = decodedToken.LastName;
-      userInfo.isAdmin = decodedToken.IsAdmin;
-      userInfo.authToken = token;
+      userInfo = {
+        appUserId : decodedToken.AppUserId,
+        username : decodedToken.Username,
+        isLoggedIn: userInfo.isLoggedIn,
+        firstName: decodedToken.FirstName,
+        lastName: decodedToken.LastName,
+        canViewRecipe: decodedToken.CanViewRecipe.toLowerCase() === "true",
+        canEditRecipe: decodedToken.CanEditRecipe.toLowerCase() === "true",
+        isAdmin: decodedToken.IsAdmin.toLowerCase() === "true",
+        authToken: token
+      };
     }
   }
 

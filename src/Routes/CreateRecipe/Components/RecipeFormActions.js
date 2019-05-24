@@ -17,7 +17,7 @@ export function RecipeFormActions(props) {
             style={{ marginRight: 20 }}
             variant="contained"
             color="primary"
-            disabled={!user.isLoggedIn}
+            disabled={!user.canEditRecipe}
             onClick={props.onSaveClick}>
             <SaveIcon style={{ marginRight: 10 }} /> Save
           </Button>

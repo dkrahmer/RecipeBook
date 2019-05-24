@@ -18,13 +18,13 @@ export function RecipeViewActions(props) {
             style={{ marginRight: 20 }}
             variant="contained"
             color="primary"
-            disabled={!user.isLoggedIn}
+            disabled={!user.canEditRecipe}
             onClick={props.editRecipe}>
             <EditIcon style={{ marginRight: 10 }} />Edit
           </Button>
           <Button
             variant="contained"
-            disabled={!user.isLoggedIn}
+            disabled={!user.canEditRecipe}
             onClick={props.deleteRecipe}>
             <DeleteIcon style={{ marginRight: 10 }} /> Delete
           </Button>
