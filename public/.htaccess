@@ -1,0 +1,10 @@
+# Redirect to https (Source: https://www.name.com/support/articles/115005296088-Redirect-HTTP-to-HTTPS-automatically)
+RewriteEngine On
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Support static index.html files for paths with no filename (See Apache HTTP server: https://facebook.github.io/create-react-app/docs/deployment)
+Options -MultiViews
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^ index.html [QSA,L]
