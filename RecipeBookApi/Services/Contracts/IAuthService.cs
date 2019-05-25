@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 
 namespace RecipeBookApi.Services.Contracts
 {
-    public interface IAuthService
-    {
-        Task<string> Authenticate(string token);
-        AppUserClaimModel GetUserFromClaims(ClaimsPrincipal userClaims);
-    }
+	public interface IAuthService
+	{
+		Task<string> Authenticate(string token);
+		AppUserClaimModel GetUserFromClaims(ClaimsPrincipal userClaims);
+	}
 }
