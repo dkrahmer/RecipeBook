@@ -35,7 +35,7 @@ function RecipeSavedSnackbarContentMessage(props) {
       <CheckCircleIcon />
       <span style={{ paddingLeft: 10 }}>Recipe saved!</span>
       <Link
-        to={`/recipe/${props.recipeId}`}
+        to={`/recipes/${props.recipeId}`}
         style={{ padding: "0 4px" }}>
         Click here
       </Link>

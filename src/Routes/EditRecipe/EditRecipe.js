@@ -17,14 +17,14 @@ export function EditRecipe(props) {
   const [recipe, setRecipe] = useState({
     id: "",
     name: "",
-    description: "",
     ingredients: "",
-    instructions: ""
+    instructions: "",
+    notes: ""
   });
 
   useEffect(() => {
     setIsLoading(true);
-    recipeService.getRecipeById(props.match.params.id, (response) => {
+    recipeService.getRecipeById(props.match.params.recipeId, null, (response) => {
       setRecipe(response.data);
       setIsLoading(false);
     }, (error) => {
@@ -40,10 +40,11 @@ export function EditRecipe(props) {
 
   function saveRecipe(updatedRecipe) {
     setIsExecuting(true);
-    recipeService.updateRecipe(recipe.id, updatedRecipe, (response) => {
+    recipeService.updateRecipe(recipe.recipeId, updatedRecipe, (response) => {
       if (response && response.status === 200) {
         setToastOpen(true);
         setRecipe(updatedRecipe);
+        props.history.replace(`/recipes/${recipe.recipeId}`);
       } else {
         console.log(response);
       }
@@ -59,6 +60,10 @@ export function EditRecipe(props) {
     });
   }
 
+  function cancelRecipe(updatedRecipe) {
+    props.history.replace(`/recipes/${recipe.recipeId}`);
+  }
+
   return (
     <React.Fragment>
       <LoadingWrapper isLoading={isLoading}>
@@ -66,11 +71,12 @@ export function EditRecipe(props) {
           pageTitle={`Edit ${recipe.name}`}
           recipe={recipe}
           onSaveClick={saveRecipe}
+          onCancel={cancelRecipe}
           isSaveExecuting={isExecuting} />
         <RecipeSavedSnackbar
           toastOpen={toastOpen}
           onToastClose={onToastClose}
-          recipeId={recipe.id} />
+          recipeId={recipe.recipeId} />
       </LoadingWrapper>
     </React.Fragment>
   );

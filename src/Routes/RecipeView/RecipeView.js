@@ -9,6 +9,7 @@ import React, {
   useEffect
 } from "react";
 import { Paper } from "@material-ui/core";
+import queryString from 'query-string'
 
 export function RecipeView(props) {
   const recipeService = useRecipeService();
@@ -17,9 +18,18 @@ export function RecipeView(props) {
   const [ownerBlurb, setOwnerBlurb] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const queryStringValues = queryString.parse(props.location.search);
+  var [scale, setScale] = useState(queryStringValues.scale);
+
   useEffect(() => {
+    if (scale) {
+      props.history.replace({
+        search: `scale=${scale}` // update the URL QS
+      })
+    }
+
     setIsLoading(true);
-    recipeService.getRecipeById(props.match.params.id, (response) => {
+    recipeService.getRecipeById(props.match.params.recipeId, scale, (response) => {
       setRecipe(response.data);
       setIsLoading(false);
     }, (error) => {
@@ -27,7 +37,7 @@ export function RecipeView(props) {
         props.history.push("/notfound");
       }
     });
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [scale]); // eslint-disable-line react-hooks/exhaustive-deps
 
   function confirmDeleteRequest() {
     setIsModalOpen(true);
@@ -38,12 +48,12 @@ export function RecipeView(props) {
   }
 
   function editRecipe() {
-    props.history.push(`/recipe/${recipe.id}/edit`);
+    props.history.push(`/recipes/${recipe.recipeId}/edit`);
   }
 
   function onDeleteConfirmed() {
     setIsModalOpen(false);
-    recipeService.deleteRecipe(recipe.id, (response) => {
+    recipeService.deleteRecipe(recipe.recipeId, (response) => {
       if (response && response.status === 200) {
         props.history.push("/");
       } else {
@@ -65,7 +75,7 @@ export function RecipeView(props) {
       <PageHeader text={recipe.name} subText={ownerBlurb} />
       <LoadingWrapper isLoading={isLoading}>
         <Paper style={{ padding: 12 }}>
-          <RecipeInfo recipe={recipe} setOwnerBlurb={setOwnerBlurb} />
+          <RecipeInfo recipe={recipe} scale={scale} setScale={setScale} setOwnerBlurb={setOwnerBlurb} />
           <RecipeViewActions
             editRecipe={editRecipe}
             deleteRecipe={confirmDeleteRequest} />

@@ -24,15 +24,12 @@ export function ClientSidePaginator(props) {
       </Tooltip>
       <Typography variant="caption" className="rb-paginator-help-text">
         <span>
-          Showing
-          <b> {props.displayStartNumber} </b>-
-          <b> {props.displayEndNumber} </b>of
-          <b> {props.dataCount}</b>
-        </span>
-        <span>
           Page
           <b> {props.currentPageNumber} </b>of
-          <b> {props.maxPageNumber}</b>
+          <b> {props.maxPageNumber} </b>
+          (Items <b>{props.displayStartNumber} </b>-
+          <b> {props.displayEndNumber} </b>of
+          <b> {props.dataCount}</b>)
         </span>
       </Typography>
       <Tooltip title="Next Page" placement="left">

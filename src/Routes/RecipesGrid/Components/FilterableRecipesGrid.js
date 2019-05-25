@@ -25,13 +25,11 @@ export function FilterableRecipesGrid(props) {
       });
     }
 
-    sortRecipesByName(workingRecipes);
+    sortRecipesByUpdateDateTime(workingRecipes);
+    //sortRecipesByName(workingRecipes);
+
     setMatchingRecipes(workingRecipes);
   }, [nameQuery, props.allRecipes]);
-
-  function handleSearchQueryChange(newNameQuery) {
-    setNameQuery(newNameQuery);
-  }
 
   return (
     <Grid container spacing={24}>
@@ -39,7 +37,7 @@ export function FilterableRecipesGrid(props) {
         <Paper style={{ padding: 12 }}>
           <RecipesFilterForm
             nameQuery={nameQuery}
-            handleSearchQueryChange={handleSearchQueryChange} />
+            setNameQuery={setNameQuery} />
         </Paper>
       </Grid>
       <PageableRecipesGrid recipes={matchingRecipes} />
@@ -53,5 +51,12 @@ function sortRecipesByName(recipes) {
     var nameB = b.name.toLowerCase();
 
     return (nameA < nameB ? -1 : (nameA > nameB ? 1 : 0));
+  });
+}
+
+function sortRecipesByUpdateDateTime(recipes) {
+  // Descending order
+  recipes.sort((a, b) => {
+    return (a.updateDateTime > b.updateDateTime ? -1 : (a.updateDateTime < b.updateDateTime ? 1 : 0));
   });
 }

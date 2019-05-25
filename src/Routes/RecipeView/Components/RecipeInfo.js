@@ -1,41 +1,30 @@
+import { RecipeIngredientsSection } from "./RecipeIngredientsSection";
+import { RecipeInstructionsSection } from "./RecipeInstructionsSection";
 import { RecipeInfoSection } from "./RecipeInfoSection";
 import React from "react";
+import moment from 'moment'
 
-export function RecipeInfo({ recipe, ...props }) {
-  props.setOwnerBlurb(generateOwnerBlurb(recipe.ownerName, recipe.updateDate));
-
+export function RecipeInfo({ recipe, scale, setScale, ...props }) {
+  props.setOwnerBlurb(generateOwnerBlurb(recipe.ownerName, recipe.updateDateTime));
+  
   return (
     <React.Fragment>
-      <RecipeInfoSection
-        title="Description"
-        body={recipe.description} />
-      <RecipeInfoSection
+      <RecipeIngredientsSection
         title="Ingredients"
-        body={recipe.ingredients} />
-      <RecipeInfoSection
+        scale={scale}
+        ingredientsList={recipe.ingredientsList}
+        setScale={setScale} />
+      <RecipeInstructionsSection
         title="Instructions"
-        body={recipe.instructions} />
+        instructions={recipe.instructions} />
+      <RecipeInfoSection
+        title="Notes"
+        body={recipe.notes} />
     </React.Fragment>
   );
 }
 
-function generateOwnerBlurb(ownerName, updateDate) {
-  const dateString = new Intl.DateTimeFormat("en-US", {
-    timeZone: "America/New_York",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    weekday: "long"
-  }).format(new Date(updateDate));
-
-  const timeString = new Intl.DateTimeFormat("en-US", {
-    timeZone: "America/New_York",
-    hour: "numeric",
-    minute: "numeric",
-    hour12: "true"
-  }).format(new Date(updateDate));
-
-  const dateTimeString = `${dateString} at ${timeString}`;
-
-  return `${ownerName} last updated this recipe on ${dateTimeString}`;
+function generateOwnerBlurb(ownerName, updateDateTime) {
+  const dateTimeString = moment(updateDateTime).format("MMM D, YYYY h:mm:ss a");
+  return `Last update: ${dateTimeString}`;
 }

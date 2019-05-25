@@ -17,33 +17,29 @@ export function RecipeFormFields(props) {
       <TextField
         fullWidth
         multiline
-        value={props.recipe.description || ""}
-        onChange={props.onDescriptionChange}
-        label="Description"
-        placeholder=""
-        margin="normal"
-        variant="outlined" />
-      <TextField
-        fullWidth
-        required
-        error={!props.errors.ingredients.isValid}
-        multiline
         value={props.recipe.ingredients}
         onChange={props.onIngredientsChange}
         label="Ingredients"
-        helperText="Separate ingredients with a newline"
+        helperText="One ingredient per line. Use brackets for Ingredient Groups. Example: [For Crust] and [For Filling]"
         placeholder=""
         margin="normal"
         variant="outlined" />
       <TextField
         fullWidth
-        required
-        error={!props.errors.instructions.isValid}
         multiline
         value={props.recipe.instructions}
         onChange={props.onInstructionsChange}
         label="Instructions"
-        helperText="Separate instructions with a newline"
+        helperText="Use brackets for Instruction Groups. Example: [For Crust] and [For Filling]"
+        placeholder=""
+        margin="normal"
+        variant="outlined" />
+      <TextField
+        fullWidth
+        multiline
+        value={props.recipe.notes || ""}
+        onChange={props.onNotesChange}
+        label="Notes"
         placeholder=""
         margin="normal"
         variant="outlined" />

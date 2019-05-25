@@ -55,7 +55,7 @@ main#main-content {
 }
 
 .rb-divider {
-  margin: 16px 0 !important;
+  margin: 4px 0 !important;
 }
 
 .rb-page-header-container {
@@ -95,7 +95,8 @@ main#main-content {
 
 .rb-recipe-info {
   margin-bottom: 12px;
-  
+  margin-right: 16px;
+
   &:last-child {
     margin-bottom: 0;
   }
@@ -103,7 +104,69 @@ main#main-content {
   .rb-recipe-info-body {
     margin-left: 16px;
     white-space: pre-wrap;
+    font-size: inherit;
   }
+  
+  .rb-recipe-instruction-list {
+    td:nth-child(1) {
+      text-align: right;
+      width: 1px;
+      padding-right: 4px;
+      vertical-align: top;
+    }
+    
+    .rb-recipe-instruction-list-heading {
+      text-align: left !important;
+      font-weight: bold;
+      font-size: larger;
+      padding-top: 10px;
+      position: relative;
+      right: 5px;
+    }
+  }
+
+  .rb-recipe-ingredient-list {
+    td:nth-child(1) {
+      text-align: right;
+      font-weight: bold;
+      width: 1px;
+      padding-right: 4px;
+      white-space: nowrap; 
+      vertical-align: top;
+    }
+    
+    .rb-recipe-ingredient-list-heading {
+      text-align: left !important;
+      font-size: larger;
+      padding-top: 10px;
+      position: relative;
+      right: 5px;
+      color: #000000;
+    }
+  }
+}
+
+.rb-scale-enabled {
+  td:nth-child(1) {
+    color: #aa0000;
+  }
+}
+
+.rb-scale-presets {
+  text-align: center;
+}
+.rb-scale-presets button {
+    color: #010185;
+  text-decoration: underline;
+}
+
+.rb-scale-presets button {
+  color: #010185;
+  text-decoration: underline;
+}
+
+.rb-recipe-card * {
+  font-weight: normal !important;
 }
 
 .rb-validation-summary {
@@ -117,4 +180,36 @@ main#main-content {
   display: flex;
   flex-direction: row;
   align-items: center;
+}
+
+.link-button {
+  background: none!important;
+  border: none;
+  padding: 0!important;
+  font: inherit;
+  cursor: pointer;}
+
+.scale-label {
+  font-size: small;
+  color: #575757;
+
+  * {
+    color: #575757;
+  }
+}
+
+.scale-label-changed * {
+  color: #aa0000;
+}
+
+.disableAnimation {
+  transition: none !important;
+
+  * {
+    transition: none !important;
+  }
+}
+
+.inherit-style {
+  color: inherit;
 }

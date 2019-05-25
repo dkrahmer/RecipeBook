@@ -19,7 +19,7 @@ import MoodBadIcon from "@material-ui/icons/MoodBad";
 export function PageableRecipesGrid({ recipes }) {
   const createInitialStateCallback = useCallback(() => {
     return {
-      pageSize: 6,
+      pageSize: 999, // divisible by 3
       data: [...recipes]
     };
   }, [recipes]);
@@ -56,20 +56,21 @@ export function PageableRecipesGrid({ recipes }) {
   return (
     <React.Fragment>
       <Grid item xs={12}>
-        {paginatorHtml}
+        <Grid container spacing={8}>
+          {recipes.length > 0 ? state.dataToDisplay.map(r => (
+            <Grid item md={4} sm={6} xs={12} key={r.recipeId}>
+              <RecipeGridCard recipe={r} />
+            </Grid>
+          )) : (
+              <Grid item xs={12} className="rb-no-recipe-results-container">
+                <MoodBadIcon fontSize="large" />
+                <Typography variant="subtitle1">
+                  No recipes found!
+                </Typography>
+              </Grid>
+            )}
+        </Grid>
       </Grid>
-      {recipes.length > 0 ? state.dataToDisplay.map(r => (
-        <Grid item md={4} sm={6} xs={12} key={r.id}>
-          <RecipeGridCard recipe={r} />
-        </Grid>
-      )) : (
-        <Grid item xs={12} className="rb-no-recipe-results-container">
-          <MoodBadIcon fontSize="large" />
-          <Typography variant="subtitle1">
-            Oh no! It looks like that food doesn't exist!
-          </Typography>
-        </Grid>
-      )}
       <Grid item xs={12}>
         {paginatorHtml}
       </Grid>

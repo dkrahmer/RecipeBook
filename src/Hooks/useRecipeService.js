@@ -19,7 +19,7 @@ export function useRecipeService() {
 }
 
 function createRecipeService(user) {
-  const api = createAxiosApi("Recipe", user);
+  const api = createAxiosApi("Recipes", user);
 
   function getAllRecipes(handleResponse, handleError) {
     api.get("/")
@@ -27,8 +27,8 @@ function createRecipeService(user) {
       .catch(handleError);
   }
 
-  function getRecipeById(id, handleResponse, handleError) {
-    api.get(`/${id}`)
+  function getRecipeById(recipeId, scale, handleResponse, handleError) {
+    api.get(`/${recipeId}${scale ? `?scale=${scale}` : ""}`)
       .then(handleResponse)
       .catch(handleError);
   }
