@@ -260,3 +260,4 @@ paket-files/
 __pycache__/
 *.pyc
 /RecipeBookApi/Properties/PublishProfiles/FolderProfile.pubxml
+/RecipeBookApi/appsettings.Production.json
