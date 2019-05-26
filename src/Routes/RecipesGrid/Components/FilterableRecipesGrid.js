@@ -12,13 +12,11 @@ import {
 export function FilterableRecipesGrid(props) {
   const [nameQuery, setNameQuery] = useState("");
   const [matchingRecipes, setMatchingRecipes] = useState(() => {
-    sortRecipesByName(props.allRecipes);
     return props.allRecipes;
   });
 
   useEffect(() => {
     let workingRecipes = [...props.allRecipes];
-
     if (nameQuery) {
       workingRecipes = workingRecipes.filter(r => {
         return r.name.toLowerCase().includes(nameQuery.toLowerCase());
@@ -26,7 +24,6 @@ export function FilterableRecipesGrid(props) {
     }
 
     sortRecipesByUpdateDateTime(workingRecipes);
-    //sortRecipesByName(workingRecipes);
 
     setMatchingRecipes(workingRecipes);
   }, [nameQuery, props.allRecipes]);
@@ -45,6 +42,7 @@ export function FilterableRecipesGrid(props) {
   );
 }
 
+/*
 function sortRecipesByName(recipes) {
   recipes.sort((a, b) => {
     var nameA = a.name.toLowerCase();
@@ -53,6 +51,7 @@ function sortRecipesByName(recipes) {
     return (nameA < nameB ? -1 : (nameA > nameB ? 1 : 0));
   });
 }
+*/
 
 function sortRecipesByUpdateDateTime(recipes) {
   // Descending order

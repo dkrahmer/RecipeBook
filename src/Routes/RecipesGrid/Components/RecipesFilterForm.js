@@ -2,21 +2,24 @@ import React from "react";
 import {
   TextField
 } from "@material-ui/core";
-import { Debounce } from 'react-throttle';
+import _ from 'lodash';
 
 export function RecipesFilterForm(props) {
+  let setNameQueryDebounced =
+    _.debounce((e) => {
+      props.setNameQuery(e.target.value);
+    }, 200);
+
   return (
     <React.Fragment>
-      <Debounce time="200" handler="onChange">
-        <TextField
-          fullWidth
-          defaultValue={props.nameQuery}
-          onChange={(e) => { props.setNameQuery(e.target.value); }}
-          label="Find Recipe"
-          placeholder="Recipe Name..."
-          margin="normal"
-          variant="outlined" />
-      </Debounce>
+      <TextField
+        fullWidth
+        defaultValue={props.nameQuery}
+        onChange={(e) => { e.persist(); setNameQueryDebounced(e);}}
+        label="Find Recipe"
+        placeholder="Recipe Name..."
+        margin="normal"
+        variant="outlined" />
     </React.Fragment>
   );
 }
