@@ -6,20 +6,26 @@ import moment from 'moment'
 
 export function RecipeInfo({ recipe, scale, setScale, ...props }) {
   props.setOwnerBlurb(generateOwnerBlurb(recipe.ownerName, recipe.updateDateTime));
-  
+
   return (
     <React.Fragment>
-      <RecipeIngredientsSection
-        title="Ingredients"
-        scale={scale}
-        ingredientsList={recipe.ingredientsList}
-        setScale={setScale} />
-      <RecipeInstructionsSection
-        title="Instructions"
-        instructions={recipe.instructions} />
-      <RecipeInfoSection
-        title="Notes"
-        body={recipe.notes} />
+      {!recipe.ingredientsList ? "" : (
+        <RecipeIngredientsSection
+          title="Ingredients"
+          scale={scale}
+          ingredientsList={recipe.ingredientsList}
+          setScale={setScale} />
+      )}
+      {!recipe.instructions ? "" : (
+        <RecipeInstructionsSection
+          title="Instructions"
+          instructions={recipe.instructions} />
+      )}
+      {!recipe.notes ? "" : (
+        <RecipeInfoSection
+          title="Notes"
+          body={recipe.notes} />
+      )}
     </React.Fragment>
   );
 }

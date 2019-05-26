@@ -8,7 +8,7 @@ import React, {
   useState,
   useEffect
 } from "react";
-import { Paper } from "@material-ui/core";
+import { Paper, Typography } from "@material-ui/core";
 import queryString from 'query-string'
 
 export function RecipeView(props) {
@@ -72,7 +72,7 @@ export function RecipeView(props) {
 
   return (
     <React.Fragment>
-      <PageHeader text={recipe.name} subText={ownerBlurb} />
+      <PageHeader text={recipe.name} />
       <LoadingWrapper isLoading={isLoading}>
         <Paper style={{ padding: 12 }}>
           <RecipeInfo recipe={recipe} scale={scale} setScale={setScale} setOwnerBlurb={setOwnerBlurb} />
@@ -87,6 +87,9 @@ export function RecipeView(props) {
           onYes={onDeleteConfirmed}
           onNo={onNoModal} />
       </LoadingWrapper>
+      <Typography variant="subtitle2" color="textSecondary">
+        {ownerBlurb}
+      </Typography>
     </React.Fragment>
   );
 }
