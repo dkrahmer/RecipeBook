@@ -3,15 +3,19 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using RecipeBookApi.Models;
 using RecipeBookApi.Options;
 using RecipeBookApi.Services;
 using RecipeBookApi.Services.Contracts;
 using Swashbuckle.AspNetCore.Swagger;
+using System.Security.Claims;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace RecipeBookApi
 {
@@ -43,7 +47,7 @@ namespace RecipeBookApi
 			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
 			services.Configure<AppOptions>(_configuration);
-			var appOptions = services.BuildServiceProvider().GetService<IOptions<AppOptions>>();
+			var options = services.BuildServiceProvider().GetService<IOptions<AppOptions>>();
 
 			services.AddSwaggerGen(swaggerGenOptions =>
 			{
@@ -54,36 +58,48 @@ namespace RecipeBookApi
 			{
 				corsOptions.AddDefaultPolicy(corsPolicyBuilder =>
 				{
-					corsPolicyBuilder.WithOrigins(appOptions.Value.AllowedOrigins)
+					corsPolicyBuilder.WithOrigins(options.Value.AllowedOrigins)
 						.AllowAnyHeader()
 						.AllowAnyMethod()
 						.AllowCredentials();
 				});
 			});
 
-			using (var db = new MySqlDbContext(appOptions.Value.MySqlConnectionString))
+			if (options.Value.DebugMode)
+			{
+				services.AddMvc(opts =>
+				{
+					opts.Filters.Add(new AllowAnonymousFilter());
+				});
+				services.AddAuthentication();
+				services.AddTransient<IAuthService, NoAuthService>();
+			}
+			else
+			{
+				services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+					.AddJwtBearer(jwtOptions =>
+					{
+						jwtOptions.RequireHttpsMetadata = false;
+						jwtOptions.SaveToken = true;
+
+						jwtOptions.TokenValidationParameters = new TokenValidationParameters
+						{
+							ValidateAudience = false,
+							ValidateIssuer = false,
+							ValidateIssuerSigningKey = true,
+							IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(options.Value.GoogleClientSecret))
+						};
+					});
+
+				services.AddTransient<IAuthService, GoogleAuthService>();
+			}
+			services.AddTransient<IAppUsersService, MySqlAppUsersService>();
+			services.AddTransient<IRecipesService, MySqlRecipesService>();
+
+			using (var db = new MySqlDbContext(options.Value.MySqlConnectionString))
 			{
 				db.Database.EnsureCreated();
 			}
-
-			services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-				.AddJwtBearer(jwtOptions =>
-				{
-					jwtOptions.RequireHttpsMetadata = false;
-					jwtOptions.SaveToken = true;
-
-					jwtOptions.TokenValidationParameters = new TokenValidationParameters
-					{
-						ValidateAudience = false,
-						ValidateIssuer = false,
-						ValidateIssuerSigningKey = true,
-						IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(appOptions.Value.GoogleClientSecret))
-					};
-				});
-
-			services.AddTransient<IAuthService, GoogleAuthService>();
-			services.AddTransient<IAppUsersService, MySqlAppUsersService>();
-			services.AddTransient<IRecipesService, MySqlRecipesService>();
 		}
 
 		public void Configure(IApplicationBuilder app)
@@ -100,10 +116,22 @@ namespace RecipeBookApi
 			});
 
 			app.UseHsts();
-			app.UseHttpsRedirection();
 			app.UseAuthentication();
 			app.UseCors();
 			app.UseMvc();
+		}
+	}
+
+	internal class NoAuthService : IAuthService
+	{
+		public Task<string> Authenticate(string token)
+		{
+			return new Task<string>(() => { return ""; });
+		}
+
+		public AppUserClaimModel GetUserFromClaims(ClaimsPrincipal userClaims)
+		{
+			return new AppUserClaimModel();
 		}
 	}
 }
