@@ -7,6 +7,7 @@ import {
   Table
 } from "@material-ui/core";
 import ScaleEntryModal from "./ScaleEntryModal";
+import Linkify from "react-linkify"
 
 export function RecipeIngredientsSection(props) {
   const [isScaleModalOpen, setIsScaleModalOpen] = useState(false);
@@ -58,7 +59,9 @@ export function RecipeIngredientsSection(props) {
       </Typography>
       <Table className={"rb-recipe-info-body rb-recipe-ingredient-list" + (scale === "1" ? "" : " rb-scale-enabled")}>
         <tbody>
-          {tableRows}
+          <Linkify properties={{ target: "_blank" }}>
+            {tableRows}
+          </Linkify>
         </tbody>
       </Table>
       <Divider style={{ marginTop: 12 }} />

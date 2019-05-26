@@ -4,6 +4,7 @@ import {
   Divider,
   Table
 } from "@material-ui/core";
+import Linkify from "react-linkify"
 
 export function RecipeInstructionsSection(props) {
   let instructionNumber = 1;
@@ -11,13 +12,11 @@ export function RecipeInstructionsSection(props) {
     if (item.trim() === "")
       return null;
 
-    if (item.startsWith("[") && item.endsWith("]"))
-    {
+    if (item.startsWith("[") && item.endsWith("]")) {
       instructionNumber = 1; // Restart numbering for the next section
       return <tr key={key}><td colSpan="2" className="rb-recipe-instruction-list-heading">{item.substr(1, item.length - 2)}</td></tr>
     }
-    else
-    {
+    else {
       return <tr key={key}><td>{instructionNumber++}.</td><td>{item}</td></tr>
     }
   });
@@ -29,7 +28,9 @@ export function RecipeInstructionsSection(props) {
       </Typography>
       <Table className="rb-recipe-info-body rb-recipe-instruction-list">
         <tbody>
-          {tableRows}
+          <Linkify properties={{ target: "_blank" }}>
+            {tableRows}
+          </Linkify>
         </tbody>
       </Table>
       <Divider style={{ marginTop: 12 }} />

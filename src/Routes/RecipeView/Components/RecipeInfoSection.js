@@ -3,6 +3,7 @@ import {
   Typography,
   Divider
 } from "@material-ui/core";
+import Linkify from "react-linkify"
 
 export function RecipeInfoSection(props) {
   return (
@@ -11,7 +12,9 @@ export function RecipeInfoSection(props) {
         {props.title}
       </Typography>
       <Typography variant="body1" className="rb-recipe-info-body">
-        {props.body}
+        <Linkify properties={{ target: "_blank" }}>
+          {props.body}
+        </Linkify>
       </Typography>
       <Divider style={{ marginTop: 12 }} />
     </div>
