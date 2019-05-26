@@ -12,6 +12,7 @@ import {
 export function FilterableRecipesGrid(props) {
   const [nameQuery, setNameQuery] = useState("");
   const [matchingRecipes, setMatchingRecipes] = useState(() => {
+    sortRecipesByUpdateDateTime(props.allRecipes);
     return props.allRecipes;
   });
 
