@@ -1,15 +1,15 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-/node_modules
-/.pnp
+/RecipeBookWeb/node_modules
+/RecipeBookWeb/.pnp
 .pnp.js
 
 # testing
-/coverage
+/RecipeBookWeb/coverage
 
 # production
-/build
+/RecipeBookWeb/build
 
 # misc
 .DS_Store
