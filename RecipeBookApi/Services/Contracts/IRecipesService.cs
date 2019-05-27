@@ -1,5 +1,4 @@
 ﻿using Common.Models;
-using RecipeBookApi.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -7,10 +6,10 @@ namespace RecipeBookApi.Services.Contracts
 {
 	public interface IRecipesService
 	{
-		int Create(Recipe model);
-		void Delete(int recipeId);
-		IEnumerable<RecipeSummary> GetAll();
-		Recipe Get(int recipeId);
-		void Update(Recipe model);
+		Task<int> Create(Recipe model);
+		Task Delete(int recipeId);
+		Task<IEnumerable<RecipeSummary>> GetAll();
+		Task<Recipe> Get(int recipeId);
+		Task Update(Recipe model);
 	}
 }
