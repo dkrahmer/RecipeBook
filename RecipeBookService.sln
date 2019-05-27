@@ -11,8 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommonTests", "CommonTests\
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MySqlDatabase", "MySqlDatabase", "{4DC3C39A-1A31-4CF9-B609-773F587B880B}"
 	ProjectSection(SolutionItems) = preProject
-		AppUser_Scripts.sql = AppUser_Scripts.sql
-		DbSchema.sql = DbSchema.sql
+		MySqlDatabase\AppUser_Scripts.sql = MySqlDatabase\AppUser_Scripts.sql
+		MySqlDatabase\DbSchema.sql = MySqlDatabase\DbSchema.sql
 	EndProjectSection
 EndProject
 Global
