@@ -1,4 +1,4 @@
-# RecipeBookService
+# RecipeBook
 
 Checkout a live demo site with the API and Maria DB running on a Raspberry Pi: [recipes-demo.remhark.com](https://recipes-demo.remhark.com)
 
