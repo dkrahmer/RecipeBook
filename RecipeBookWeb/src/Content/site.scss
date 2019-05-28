@@ -1,215 +1,214 @@
 $layout-padding-size: 24px;
 
 #root {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
 }
 
 main#main-content {
-  position: relative;
-  max-width: 1170px;
-  margin: auto;
-  padding: $layout-padding-size;
-  width: 100%;
-  flex-grow: 1;
+	position: relative;
+	max-width: 1170px;
+	margin: auto;
+	padding: $layout-padding-size;
+	width: 100%;
+	flex-grow: 1;
 }
 
 .footer-container {
-  color: #fff;
-  padding: $layout-padding-size 0;
-  box-shadow:
-    0px -2px 4px -1px rgba(0,0,0,0.2),
-    0px -4px 5px 0px rgba(0,0,0,0.14),
-    0px -1px 10px 0px rgba(0,0,0,0.12);
-  background-color: #424242;
+	color: #fff;
+	padding: $layout-padding-size 0;
+	box-shadow: 0px -2px 4px -1px rgba(0,0,0,0.2), 0px -4px 5px 0px rgba(0,0,0,0.14), 0px -1px 10px 0px rgba(0,0,0,0.12);
+	background-color: #424242;
 }
 
 .loading-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 }
 
 .not-allowed {
-  cursor: not-allowed;
+	cursor: not-allowed;
 }
 
 .page-not-found-container {
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  left: 0;
-  z-index: 99999;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	right: 0;
+	left: 0;
+	z-index: 99999;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 
 .paper-actions-container {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: space-between;
 }
 
 .rb-divider {
-  margin: 4px 0 !important;
+	margin: 4px 0 !important;
 }
 
 .rb-page-header-container {
-  display: flex;
-  flex-direction: column;
-  
-  .rb-page-header-primary {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-  }
+	display: flex;
+	flex-direction: column;
+
+	.rb-page-header-primary {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+	}
 }
 
 .rb-no-recipe-results-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
 }
 
 .rb-recipe-filter-header {
-  display: flex;
-  align-items: center;
+	display: flex;
+	align-items: center;
 }
 
 .rb-paginator {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  
-  .rb-paginator-help-text {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+
+	.rb-paginator-help-text {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
 }
 
 .rb-recipe-info {
-  margin-bottom: 12px;
-  margin-right: 16px;
+	margin-bottom: 12px;
+	margin-right: 16px;
 
-  &:last-child {
-    margin-bottom: 0;
-  }
-  
-  .rb-recipe-info-body {
-    margin-left: 16px;
-    white-space: pre-wrap;
-    font-size: inherit;
-  }
-  
-  .rb-recipe-instruction-list {
-    td:nth-child(1) {
-      text-align: right;
-      width: 1px;
-      padding-right: 4px;
-      vertical-align: top;
-    }
-    
-    .rb-recipe-instruction-list-heading {
-      text-align: left !important;
-      font-weight: bold;
-      font-size: larger;
-      padding-top: 10px;
-      position: relative;
-      right: 5px;
-    }
-  }
+	&:last-child {
+		margin-bottom: 0;
+	}
 
-  .rb-recipe-ingredient-list {
-    td:nth-child(1) {
-      text-align: right;
-      font-weight: bold;
-      width: 1px;
-      padding-right: 4px;
-      white-space: nowrap; 
-      vertical-align: top;
-    }
-    
-    .rb-recipe-ingredient-list-heading {
-      text-align: left !important;
-      font-size: larger;
-      padding-top: 10px;
-      position: relative;
-      right: 5px;
-      color: #000000;
-    }
-  }
+	.rb-recipe-info-body {
+		margin-left: 16px;
+		white-space: pre-wrap;
+		font-size: inherit;
+	}
+
+	.rb-recipe-instruction-list {
+		td:nth-child(1) {
+			text-align: right;
+			width: 1px;
+			padding-right: 4px;
+			vertical-align: top;
+		}
+
+		.rb-recipe-instruction-list-heading {
+			text-align: left !important;
+			font-weight: bold;
+			font-size: larger;
+			padding-top: 10px;
+			position: relative;
+			right: 5px;
+		}
+	}
+
+	.rb-recipe-ingredient-list {
+		td:nth-child(1) {
+			text-align: right;
+			font-weight: bold;
+			width: 1px;
+			padding-right: 4px;
+			white-space: nowrap;
+			vertical-align: top;
+		}
+
+		.rb-recipe-ingredient-list-heading {
+			text-align: left !important;
+			font-size: larger;
+			padding-top: 10px;
+			position: relative;
+			right: 5px;
+			color: #000000;
+		}
+	}
 }
 
 .rb-scale-enabled {
-  td:nth-child(1) {
-    color: #aa0000;
-  }
+	td:nth-child(1) {
+		color: #aa0000;
+	}
 }
 
 .rb-scale-presets {
-  text-align: center;
-}
-.rb-scale-presets button {
-    color: #010185;
-  text-decoration: underline;
+	text-align: center;
 }
 
 .rb-scale-presets button {
-  color: #010185;
-  text-decoration: underline;
+	color: #010185;
+	text-decoration: underline;
+}
+
+.rb-scale-presets button {
+	color: #010185;
+	text-decoration: underline;
 }
 
 .rb-recipe-card * {
-  font-weight: normal !important;
+	font-weight: normal !important;
 }
 
 .rb-validation-summary {
-  padding: 10px 10px 10px 0;
-  border: 1px solid #b71c1c;
-  border-radius: 5px;
-  background: rgba(255, 224, 222, 0.5);
+	padding: 10px 10px 10px 0;
+	border: 1px solid #b71c1c;
+	border-radius: 5px;
+	background: rgba(255, 224, 222, 0.5);
 }
 
 .rb-snackbar-message {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
 }
 
 .link-button {
-  background: none!important;
-  border: none;
-  padding: 0!important;
-  font: inherit;
-  cursor: pointer;}
+	background: none !important;
+	border: none;
+	padding: 0 !important;
+	font: inherit;
+	cursor: pointer;
+}
 
 .scale-label {
-  font-size: small;
-  color: #575757;
+	font-size: small;
+	color: #575757;
 
-  * {
-    color: #575757;
-  }
+	* {
+		color: #575757;
+	}
 }
 
 .scale-label-changed * {
-  color: #aa0000;
+	color: #aa0000;
 }
 
 .disableAnimation {
-  transition: none !important;
+	transition: none !important;
 
-  * {
-    transition: none !important;
-  }
+	* {
+		transition: none !important;
+	}
 }
 
 .inherit-style {
-  color: inherit;
+	color: inherit;
 }

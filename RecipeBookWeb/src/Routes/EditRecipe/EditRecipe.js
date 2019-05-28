@@ -1,83 +1,83 @@
 import { useRecipeService } from "../../Hooks/useRecipeService";
 import { LoadingWrapper } from "../../Shared/LoadingWrapper";
 import { RecipeForm } from "../CreateRecipe/Components/RecipeForm";
-import { 
-  RecipeSavedSnackbar
+import {
+	RecipeSavedSnackbar
 } from "../CreateRecipe/Components/RecipeSavedSnackbar";
 import React, {
-  useState,
-  useEffect
+	useState,
+	useEffect
 } from "react";
 
 export function EditRecipe(props) {
-  const recipeService = useRecipeService();
-  const [isLoading, setIsLoading] = useState(true);
-  const [toastOpen, setToastOpen] = useState(false);
-  const [isExecuting, setIsExecuting] = useState(false);
-  const [recipe, setRecipe] = useState({
-    id: "",
-    name: "",
-    ingredients: "",
-    instructions: "",
-    notes: ""
-  });
+	const recipeService = useRecipeService();
+	const [isLoading, setIsLoading] = useState(true);
+	const [toastOpen, setToastOpen] = useState(false);
+	const [isExecuting, setIsExecuting] = useState(false);
+	const [recipe, setRecipe] = useState({
+		id: "",
+		name: "",
+		ingredients: "",
+		instructions: "",
+		notes: ""
+	});
 
-  useEffect(() => {
-    setIsLoading(true);
-    recipeService.getRecipeById(props.match.params.recipeId, null, (response) => {
-      setRecipe(response.data);
-      setIsLoading(false);
-    }, (error) => {
-      if (error.response.status === 404) {
-        props.history.push("/notfound");
-      }
-    });
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+	useEffect(() => {
+		setIsLoading(true);
+		recipeService.getRecipeById(props.match.params.recipeId, null, (response) => {
+			setRecipe(response.data);
+			setIsLoading(false);
+		}, (error) => {
+			if (error.response.status === 404) {
+				props.history.push("/notfound");
+			}
+		});
+	}, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  function onToastClose() {
-    setToastOpen(false);
-  }
+	function onToastClose() {
+		setToastOpen(false);
+	}
 
-  function saveRecipe(updatedRecipe) {
-    setIsExecuting(true);
-    recipeService.updateRecipe(recipe.recipeId, updatedRecipe, (response) => {
-      if (response && response.status === 200) {
-        setToastOpen(true);
-        setRecipe(updatedRecipe);
-        props.history.replace(`/recipes/${recipe.recipeId}`);
-      } else {
-        console.log(response);
-      }
+	function saveRecipe(updatedRecipe) {
+		setIsExecuting(true);
+		recipeService.updateRecipe(recipe.recipeId, updatedRecipe, (response) => {
+			if (response && response.status === 200) {
+				setToastOpen(true);
+				setRecipe(updatedRecipe);
+				props.history.replace(`/recipes/${recipe.recipeId}`);
+			} else {
+				console.log(response);
+			}
 
-      setIsExecuting(false);
-    }, (error) => {
-      console.log(error);
-      if (error.response) {
-        console.log(error.response);
-      }
+			setIsExecuting(false);
+		}, (error) => {
+			console.log(error);
+			if (error.response) {
+				console.log(error.response);
+			}
 
-      setIsExecuting(false);
-    });
-  }
+			setIsExecuting(false);
+		});
+	}
 
-  function cancelRecipe(updatedRecipe) {
-    props.history.replace(`/recipes/${recipe.recipeId}`);
-  }
+	function cancelRecipe(updatedRecipe) {
+		props.history.replace(`/recipes/${recipe.recipeId}`);
+	}
 
-  return (
-    <React.Fragment>
-      <LoadingWrapper isLoading={isLoading}>
-        <RecipeForm
-          pageTitle={`Edit ${recipe.name}`}
-          recipe={recipe}
-          onSaveClick={saveRecipe}
-          onCancel={cancelRecipe}
-          isSaveExecuting={isExecuting} />
-        <RecipeSavedSnackbar
-          toastOpen={toastOpen}
-          onToastClose={onToastClose}
-          recipeId={recipe.recipeId} />
-      </LoadingWrapper>
-    </React.Fragment>
-  );
+	return (
+		<React.Fragment>
+			<LoadingWrapper isLoading={isLoading}>
+				<RecipeForm
+					pageTitle={`Edit ${recipe.name}`}
+					recipe={recipe}
+					onSaveClick={saveRecipe}
+					onCancel={cancelRecipe}
+					isSaveExecuting={isExecuting} />
+				<RecipeSavedSnackbar
+					toastOpen={toastOpen}
+					onToastClose={onToastClose}
+					recipeId={recipe.recipeId} />
+			</LoadingWrapper>
+		</React.Fragment>
+	);
 }

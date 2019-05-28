@@ -1,76 +1,76 @@
 import React, {
-  useState
+	useState
 } from "react";
 import {
-  Typography,
-  Divider,
-  Table
+	Typography,
+	Divider,
+	Table
 } from "@material-ui/core";
 import ScaleEntryModal from "./ScaleEntryModal";
-import Linkify from "react-linkify"
+import Linkify from "react-linkify";
 
 export function RecipeIngredientsSection(props) {
-  const [isScaleModalOpen, setIsScaleModalOpen] = useState(false);
-  let tableRows = props.ingredientsList.map((item, key) => {
-    if (item.isHeading) {
-      return <tr key={key}><td colSpan="2" className="rb-recipe-ingredient-list-heading">{item.name}</td></tr>
-    }
-    else {
-      return <tr key={key}><td>{item.amount}</td><td>{item.name}</td></tr>
-    }
-  });
+	const [isScaleModalOpen, setIsScaleModalOpen] = useState(false);
+	let tableRows = props.ingredientsList.map((item, key) => {
+		if (item.isHeading) {
+			return (<tr key={key}><td colSpan="2" className="rb-recipe-ingredient-list-heading">{item.name}</td></tr>);
+		}
+		else {
+			return (<tr key={key}><td>{item.amount}</td><td>{item.name}</td></tr>);
+		}
+	});
 
-  let scale = props.scale;
+	let scale = props.scale;
 
-  if (!scale)
-    scale = "1";
+	if (!scale)
+		scale = "1";
 
-  let scaleClassName = "scale-label";
-  if (scale !== "1")
-    scaleClassName += " scale-label-changed";
+	let scaleClassName = "scale-label";
+	if (scale !== "1")
+		scaleClassName += " scale-label-changed";
 
-  let newScale = null;
+	let newScale = null;
 
-  function showScaleDialog() {
-    setIsScaleModalOpen(true);
-  }
+	function showScaleDialog() {
+		setIsScaleModalOpen(true);
+	}
 
-  function onScaleEntryModalApply() {
-    if (newScale)
-      props.setScale(newScale);
-    setIsScaleModalOpen(false);
-  }
+	function onScaleEntryModalApply() {
+		if (newScale)
+			props.setScale(newScale);
+		setIsScaleModalOpen(false);
+	}
 
-  function onScaleEntryModalCancel() {
-    setIsScaleModalOpen(false);
-  }
+	function onScaleEntryModalCancel() {
+		setIsScaleModalOpen(false);
+	}
 
-  function onScaleChange(value) {
-    newScale = value;
-    return newScale;
-  }
+	function onScaleChange(value) {
+		newScale = value;
+		return newScale;
+	}
 
-  let scaleLabel = <span className={scaleClassName}>(<button className="link-button" onClick={showScaleDialog}>{`scale: x ${scale}`}</button>)</span>
+	let scaleLabel = (<span className={scaleClassName}>(<button className="link-button" onClick={showScaleDialog}>{`scale: x ${scale}`}</button>)</span>);
 
-  return (
-    <div className="rb-recipe-info">
-      <Typography variant="h6" color="primary">
-        {props.title} {scaleLabel}
-      </Typography>
-      <Table className={"rb-recipe-info-body rb-recipe-ingredient-list" + (scale === "1" ? "" : " rb-scale-enabled")}>
-        <tbody>
-          <Linkify properties={{ target: "_blank" }}>
-            {tableRows}
-          </Linkify>
-        </tbody>
-      </Table>
-      <Divider style={{ marginTop: 12 }} />
-      <ScaleEntryModal
-        isOpen={isScaleModalOpen}
-        scale={scale}
-        onApply={onScaleEntryModalApply}
-        onCancel={onScaleEntryModalCancel}
-        onScaleChange={onScaleChange} />
-    </div>
-  );
+	return (
+		<div className="rb-recipe-info">
+			<Typography variant="h6" color="primary">
+				{props.title} {scaleLabel}
+			</Typography>
+			<Table className={"rb-recipe-info-body rb-recipe-ingredient-list" + (scale === "1" ? "" : " rb-scale-enabled")}>
+				<tbody>
+					<Linkify properties={{ target: "_blank" }}>
+						{tableRows}
+					</Linkify>
+				</tbody>
+			</Table>
+			<Divider style={{ marginTop: 12 }} />
+			<ScaleEntryModal
+				isOpen={isScaleModalOpen}
+				scale={scale}
+				onApply={onScaleEntryModalApply}
+				onCancel={onScaleEntryModalCancel}
+				onScaleChange={onScaleChange} />
+		</div>
+	);
 }
