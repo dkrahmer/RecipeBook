@@ -20,13 +20,6 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import "./Content/site.scss";
 
 export default function App() {
-	/*
-	if ((navigator.userAgent.indexOf("iPad") > -1 || navigator.userAgent.indexOf("iPhone") > -1) 
-		&& navigator.userAgent.indexOf(" OS 9") > -1) {
-	  document.body.classList.add("disableAnimation"); // Animations make some old devices very slow
-	}
-	*/
-
 	return (
 		<BrowserRouter>
 			<CssBaseline />
