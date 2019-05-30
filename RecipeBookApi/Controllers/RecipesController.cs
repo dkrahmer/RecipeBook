@@ -6,6 +6,7 @@ using RecipeBookApi.Models;
 using RecipeBookApi.Services.Contracts;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -25,10 +26,15 @@ namespace RecipeBookApi.Controllers
 		[RequirePermission("CanViewRecipe")]
 		[HttpGet]
 		[Route("")]
+		[ProducesResponseType((int) HttpStatusCode.NotModified)]
 		[ProducesResponseType(typeof(IEnumerable<RecipeViewModel>), (int) HttpStatusCode.OK)]
 		public async Task<IActionResult> GetRecipeList()
 		{
 			var allRecipes = await _recipesService.GetAll();
+
+			DateTime lastRecipeUpdate = allRecipes.Max(r => r.UpdateDateTime);
+			if (TryGetNotModifiedResult(lastRecipeUpdate, out IActionResult notModifiedResult))
+				return notModifiedResult;
 
 			return Ok(allRecipes);
 		}
@@ -36,15 +42,17 @@ namespace RecipeBookApi.Controllers
 		[RequirePermission("CanViewRecipe")]
 		[HttpGet]
 		[Route("{recipeId}")]
+		[ProducesResponseType((int) HttpStatusCode.NotModified)]
 		[ProducesResponseType((int) HttpStatusCode.NotFound)]
 		[ProducesResponseType(typeof(RecipeViewModel), (int) HttpStatusCode.OK)]
 		public async Task<IActionResult> GetRecipe(int recipeId, [FromQuery] string scale)
 		{
 			var recipe = await _recipesService.Get(recipeId);
 			if (recipe == null)
-			{
 				return NotFound();
-			}
+
+			if (TryGetNotModifiedResult(recipe.UpdateDateTime, out IActionResult notModifiedResult))
+				return notModifiedResult;
 
 			if (!string.IsNullOrEmpty(scale) && Amount.TryParse(scale, out Amount scaleAmount) && scaleAmount.ToString() != "1")
 			{

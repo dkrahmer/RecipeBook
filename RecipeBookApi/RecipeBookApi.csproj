@@ -6,6 +6,7 @@
     <UserSecretsId>0857e991-a76b-4061-b116-ecd0d3bd00e7</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="AspNetCore.Mvc.HttpActionResults.Redirection.Extensions" Version="0.3.0" />
     <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.3.100.5" />
     <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="3.3.100.1" />
     <PackageReference Include="Amazon.Lambda.AspNetCoreServer" Version="3.0.3" />
