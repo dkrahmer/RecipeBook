@@ -47,7 +47,7 @@ namespace RecipeBookApi
 			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
 			services.Configure<AppOptions>(_configuration);
-			var options = services.BuildServiceProvider().GetService<IOptions<AppOptions>>();
+			var options = services.BuildServiceProvider().GetService<IOptions<AppOptions>>().Value;
 
 			services.AddSwaggerGen(swaggerGenOptions =>
 			{
@@ -58,14 +58,14 @@ namespace RecipeBookApi
 			{
 				corsOptions.AddDefaultPolicy(corsPolicyBuilder =>
 				{
-					corsPolicyBuilder.WithOrigins(options.Value.AllowedOrigins)
+					corsPolicyBuilder.WithOrigins(options.AllowedOrigins)
 						.AllowAnyHeader()
 						.AllowAnyMethod()
 						.AllowCredentials();
 				});
 			});
 
-			if (options.Value.DebugMode)
+			if (options.DebugMode)
 			{
 				services.AddMvc(opts =>
 				{
@@ -87,7 +87,7 @@ namespace RecipeBookApi
 							ValidateAudience = false,
 							ValidateIssuer = false,
 							ValidateIssuerSigningKey = true,
-							IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(options.Value.GoogleClientSecret))
+							IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(options.GoogleClientSecret))
 						};
 					});
 
@@ -96,7 +96,7 @@ namespace RecipeBookApi
 			services.AddTransient<IAppUsersService, MySqlAppUsersService>();
 			services.AddTransient<IRecipesService, MySqlRecipesService>();
 
-			using (var db = new MySqlDbContext(options.Value.MySqlConnectionString))
+			using (var db = new MySqlDbContext(options.MySqlConnectionString))
 			{
 				db.Database.EnsureCreated();
 			}
