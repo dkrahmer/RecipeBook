@@ -1,5 +1,6 @@
 import { RecipesFilterForm } from "./RecipesFilterForm";
 import { PageableRecipesGrid } from "./PageableRecipesGrid";
+import { LoadingWrapper } from "../../../Shared/LoadingWrapper";
 import React, {
 	useState,
 	useEffect
@@ -38,7 +39,9 @@ export function FilterableRecipesGrid(props) {
 						setNameQuery={setNameQuery} />
 				</Paper>
 			</Grid>
-			<PageableRecipesGrid recipes={matchingRecipes} />
+			<LoadingWrapper isLoading={props.isLoading}>
+				<PageableRecipesGrid recipes={matchingRecipes} />
+			</LoadingWrapper>
 		</Grid>
 	);
 }
@@ -46,10 +49,10 @@ export function FilterableRecipesGrid(props) {
 /*
 function sortRecipesByName(recipes) {
   recipes.sort((a, b) => {
-    var nameA = a.name.toLowerCase();
-    var nameB = b.name.toLowerCase();
+	var nameA = a.name.toLowerCase();
+	var nameB = b.name.toLowerCase();
 
-    return (nameA < nameB ? -1 : (nameA > nameB ? 1 : 0));
+	return (nameA < nameB ? -1 : (nameA > nameB ? 1 : 0));
   });
 }
 */

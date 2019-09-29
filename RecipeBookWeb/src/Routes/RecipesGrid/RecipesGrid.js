@@ -1,6 +1,5 @@
 import { useUserContext } from "../../Hooks/useUserContext";
 import { useRecipeService } from "../../Hooks/useRecipeService";
-import { LoadingWrapper } from "../../Shared/LoadingWrapper";
 import { FilterableRecipesGrid } from "./Components/FilterableRecipesGrid";
 import React, {
 	useState,
@@ -55,9 +54,7 @@ export function RecipesGrid(props) {
 
 	return (
 		<React.Fragment>
-			<LoadingWrapper isLoading={isLoading}>
-				<FilterableRecipesGrid allRecipes={allRecipes} />
-			</LoadingWrapper>
+			<FilterableRecipesGrid allRecipes={allRecipes} isLoading={isLoading} />
 		</React.Fragment>
 	);
 }
