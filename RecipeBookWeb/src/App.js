@@ -5,6 +5,7 @@ import { RecipesGrid } from "./Routes/RecipesGrid/RecipesGrid";
 import { RecipeView } from "./Routes/RecipeView/RecipeView";
 import { CreateRecipe } from "./Routes/CreateRecipe/CreateRecipe";
 import { EditRecipe } from "./Routes/EditRecipe/EditRecipe";
+import { CloneRecipe } from "./Routes/CloneRecipe/CloneRecipe";
 import { Login } from "./Routes/Login/Login";
 import { Logout } from "./Routes/Logout/Logout";
 import { RouteNotFound } from "./Shared/RouteNotFound";
@@ -32,6 +33,7 @@ export default function App() {
 						<Route exact path="/recipes/create" component={CreateRecipe} />
 						<Route exact path="/recipes/:recipeId" component={RecipeView} />
 						<Route exact path="/recipes/:recipeId/edit" component={EditRecipe} />
+						<Route exact path="/recipes/:recipeId/clone" component={CloneRecipe} />
 						<Route exact path="/login" component={Login} />
 						<Route exact path="/logout" component={Logout} />
 						<Route component={RouteNotFound} />

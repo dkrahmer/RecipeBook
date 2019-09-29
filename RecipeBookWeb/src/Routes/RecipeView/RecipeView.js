@@ -51,6 +51,10 @@ export function RecipeView(props) {
 		props.history.push(`/recipes/${recipe.recipeId}/edit`);
 	}
 
+	function cloneRecipe() {
+		props.history.push(`/recipes/${recipe.recipeId}/clone`);
+	}
+
 	function onDeleteConfirmed() {
 		setIsModalOpen(false);
 		recipeService.deleteRecipe(recipe.recipeId, (response) => {
@@ -78,6 +82,7 @@ export function RecipeView(props) {
 					<RecipeInfo recipe={recipe} scale={scale} setScale={setScale} setOwnerBlurb={setOwnerBlurb} />
 					<RecipeViewActions
 						editRecipe={editRecipe}
+						cloneRecipe={cloneRecipe}
 						deleteRecipe={confirmDeleteRequest} />
 				</Paper>
 				<YesNoModal

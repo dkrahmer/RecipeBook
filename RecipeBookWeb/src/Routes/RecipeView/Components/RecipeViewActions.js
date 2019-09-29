@@ -5,6 +5,7 @@ import {
 	Button
 } from "@material-ui/core";
 import EditIcon from "@material-ui/icons/Edit";
+import CloneIcon from "@material-ui/icons/FileCopy";
 import DeleteIcon from "@material-ui/icons/Delete";
 
 export function RecipeViewActions(props) {
@@ -21,6 +22,14 @@ export function RecipeViewActions(props) {
 						disabled={!user.canEditRecipe}
 						onClick={props.editRecipe}>
 						<EditIcon style={{ marginRight: 10 }} />Edit
+					</Button>
+					<Button
+						style={{ marginRight: 20 }}
+						variant="contained"
+						color="primary"
+						disabled={!user.canEditRecipe}
+						onClick={props.cloneRecipe}>
+						<CloneIcon style={{ marginRight: 10 }} />Clone
 					</Button>
 					<Button
 						variant="contained"

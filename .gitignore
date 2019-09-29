@@ -262,3 +262,4 @@ __pycache__/
 /RecipeBookApi/Properties/PublishProfiles/FolderProfile.pubxml
 /RecipeBookApi/appsettings.Production.json
 /RecipeBookWeb/Properties/launchSettings.json
+/RecipeBookWeb/build

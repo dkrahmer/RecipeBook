@@ -68,11 +68,11 @@ export function EditRecipe(props) {
 		<React.Fragment>
 			<LoadingWrapper isLoading={isLoading}>
 				<RecipeForm
-					pageTitle={`Edit ${recipe.name}`}
+					pageTitle={`${props.title || "Edit"} ${recipe.name}`}
 					recipe={recipe}
-					onSaveClick={saveRecipe}
+					onSaveClick={props.saveRecipe || saveRecipe}
 					onCancel={cancelRecipe}
-					isSaveExecuting={isExecuting} />
+					isSaveExecuting={props.isExecuting || isExecuting} />
 				<RecipeSavedSnackbar
 					toastOpen={toastOpen}
 					onToastClose={onToastClose}
