@@ -35,14 +35,15 @@ export function Menu() {
 	}];
 
 	const signedInActions = [/*{
-    text: "Settings",
-    url: "/settings",
-    icon: <SettingsIcon />
+	text: "Settings",
+	url: "/settings",
+	icon: <SettingsIcon />
   }, */ {
 			text: "Create Recipe",
 			url: "/recipes/create",
 			icon: <CreateIcon />
 		},
+		"divider",
 		{
 			text: "Logout",
 			url: "/logout",
