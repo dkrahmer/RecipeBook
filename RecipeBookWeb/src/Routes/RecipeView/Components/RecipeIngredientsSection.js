@@ -1,6 +1,4 @@
-import React, {
-	useState
-} from "react";
+import React, { useState } from "react";
 import {
 	Typography,
 	Divider,
@@ -11,12 +9,31 @@ import Linkify from "react-linkify";
 
 export function RecipeIngredientsSection(props) {
 	const [isScaleModalOpen, setIsScaleModalOpen] = useState(false);
+	const [checkedRows, setCheckedRows] = useState({});
+
+	function onRowClick(e, key) {
+		const newCheckedRows = { ...checkedRows };
+
+		// Reverse the checked state of the selected row
+		if (newCheckedRows[key]) {
+			delete newCheckedRows[key];
+		}
+		else {
+			newCheckedRows[key] = true;
+		}
+
+		setCheckedRows(newCheckedRows);
+
+		e.preventDefault();
+		return false;
+	}
+
 	let tableRows = props.ingredientsList.map((item, key) => {
 		if (item.isHeading) {
 			return (<tr key={key}><td colSpan="2" className="rb-recipe-ingredient-list-heading">{item.name}</td></tr>);
 		}
 		else {
-			return (<tr key={key}><td>{item.amount}</td><td>{item.name}</td></tr>);
+			return (<tr key={key} onClick={(e) => onRowClick(e, key)} className={checkedRows[key] ? "checked-row" : "unchecked-row"}><td>{item.amount}</td><td>{item.name}</td></tr>);
 		}
 	});
 
@@ -57,13 +74,13 @@ export function RecipeIngredientsSection(props) {
 			<Typography variant="h6" color="primary">
 				{props.title} {scaleLabel}
 			</Typography>
-			<Table className={"rb-recipe-info-body rb-recipe-ingredient-list" + (scale === "1" ? "" : " rb-scale-enabled")}>
-				<tbody>
-					<Linkify properties={{ target: "_blank" }}>
+			<Linkify properties={{ target: "_blank" }}>
+				<Table className={"rb-recipe-info-body rb-recipe-ingredient-list" + (scale === "1" ? "" : " rb-scale-enabled")}>
+					<tbody>
 						{tableRows}
-					</Linkify>
-				</tbody>
-			</Table>
+					</tbody>
+				</Table>
+			</Linkify>
 			<Divider style={{ marginTop: 12 }} />
 			<ScaleEntryModal
 				isOpen={isScaleModalOpen}

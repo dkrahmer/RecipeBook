@@ -212,3 +212,13 @@ main#main-content {
 .inherit-style {
 	color: inherit;
 }
+
+tr.unchecked-row td {
+	cursor:pointer;
+}
+
+tr.checked-row td {
+	cursor: pointer;
+	text-decoration: line-through;
+	opacity: 0.5;
+}
