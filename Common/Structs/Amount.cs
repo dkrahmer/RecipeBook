@@ -1,6 +1,8 @@
 ﻿using Newtonsoft.Json;
 using Rationals;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Common.Structs
@@ -44,7 +46,7 @@ namespace Common.Structs
 			if (IsDecimal)
 				return this;
 
-			return new Amount() { _decimal = decimal.Round((decimal)_fraction.Value.Numerator / (decimal)_fraction.Value.Denominator, 2) };
+			return new Amount() { _decimal = decimal.Round((decimal) _fraction.Value.Numerator / (decimal) _fraction.Value.Denominator, 2) };
 		}
 
 		public Amount ToFractionAmount()
@@ -59,6 +61,8 @@ namespace Common.Structs
 		{
 			if (string.IsNullOrWhiteSpace(value))
 				throw new ArgumentException("Invalid Amount value. Cannot be null or empty.");
+
+			value = GetNormalizedValue(value);
 
 			if (value.Contains("/"))
 			{
@@ -79,6 +83,39 @@ namespace Common.Structs
 			}
 		}
 
+		public static readonly Dictionary<string, string> FractionMap = new Dictionary<string, string>()
+		{
+			// Fraction characters
+			{ "\x2044", "/"},		// Fraction Slash
+			{ "\x215F", "1/"},
+			{ "\x00BC", "1/4"},
+			{ "\x00BD", "1/2"},
+			{ "\x00BE", "3/4"},
+			{ "\x2150", "1/7"},
+			{ "\x2151", "1/9"},
+			{ "\x2152", "1/10"},
+			{ "\x2153", "1/3"},
+			{ "\x2154", "2/3"},
+			{ "\x2155", "1/5"},
+			{ "\x2156", "2/5"},
+			{ "\x2157", "3/5"},
+			{ "\x2158", "4/5"},
+			{ "\x2159", "1/6"},
+			{ "\x215A", "5/6"},
+			{ "\x215B", "1/8"},
+			{ "\x215C", "3/8"},
+			{ "\x215D", "5/8"},
+			{ "\x215E", "7/8"},
+			{ "\x2189", "0"}		// Char: "0/8"
+		};
+
+		private static string GetNormalizedValue(string value)
+		{
+			string output = FractionMap.Aggregate(value, (current, map) => current.Replace(map.Key, map.Value));
+
+			return output;
+		}
+
 		public static bool TryParse(string value, out Amount amount)
 		{
 			if (string.IsNullOrWhiteSpace(value))
@@ -86,6 +123,8 @@ namespace Common.Structs
 				amount = new Amount();
 				return false;
 			}
+
+			value = GetNormalizedValue(value);
 
 			if (value.Contains("/"))
 			{

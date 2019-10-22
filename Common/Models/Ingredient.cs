@@ -1,15 +1,17 @@
 ﻿using Common.Structs;
 using Newtonsoft.Json;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Common.Models
 {
 	public class Ingredient
 	{
-		const string FRACTION_REGEX_PARTIAL = @"(?<Fraction>(([0-9]+\s+)?[0-9]+\/[1-9]+[0-9]*))";
-		const string DECIMAL_REGEX_PARTIAL = @"(?<Decimal>([0-9]+\.[0-9]*)|([0-9]*\.[0-9]+)|[0-9]+)";
-		const string AMOUNT_REGEX_PARTIAL = "(?<Amount>" + FRACTION_REGEX_PARTIAL + "|" + DECIMAL_REGEX_PARTIAL + ")";
-		const string RECIPE_UNIT_NAME_REGEX_PARTIAL = @"(?<Name>(?<Unit>[^\s]*).*)";
+		private static readonly string REGEX_FRACTION_STRINGS = string.Join("", Amount.FractionMap.Select(m => Regex.Escape(m.Key)));
+		private static readonly string FRACTION_REGEX_PARTIAL = @"(?<Fraction>(([0-9]+\s+)?(([0-9]+\/[1-9]+[0-9]*)|([0-9" + REGEX_FRACTION_STRINGS + @"]+))))";
+		private static readonly string DECIMAL_REGEX_PARTIAL = @"(?<Decimal>([0-9]+\.[0-9]*)|([0-9]*\.[0-9]+)|[0-9]+)";
+		private static readonly string AMOUNT_REGEX_PARTIAL = "(?<Amount>" + FRACTION_REGEX_PARTIAL + "|" + DECIMAL_REGEX_PARTIAL + ")";
+		private const string RECIPE_UNIT_NAME_REGEX_PARTIAL = @"(?<Name>(?<Unit>[^\s]*).*)";
 
 		protected static readonly Regex IngredientLineRegEx =
 			new Regex($"^({AMOUNT_REGEX_PARTIAL}\\s*)?{RECIPE_UNIT_NAME_REGEX_PARTIAL}$", RegexOptions.Compiled);
@@ -47,6 +49,7 @@ namespace Common.Models
 		}
 
 		public Amount Amount { get; set; }
+
 		[JsonIgnore]
 		public string Unit { get; private set; }
 		public string Name { get; set; }

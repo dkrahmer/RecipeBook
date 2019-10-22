@@ -54,6 +54,12 @@ namespace CommonTests
 
 			amount = Amount.Parse(".6666666") - Amount.Parse("1/9");
 			Assert.AreEqual("5/9", amount.ToString());
+
+			amount = Amount.Parse("\x00BD");
+			Assert.AreEqual("1/2", amount.ToString());
+
+			amount = Amount.Parse("\x00BC");
+			Assert.AreEqual("1/4", amount.ToString());
 		}
 	}
 }
