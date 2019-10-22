@@ -65,7 +65,7 @@ namespace RecipeBookApi.Services
 			recipe.UpdateDateTime = DateTime.UtcNow;
 			using (var db = new MySqlDbContext(_options.MySqlConnectionString))
 			{
-				var updatededRecipe = await db.AddAsync(recipe);
+				var updatededRecipe = db.Update(recipe);
 				await db.SaveChangesAsync();
 			}
 		}
