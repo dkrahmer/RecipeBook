@@ -28,6 +28,8 @@ namespace Common.MySql
 
 			modelBuilder.Entity<Recipe>(entity =>
 			{
+				entity.ForMySQLHasCharset("utf8").ForMySQLHasCollation("utf8_unicode_ci");
+
 				entity.HasKey(e => e.RecipeId);
 				entity.Property(e => e.RecipeId).UseMySQLAutoIncrementColumn("INT");
 
@@ -38,6 +40,8 @@ namespace Common.MySql
 
 			modelBuilder.Entity<AppUser>(entity =>
 			{
+				entity.ForMySQLHasCharset("utf8").ForMySQLHasCollation("utf8_unicode_ci");
+
 				entity.HasKey(e => e.AppUserId);
 				entity.Property(e => e.AppUserId).UseMySQLAutoIncrementColumn("INT");
 

@@ -1,4 +1,4 @@
-﻿CREATE TABLE `Recipes` (
+﻿CREATE TABLE `RecipesTest` (
   `RecipeId` int(11) NOT NULL AUTO_INCREMENT,
   `Name` varchar(50) NOT NULL,
   `Description` text,
@@ -9,8 +9,7 @@
   `Notes` text,
   PRIMARY KEY (`RecipeId`),
   UNIQUE KEY `RecipeId_UNIQUE` (`RecipeId`)
-) ENGINE=MyISAM AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
-
+) ENGINE=MyISAM AUTO_INCREMENT=11 DEFAULT CHARSET=utf8 DEFAULT COLLATE=utf8_unicode_ci;
 
 CREATE TABLE `AppUsers` (
   `AppUserId` int(11) NOT NULL AUTO_INCREMENT,
@@ -25,4 +24,6 @@ CREATE TABLE `AppUsers` (
   `UpdateDateTime` datetime NOT NULL,
   PRIMARY KEY (`AppUserId`),
   UNIQUE KEY `Username_UNIQUE` (`Username`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 DEFAULT COLLATE=utf8_unicode_ci;
+
+-- Character set and collate info: https://dba.stackexchange.com/questions/96265/mysql-silently-replaces-utf-chars-with-literal-question-marks
