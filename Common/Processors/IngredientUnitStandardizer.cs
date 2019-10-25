@@ -2,15 +2,18 @@
 using Common.Structs;
 using System;
 using System.Collections.Generic;
+using System.Data;
 
 namespace Common.Processors
 {
 	public class IngredientUnitStandardizer
 	{
 		private readonly Dictionary<string, string> _unitMap;
+		private readonly List<UnitConversionRule> _unitAppropriations;
+		private readonly List<UnitConversionRule> _metricConversions;
 		private readonly HashSet<string> _alwaysDecimalUnits;
 
-		public IngredientUnitStandardizer(List<List<string>> unitEquivalents, List<string> alwaysDecimalUnits)
+		public IngredientUnitStandardizer(List<List<string>> unitEquivalents, List<UnitConversionRule> unitAppropriations, List<UnitConversionRule> metricConversions, List<string> alwaysDecimalUnits)
 		{
 			_unitMap = new Dictionary<string, string>();
 
@@ -31,6 +34,9 @@ namespace Common.Processors
 				}
 			}
 
+			_unitAppropriations = unitAppropriations ?? new List<UnitConversionRule>();
+			_metricConversions = metricConversions ?? new List<UnitConversionRule>();
+
 			_alwaysDecimalUnits = new HashSet<string>(alwaysDecimalUnits ?? new List<string>(), StringComparer.InvariantCultureIgnoreCase);
 		}
 
@@ -38,7 +44,7 @@ namespace Common.Processors
 		private static Amount One = new Amount(1M);
 		private static Amount Two = new Amount(2M);
 
-		public bool StandardizeUnit(Ingredient ingredient)
+		public bool StandardizeUnit(Ingredient ingredient, bool allMetric = false)
 		{
 			string cleanUnit = ingredient.Unit.Trim(new char[] { ' ', '.' });
 			bool changed = false;
@@ -55,6 +61,13 @@ namespace Common.Processors
 			{
 				ingredient.Unit = mappedUnit;
 				changed = true;
+			}
+
+			ConvertUnit(ingredient, _unitAppropriations);
+
+			if (allMetric)
+			{
+				ConvertUnit(ingredient, _metricConversions);
 			}
 
 			if (_alwaysDecimalUnits.Contains(ingredient.Unit) && !ingredient.Amount.IsDecimal)
@@ -77,6 +90,63 @@ namespace Common.Processors
 			}
 
 			return changed;
+		}
+
+		private static void ConvertUnit(Ingredient ingredient, List<UnitConversionRule> unitConversionRules)
+		{
+			try
+			{
+				bool unitAppropriated;
+				var dt = new DataTable();
+				string amount = ingredient.Amount.ToDecimalAmount().ToString();
+				int iterations = 0;
+				do
+				{
+					unitAppropriated = false;
+					foreach (var unitConversionRule in unitConversionRules)
+					{
+						if (ingredient.Unit != unitConversionRule.InputUnit)
+							continue;
+
+						bool rulesMatch = true;
+						if (unitConversionRule.Rules != null)
+						{
+							foreach (var rule in unitConversionRule.Rules)
+							{
+								string ruleEquation = rule.Replace("{{value}}", amount);
+								if (!Convert.ToBoolean(dt.Compute(ruleEquation, "")))
+								{
+									rulesMatch = false;
+									break;
+								}
+							}
+						}
+
+						if (!rulesMatch)
+							continue;
+
+						// The rules match! Let's convert it
+						string unitEquation = unitConversionRule.ConversionEquation.Replace("{{value}}", amount);
+						var newAmountDecimal = Convert.ToDecimal(dt.Compute(unitEquation, ""));
+						amount = newAmountDecimal.ToString();
+						var newAmount = new Amount(newAmountDecimal);
+						if (ingredient.Amount.IsFraction)
+							newAmount = newAmount.ToFractionAmount();
+
+						ingredient.Amount = newAmount;
+						ingredient.Unit = unitConversionRule.OutputUnit;
+						unitAppropriated = true;
+					}
+
+					if (++iterations > 20)
+						throw new ApplicationException("Too many iterations while calculating the appropriate unit. Check unit conversion rules for cyclical conversion loops.");
+				}
+				while (unitAppropriated);
+			}
+			catch (Exception ex)
+			{
+				throw;
+			}
 		}
 	}
 }

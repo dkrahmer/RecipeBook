@@ -27,8 +27,8 @@ export function RecipeIngredientsSection(props) {
 		e.preventDefault();
 		return false;
 	}
-
-	let tableRows = props.ingredientsList.map((item, key) => {
+	const ingredientsList = props.ingredientsList || [];
+	let tableRows = ingredientsList.map((item, key) => {
 		if (item.isHeading) {
 			return (<tr key={key}><td colSpan="2" className="rb-recipe-ingredient-list-heading">{item.name}</td></tr>);
 		}
@@ -38,6 +38,7 @@ export function RecipeIngredientsSection(props) {
 	});
 
 	let scale = props.scale;
+	let system = props.system;
 
 	if (!scale)
 		scale = "1";
@@ -46,15 +47,29 @@ export function RecipeIngredientsSection(props) {
 	if (scale !== "1")
 		scaleClassName += " scale-label-changed";
 
+	let systemClassName = "scale-label";
+	if (system)
+		systemClassName += " scale-label-changed";
+
 	let newScale = null;
 
 	function showScaleDialog() {
 		setIsScaleModalOpen(true);
 	}
 
+	function toggleSystem() {
+		if (system !== "metric") {
+			props.setSystem("metric");
+		}
+		else {
+			props.setSystem(null);
+		}
+	}
+
 	function onScaleEntryModalApply() {
 		if (newScale)
 			props.setScale(newScale);
+
 		setIsScaleModalOpen(false);
 	}
 
@@ -68,11 +83,12 @@ export function RecipeIngredientsSection(props) {
 	}
 
 	let scaleLabel = (<span className={scaleClassName}>(<button className="link-button" onClick={showScaleDialog}>{`scale: x ${scale}`}</button>)</span>);
+	let systemLabel = (<span className={systemClassName}>(<button className="link-button" onClick={toggleSystem}>{`measurement system: ${system || "normal"}`}</button>)</span>);
 
 	return (
 		<div className="rb-recipe-info">
 			<Typography variant="h6" color="primary">
-				{props.title} {scaleLabel}
+				{props.title} {scaleLabel} {systemLabel}
 			</Typography>
 			<Linkify properties={{ target: "_blank" }}>
 				<Table className={"rb-recipe-info-body rb-recipe-ingredient-list" + (scale === "1" ? "" : " rb-scale-enabled")}>

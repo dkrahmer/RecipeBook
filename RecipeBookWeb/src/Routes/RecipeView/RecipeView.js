@@ -20,16 +20,17 @@ export function RecipeView(props) {
 
 	const queryStringValues = queryString.parse(props.location.search);
 	var [scale, setScale] = useState(queryStringValues.scale);
+	var [system, setSystem] = useState(queryStringValues.system);
 
 	useEffect(() => {
-		if (scale) {
+		if (scale || system) {
 			props.history.replace({
-				search: `scale=${scale}` // update the URL QS
+				search: `scale=${scale || ""}&system=${system || ""}` // update the URL QS
 			});
 		}
 
 		setIsLoading(true);
-		recipeService.getRecipeById(props.match.params.recipeId, scale, (response) => {
+		recipeService.getRecipeById(props.match.params.recipeId, scale, system, (response) => {
 			setRecipe(response.data);
 			setIsLoading(false);
 		}, (error) => {
@@ -37,7 +38,7 @@ export function RecipeView(props) {
 				props.history.push("/notfound");
 			}
 		});
-	}, [scale]); // eslint-disable-line react-hooks/exhaustive-deps
+	}, [scale, system]); // eslint-disable-line react-hooks/exhaustive-deps
 
 	function confirmDeleteRequest() {
 		setIsModalOpen(true);
@@ -78,20 +79,26 @@ export function RecipeView(props) {
 		<React.Fragment>
 			<PageHeader text={recipe.name} />
 			<LoadingWrapper isLoading={isLoading}>
-				<Paper style={{ padding: 12 }}>
-					<RecipeInfo recipe={recipe} scale={scale} setScale={setScale} setOwnerBlurb={setOwnerBlurb} />
-					<RecipeViewActions
-						editRecipe={editRecipe}
-						cloneRecipe={cloneRecipe}
-						deleteRecipe={confirmDeleteRequest} />
-				</Paper>
-				<YesNoModal
-					isOpen={isModalOpen}
-					title="Delete Recipe"
-					question={`Are you sure you want to delete ${recipe.name}?`}
-					onYes={onDeleteConfirmed}
-					onNo={onNoModal} />
 			</LoadingWrapper>
+			<Paper style={{ padding: 12 }}>
+				<RecipeInfo
+					recipe={recipe}
+					scale={scale}
+					setScale={setScale}
+					system={system}
+					setSystem={setSystem}
+					setOwnerBlurb={setOwnerBlurb} />
+				<RecipeViewActions
+					editRecipe={editRecipe}
+					cloneRecipe={cloneRecipe}
+					deleteRecipe={confirmDeleteRequest} />
+			</Paper>
+			<YesNoModal
+				isOpen={isModalOpen}
+				title="Delete Recipe"
+				question={`Are you sure you want to delete ${recipe.name}?`}
+				onYes={onDeleteConfirmed}
+				onNo={onNoModal} />
 			<Typography variant="subtitle2" color="textSecondary">
 				{ownerBlurb}
 			</Typography>
