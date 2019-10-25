@@ -224,7 +224,17 @@ namespace Common.Structs
 
 		public override string ToString()
 		{
-			return _decimal?.ToString("G29") ?? _fraction?.ToString("W").Replace(" + ", " ") ?? "";
+			return ToString(useFractionSlash: true);
+		}
+
+		public string ToString(bool useFractionSlash = true)
+		{
+			string output = _decimal?.ToString("G29") ?? _fraction?.ToString("W").Replace(" + ", " ") ?? "";
+
+			if (useFractionSlash)
+				output = output.Replace("/", "\x2044"); // x2044 is the fraction slash char
+
+			return output;
 		}
 	}
 }
