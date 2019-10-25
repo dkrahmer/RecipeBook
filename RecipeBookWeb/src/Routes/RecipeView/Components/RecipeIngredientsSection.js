@@ -83,7 +83,7 @@ export function RecipeIngredientsSection(props) {
 	}
 
 	let scaleLabel = (<span className={scaleClassName}>(<button className="link-button" onClick={showScaleDialog}>{`scale: x ${scale}`}</button>)</span>);
-	let systemLabel = (<span className={systemClassName}>(<button className="link-button" onClick={toggleSystem}>{`measurement system: ${system || "normal"}`}</button>)</span>);
+	let systemLabel = (<span className={systemClassName}>(<button className="link-button" onClick={toggleSystem}>{`measurements: ${system || "normal"}`}</button>)</span>);
 
 	return (
 		<div className="rb-recipe-info">

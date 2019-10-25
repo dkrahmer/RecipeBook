@@ -130,8 +130,7 @@ namespace Common.Processors
 						var newAmountDecimal = Convert.ToDecimal(dt.Compute(unitEquation, ""));
 						amount = newAmountDecimal.ToString();
 						var newAmount = new Amount(newAmountDecimal);
-						if (ingredient.Amount.IsFraction)
-							newAmount = newAmount.ToFractionAmount();
+						newAmount = newAmount.ToFractionAmount();
 
 						ingredient.Amount = newAmount;
 						ingredient.Unit = unitConversionRule.OutputUnit;
