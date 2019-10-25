@@ -50,8 +50,21 @@ namespace Common.Models
 
 		public Amount Amount { get; set; }
 
+		private string _unit;
+
 		[JsonIgnore]
-		public string Unit { get; private set; }
+		public string Unit
+		{
+			get => _unit;
+			set
+			{
+				if (!string.IsNullOrEmpty(_unit) && !string.IsNullOrEmpty(Name) && Name.Length > _unit.Length)
+				{
+					Name = $"{value} {Name.Substring(_unit.Length).TrimStart()}";
+				}
+				_unit = value;
+			}
+		}
 		public string Name { get; set; }
 		public bool IsHeading { get; set; }
 	}

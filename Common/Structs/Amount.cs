@@ -222,6 +222,100 @@ namespace Common.Structs
 			return new Amount(x._fraction.Value / y._fraction.Value);
 		}
 
+		public static bool operator <=(Amount x, Amount y)
+		{
+			if (x.IsEmpty && y.IsEmpty)
+				return true;
+
+			if (x.IsEmpty || y.IsEmpty)
+				return false;
+
+			if (x.IsDecimal && y.IsDecimal)
+				return x._decimal.Value <= y._decimal.Value;
+
+			if (x.IsDecimal)
+				return Rational.ParseDecimal(x._decimal.ToString(), FRACTION_TOLERANCE) <= y._fraction.Value;
+
+			if (y.IsDecimal)
+				return x._fraction.Value <= Rational.ParseDecimal(y._decimal.ToString(), FRACTION_TOLERANCE);
+
+			return x._fraction.Value <= y._fraction.Value;
+		}
+
+		public static bool operator >=(Amount x, Amount y)
+		{
+			if (x.IsEmpty && y.IsEmpty)
+				return true;
+
+			if (x.IsEmpty || y.IsEmpty)
+				return false;
+
+			if (x.IsDecimal && y.IsDecimal)
+				return x._decimal.Value >= y._decimal.Value;
+
+			if (x.IsDecimal)
+				return Rational.ParseDecimal(x._decimal.ToString(), FRACTION_TOLERANCE) >= y._fraction.Value;
+
+			if (y.IsDecimal)
+				return x._fraction.Value >= Rational.ParseDecimal(y._decimal.ToString(), FRACTION_TOLERANCE);
+
+			return x._fraction.Value >= y._fraction.Value;
+		}
+
+		public static bool operator ==(Amount x, Amount y)
+		{
+			if (x.IsEmpty && y.IsEmpty)
+				return true;
+
+			if (x.IsEmpty || y.IsEmpty)
+				return false;
+
+			if (x.IsDecimal && y.IsDecimal)
+				return x._decimal.Value == y._decimal.Value;
+
+			if (x.IsDecimal)
+				return Rational.ParseDecimal(x._decimal.ToString(), FRACTION_TOLERANCE) == y._fraction.Value;
+
+			if (y.IsDecimal)
+				return x._fraction.Value == Rational.ParseDecimal(y._decimal.ToString(), FRACTION_TOLERANCE);
+
+			return x._fraction.Value == y._fraction.Value;
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (obj == null || !(obj is Amount))
+				return false;
+
+			return (Amount) obj == this;
+		}
+
+		public override int GetHashCode()
+		{
+			if (IsDecimal)
+				return _decimal.GetHashCode();
+
+			if (IsFraction)
+				return _fraction.GetHashCode();
+
+			return base.GetHashCode();
+		}
+
+		public static bool operator <(Amount x, Amount y)
+		{
+			return !(x >= y);
+		}
+
+		public static bool operator >(Amount x, Amount y)
+		{
+			return !(x <= y);
+		}
+
+		public static bool operator !=(Amount x, Amount y)
+		{
+			return !(x == y);
+		}
+
 		public override string ToString()
 		{
 			return _decimal?.ToString("G29") ?? _fraction?.ToString("W").Replace(" + ", " ") ?? "";
