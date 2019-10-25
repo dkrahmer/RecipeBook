@@ -1,5 +1,6 @@
 ﻿using Common.Structs;
 using Newtonsoft.Json;
+using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -67,6 +68,36 @@ namespace Common.Models
 		}
 		public string Name { get; set; }
 		public bool IsHeading { get; set; }
+
+		public string GetCleanName(bool removeNotes = true)
+		{
+			if (string.IsNullOrEmpty(Name) || string.IsNullOrEmpty(Unit) || Name.Length <= Unit.Length)
+				return Name;
+
+			string cleanName = Name.Substring(Unit.Length);
+
+			if (removeNotes)
+			{
+				// Get rid of extra notes in the name
+				int dividerIndex = cleanName.IndexOfAny(new char[] { ',', '(', '[', '<', '-', '*', ';', '~', '@' });
+				if (dividerIndex > -1)
+				{
+					cleanName = cleanName.Substring(0, dividerIndex);
+				}
+
+				var dividerStrings = new string[] { " or ", " at ", " with ", "- ", " -" };
+				foreach (string dividerWord in dividerStrings)
+				{
+					dividerIndex = cleanName.IndexOf(dividerWord);
+					if (dividerIndex > -1)
+					{
+						cleanName = cleanName.Substring(0, dividerIndex);
+					}
+				}
+			}
+
+			return cleanName.Trim();
+		}
 
 		public override string ToString()
 		{

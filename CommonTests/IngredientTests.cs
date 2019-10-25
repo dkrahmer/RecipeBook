@@ -1,9 +1,7 @@
 using Common.Models;
 using Common.Processors;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using System.Collections.Generic;
-using System.Data;
 
 namespace CommonTests
 {
@@ -87,7 +85,7 @@ namespace CommonTests
 				new List<string>(){ "cups", "cup", "c", "cp" }
 			};
 
-			var ingredientUnitStandardizer = new IngredientUnitStandardizer(unitEquivalents, null, null, null);
+			var ingredientUnitStandardizer = new IngredientUnitStandardizer(unitEquivalents, null, null, null, null);
 
 			var ingredient_T = Ingredient.Parse("8 T. Water");
 			bool wasChanged_T = ingredientUnitStandardizer.StandardizeUnit(ingredient_T);
@@ -144,9 +142,47 @@ namespace CommonTests
 		}
 
 		[TestMethod]
-		public void IngredientUnitOptimizationTests()
+		public void IngredientGetCleanNameTests()
 		{
-			var ingredient = Ingredient.Parse("8 tblsp Water");
+			var ingredient = Ingredient.Parse("1 cup Water - warm");
+			Assert.AreEqual("Water", ingredient.GetCleanName());
+
+			ingredient = Ingredient.Parse("1 cup Water at room temp");
+			Assert.AreEqual("Water", ingredient.GetCleanName());
+
+			ingredient = Ingredient.Parse("1 cup Water at room temp");
+			Assert.AreEqual("Water", ingredient.GetCleanName());
+
+			ingredient = Ingredient.Parse("1 cup Water or juice at room temp");
+			Assert.AreEqual("Water", ingredient.GetCleanName());
+
+			ingredient = Ingredient.Parse("1 cup Broccoli with stems");
+			Assert.AreEqual("Broccoli", ingredient.GetCleanName());
+		}
+
+		[TestMethod]
+		public void IngredientVolumeToMassConversionTests()
+		{
+			var volumeToMassConversion = new List<DensityMap>()
+			{
+				new DensityMap() { Names = new List<string>(){ "flour", "white flour", "all-purpose flour" }, Density = 0.55M },
+				new DensityMap() { Names = new List<string>(){ "almond flour" }, Density = 0.406M },
+				new DensityMap() { Names = new List<string>(){ "whole wheat flour" }, Density = 0.593M },
+			};
+
+			var ingredientUnitStandardizer = new IngredientUnitStandardizer(null, null, null, null, volumeToMassConversion);
+
+			Ingredient ingredient;
+			ingredient = Ingredient.Parse("100 ml white almond flour (sifted)");
+			ingredientUnitStandardizer.StandardizeUnit(ingredient, convertToMass: true);
+			Assert.AreEqual("g", ingredient.Unit);
+			Assert.AreEqual("40.6", ingredient.Amount.ToString());
+
+			ingredient = Ingredient.Parse("100 ml flour - warm");
+			ingredientUnitStandardizer.StandardizeUnit(ingredient, convertToMass: true);
+			Assert.AreEqual("g", ingredient.Unit);
+			Assert.AreEqual("55", ingredient.Amount.ToString());
+
 		}
 	}
 }

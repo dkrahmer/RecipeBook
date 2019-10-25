@@ -22,6 +22,12 @@ namespace Common.Structs
 
 		public bool IsEmpty => !IsDecimal && !IsFraction;
 
+		public Amount(Amount value) : this()
+		{
+			_decimal = value._decimal;
+			_fraction = value._fraction;
+		}
+
 		public Amount(decimal value) : this()
 		{
 			_decimal = decimal.Parse(value.ToString("G29"));
