@@ -85,7 +85,7 @@ namespace CommonTests
 				new List<string>(){ "cups", "cup", "c", "cp" }
 			};
 
-			var ingredientUnitStandardizer = new IngredientUnitStandardizer(unitEquivalents);
+			var ingredientUnitStandardizer = new IngredientUnitStandardizer(unitEquivalents, null);
 
 			var ingredient_T = Ingredient.Parse("8 T. Water");
 			bool wasChanged_T = ingredientUnitStandardizer.StandardizeUnit(ingredient_T);
@@ -133,6 +133,12 @@ namespace CommonTests
 			Assert.IsTrue(wasChanged_cups4);
 			Assert.AreEqual("cups", ingredient_cups4.Unit);
 			Assert.AreEqual("cups Water", ingredient_cups4.Name);
+
+			var ingredient_cups5 = Ingredient.Parse("1 1/2 c. Water");
+			bool wasChanged_cups5 = ingredientUnitStandardizer.StandardizeUnit(ingredient_cups5);
+			Assert.IsTrue(wasChanged_cups5);
+			Assert.AreEqual("cup", ingredient_cups5.Unit);
+			Assert.AreEqual("cup Water", ingredient_cups5.Name);
 		}
 
 		[TestMethod]

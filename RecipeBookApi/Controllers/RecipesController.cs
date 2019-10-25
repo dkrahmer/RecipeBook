@@ -1,8 +1,10 @@
 ﻿using Common.Models;
 using Common.Structs;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using RecipeBookApi.Attributes;
 using RecipeBookApi.Models;
+using RecipeBookApi.Options;
 using RecipeBookApi.Services.Contracts;
 using System;
 using System.Collections.Generic;
@@ -16,11 +18,13 @@ namespace RecipeBookApi.Controllers
 	public class RecipesController : BaseApiController
 	{
 		private readonly IRecipesService _recipesService;
+		private readonly AppOptions _appOptions;
 
-		public RecipesController(IAuthService authService, IRecipesService recipesService)
+		public RecipesController(IAuthService authService, IRecipesService recipesService, IOptions<AppOptions> appOptions)
 					: base(authService)
 		{
 			_recipesService = recipesService;
+			_appOptions = appOptions.Value;
 		}
 
 		[RequirePermission("CanViewRecipe")]
@@ -54,24 +58,22 @@ namespace RecipeBookApi.Controllers
 			if (TryGetNotModifiedResult(recipe.UpdateDateTime, out IActionResult notModifiedResult))
 				return notModifiedResult;
 
-			if (!string.IsNullOrEmpty(scale) && Amount.TryParse(scale, out Amount scaleAmount) && scaleAmount.ToString() != "1")
-			{
-				foreach (var ingredient in recipe.IngredientsList)
-				{
-					if (ingredient.Amount.IsEmpty)
-						continue;
+			Amount scaleAmount = new Amount(1M);
+			bool needScaling = !string.IsNullOrEmpty(scale) && Amount.TryParse(scale, out scaleAmount) && scaleAmount.ToString() != "1";
 
+			foreach (var ingredient in recipe.IngredientsList)
+			{
+				if (ingredient.Amount.IsEmpty)
+					continue;
+
+				if (needScaling)
 					ingredient.Amount *= scaleAmount;
 
-					if (_alwaysDecimalUnits.Contains(ingredient.Unit))
-						ingredient.Amount = ingredient.Amount.ToDecimalAmount();
-				}
+				_appOptions.IngredientUnitStandardizer.StandardizeUnit(ingredient);
 			}
 
 			return Ok(recipe);
 		}
-
-		private HashSet<string> _alwaysDecimalUnits = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase) { "g", "mg", "kg", "l", "ml" };
 
 		[RequirePermission("CanEditRecipe")]
 		[HttpPost]

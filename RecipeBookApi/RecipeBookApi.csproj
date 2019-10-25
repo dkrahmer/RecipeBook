@@ -5,6 +5,9 @@
     <AWSProjectType>Lambda</AWSProjectType>
     <UserSecretsId>0857e991-a76b-4061-b116-ecd0d3bd00e7</UserSecretsId>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="AspNetCore.Mvc.HttpActionResults.Redirection.Extensions" Version="0.3.0" />
     <PackageReference Include="Google.Apis.Auth" Version="1.40.0" />
