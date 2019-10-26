@@ -10,6 +10,7 @@ import React, {
 } from "react";
 import { Paper, Typography } from "@material-ui/core";
 import queryString from "query-string";
+import _ from "lodash";
 
 export function RecipeView(props) {
 	const recipeService = useRecipeService();
@@ -23,11 +24,12 @@ export function RecipeView(props) {
 	var [system, setSystem] = useState(queryStringValues.system);
 
 	useEffect(() => {
-		if (scale || system) {
-			props.history.replace({
-				search: `scale=${scale || ""}&system=${system || ""}` // update the URL QS
-			});
+		if (scale === "1") {
+			setScale(null);
+			return;
 		}
+
+		props.history.replace({ search: queryString.stringify(_.pickBy({ scale, system })) }); // update the URL QS
 
 		setIsLoading(true);
 		recipeService.getRecipeById(props.match.params.recipeId, scale, system, (response) => {
