@@ -147,9 +147,9 @@ namespace Common.Processors
 
 			string cleanIngredientName = ingredient.GetCleanName();
 
-			string bestLevenshteinDistanceName = null;
-			double bestLevenshteinDistanceScore = 1000;
-			decimal bestLevenshteinDistanceDensity = 0;
+			//string bestLevenshteinDistanceName = null;
+			//double bestLevenshteinDistanceScore = 1000;
+			//decimal bestLevenshteinDistanceDensity = 0;
 
 			string bestLongestCommonSubsequenceName = null;
 			double bestLongestCommonSubsequenceScore = 0;
@@ -163,8 +163,6 @@ namespace Common.Processors
 			{
 				foreach (string name in volumeToMassConversion.Names)
 				{
-					//bool fuzzyEquals = name.FuzzyEquals(cleanIngredientName);
-					//double fuzzyMatch = name.FuzzyMatch(cleanIngredientName);
 					int levenshteinDistance = cleanIngredientName.LevenshteinDistance(name);
 					Tuple<string, double> longestCommonSubsequence = cleanIngredientName.LongestCommonSubsequence(name);
 					double diceCoefficient = cleanIngredientName.DiceCoefficient(name);
@@ -194,12 +192,12 @@ namespace Common.Processors
 
 			Amount newAmount = new Amount();
 			string matchedName = null;
-			if (bestDiceCoefficientScore >= 0.6)
+			if (bestDiceCoefficientScore >= 0.75)
 			{
 				newAmount = amountMl * new Amount(bestDiceCoefficientDensity);
 				matchedName = bestDiceCoefficientName;
 			}
-			else if (bestLongestCommonSubsequenceScore >= 0.6)
+			else if (bestLongestCommonSubsequenceScore >= 0.75)
 			{
 				newAmount = amountMl * new Amount(bestLongestCommonSubsequenceDensity);
 				matchedName = bestLongestCommonSubsequenceName;
@@ -211,16 +209,7 @@ namespace Common.Processors
 			//}
 			else
 			{
-				// Figure out which is best
-				//if (bestLevenshteinDistanceName == bestLongestCommonSubsequenceName
-				//	&& bestLongestCommonSubsequenceName == bestDiceCoefficientName)
-				//{
-				//	newAmount = amountMl * new Amount(bestLevenshteinDistanceName);
-				//}
-				//else
-				//{
 				return; // No good match
-						//}
 			}
 
 			if (!newAmount.IsEmpty)
@@ -244,7 +233,7 @@ namespace Common.Processors
 			{
 				bool unitAppropriated;
 				var dt = new DataTable();
-				string amount = ingredient.Amount.ToDecimalAmount().ToString();
+				string amount = ingredient.Amount.ToDecimalAmount(5).ToString();
 				int iterations = 0;
 				do
 				{

@@ -52,7 +52,7 @@ namespace Common.Structs
 			if (IsDecimal)
 				return this;
 
-			return new Amount() { _decimal = decimal.Round((decimal) _fraction.Value.Numerator / (decimal) _fraction.Value.Denominator, 2) };
+			return new Amount() { _decimal = decimal.Round((decimal) _fraction.Value.Numerator / (decimal) _fraction.Value.Denominator, decimals) };
 		}
 
 		public Amount ToFractionAmount()
@@ -322,9 +322,17 @@ namespace Common.Structs
 			return !(x == y);
 		}
 
-		public override string ToString()
+		/// <summary>
+		/// Converts to string.
+		/// </summary>
+		/// <param name="decimalFormat">Use decimal type format.</param>
+		/// <param name="fractionFormat">F for normal fraction, C for canonical fraction, W for whole+fractional.</param>
+		/// <returns>
+		/// A <see cref="System.String" /> that represents this instance.
+		/// </returns>
+		public string ToString(string decimalFormat = "G29", string fractionFormat = "W")
 		{
-			return _decimal?.ToString("G29") ?? _fraction?.ToString("W").Replace(" + ", " ") ?? "";
+			return _decimal?.ToString(decimalFormat) ?? _fraction?.ToString(fractionFormat).Replace(" + ", " ") ?? "";
 		}
 	}
 }
