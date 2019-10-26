@@ -1,6 +1,5 @@
 ﻿using Common.Structs;
 using Newtonsoft.Json;
-using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -51,6 +50,8 @@ namespace Common.Models
 
 		public Amount Amount { get; set; }
 
+		private int _unitTrimCharCount;
+
 		private string _unit;
 
 		[JsonIgnore]
@@ -59,11 +60,22 @@ namespace Common.Models
 			get => _unit;
 			set
 			{
-				if (!string.IsNullOrEmpty(_unit) && !string.IsNullOrEmpty(Name) && Name.Length > _unit.Length)
+				if (!string.IsNullOrEmpty(_unit) && !string.IsNullOrEmpty(Name) && Name.Length >= _unit.Length)
 				{
-					Name = $"{value} {Name.Substring(_unit.Length).TrimStart()}";
+					Name = $"{value}{Name.Substring(_unit.Length + 1 - _unitTrimCharCount, _unitTrimCharCount)} {Name.Substring(_unit.Length + _unitTrimCharCount).TrimStart()}".TrimEnd();
 				}
-				_unit = value;
+				string unit = value;
+				if (unit != null)
+				{
+					unit = unit.Trim(new char[] { ',' });
+					_unitTrimCharCount = value.Length - unit.Length;
+				}
+				else
+				{
+					_unitTrimCharCount = 0;
+				}
+
+				_unit = unit;
 			}
 		}
 		public string Name { get; set; }
