@@ -15,6 +15,7 @@ namespace RecipeBookApi.Options
 		public List<string> AlwaysDecimalUnits { get; set; }
 		public List<UnitConversionRule> UnitAppropriations { get; set; }
 		public List<UnitConversionRule> MetricConversions { get; set; }
+		public decimal VolumeToMassConversionMinGrams { get; set; }
 
 		/// <summary>
 		/// Volume to mass conversions. (ml -> g)
@@ -28,7 +29,7 @@ namespace RecipeBookApi.Options
 			{
 				if (_ingredientUnitStandardizer == null)
 				{
-					_ingredientUnitStandardizer = new IngredientUnitStandardizer(UnitEquivalents, UnitAppropriations, MetricConversions, AlwaysDecimalUnits, VolumeToMassConversions);
+					_ingredientUnitStandardizer = new IngredientUnitStandardizer(UnitEquivalents, UnitAppropriations, MetricConversions, AlwaysDecimalUnits, VolumeToMassConversions, VolumeToMassConversionMinGrams);
 				}
 
 				return _ingredientUnitStandardizer;

@@ -27,8 +27,8 @@ function createRecipeService(user) {
 			.catch(handleError);
 	}
 
-	function getRecipeById(recipeId, scale, system, handleResponse, handleError) {
-		api.get(`/${recipeId}?scale=${scale || ""}&system=${system || ""}`)
+	function getRecipeById(recipeId, queryString, handleResponse, handleError) {
+		api.get(`/${recipeId}?${queryString}`)
 			.then(handleResponse)
 			.catch(handleError);
 	}

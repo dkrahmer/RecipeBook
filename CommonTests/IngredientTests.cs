@@ -85,7 +85,7 @@ namespace CommonTests
 				new List<string>(){ "cups", "cup", "c", "cp" }
 			};
 
-			var ingredientUnitStandardizer = new IngredientUnitStandardizer(unitEquivalents, null, null, null, null);
+			var ingredientUnitStandardizer = new IngredientUnitStandardizer(unitEquivalents, null, null, null, null, 20);
 
 			var ingredient_T = Ingredient.Parse("8 T. Water");
 			bool wasChanged_T = ingredientUnitStandardizer.StandardizeUnit(ingredient_T);
@@ -170,7 +170,7 @@ namespace CommonTests
 				new DensityMap() { Names = new List<string>(){ "whole wheat flour" }, Density = 0.593M },
 			};
 
-			var ingredientUnitStandardizer = new IngredientUnitStandardizer(null, null, null, null, volumeToMassConversion);
+			var ingredientUnitStandardizer = new IngredientUnitStandardizer(null, null, null, null, volumeToMassConversion, 20);
 
 			Ingredient ingredient;
 			ingredient = Ingredient.Parse("100 ml white almond flour (sifted)");

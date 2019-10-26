@@ -22,6 +22,7 @@ export function RecipeView(props) {
 	const queryStringValues = queryString.parse(props.location.search);
 	var [scale, setScale] = useState(queryStringValues.scale);
 	var [system, setSystem] = useState(queryStringValues.system);
+	var [convertToMass, setConvertToMass] = useState(queryStringValues.convertToMass);
 
 	useEffect(() => {
 		if (scale === "1") {
@@ -29,10 +30,11 @@ export function RecipeView(props) {
 			return;
 		}
 
-		props.history.replace({ search: queryString.stringify(_.pickBy({ scale, system })) }); // update the URL QS
+		const qs = queryString.stringify(_.pickBy({ scale, system, convertToMass }));
+		props.history.replace({ search: qs }); // update the URL QS
 
 		setIsLoading(true);
-		recipeService.getRecipeById(props.match.params.recipeId, scale, system, (response) => {
+		recipeService.getRecipeById(props.match.params.recipeId, qs, (response) => {
 			setRecipe(response.data);
 			setIsLoading(false);
 		}, (error) => {
@@ -40,7 +42,7 @@ export function RecipeView(props) {
 				props.history.push("/notfound");
 			}
 		});
-	}, [scale, system]); // eslint-disable-line react-hooks/exhaustive-deps
+	}, [scale, system, convertToMass]); // eslint-disable-line react-hooks/exhaustive-deps
 
 	function confirmDeleteRequest() {
 		setIsModalOpen(true);
@@ -80,8 +82,6 @@ export function RecipeView(props) {
 	return (
 		<React.Fragment>
 			<PageHeader text={recipe.name} />
-			<LoadingWrapper isLoading={isLoading}>
-			</LoadingWrapper>
 			<Paper style={{ padding: 12 }}>
 				<RecipeInfo
 					recipe={recipe}
@@ -89,6 +89,8 @@ export function RecipeView(props) {
 					setScale={setScale}
 					system={system}
 					setSystem={setSystem}
+					convertToMass={convertToMass}
+					setConvertToMass={setConvertToMass}
 					setOwnerBlurb={setOwnerBlurb} />
 				<RecipeViewActions
 					editRecipe={editRecipe}

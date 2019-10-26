@@ -14,8 +14,9 @@ namespace Common.Processors
 		private readonly List<UnitConversionRule> _metricConversions;
 		private readonly HashSet<string> _alwaysDecimalUnits;
 		private readonly List<DensityMap> _volumeToMassConversions;
+		private readonly Amount _volumeToMassConversionMinGrams;
 
-		public IngredientUnitStandardizer(List<List<string>> unitEquivalents, List<UnitConversionRule> unitAppropriations, List<UnitConversionRule> metricConversions, List<string> alwaysDecimalUnits, List<DensityMap> volumeToMassConversions)
+		public IngredientUnitStandardizer(List<List<string>> unitEquivalents, List<UnitConversionRule> unitAppropriations, List<UnitConversionRule> metricConversions, List<string> alwaysDecimalUnits, List<DensityMap> volumeToMassConversions, decimal volumeToMassConversionMinGrams)
 		{
 			_unitMap = new Dictionary<string, string>();
 
@@ -40,6 +41,7 @@ namespace Common.Processors
 			_metricConversions = metricConversions ?? new List<UnitConversionRule>();
 			_alwaysDecimalUnits = new HashSet<string>(alwaysDecimalUnits ?? new List<string>(), StringComparer.InvariantCultureIgnoreCase);
 			_volumeToMassConversions = volumeToMassConversions ?? new List<DensityMap>();
+			_volumeToMassConversionMinGrams = new Amount(volumeToMassConversionMinGrams);
 		}
 
 		private static Amount Zero = new Amount(0M);
@@ -107,7 +109,7 @@ namespace Common.Processors
 			if (ingredient.Unit == "g" || ingredient.Unit == "kg" || ingredient.Unit == "oz" || ingredient.Unit == "lbs") // TODO: add a config value for these
 				return; // unit is alread in mass
 
-			Amount amountMl;
+			Amount amountMl = new Amount();
 
 			if (ingredient.Unit != "ml" && ingredient.Unit != "L")
 			{
@@ -117,19 +119,30 @@ namespace Common.Processors
 					Amount = new Amount(ingredient.Amount)
 				};
 				ConvertUnit(ingredientCopy, _metricConversions); // Convert to metric volume, if possible
+				if (ingredientCopy.Unit == "ml")
+				{
+					amountMl = ingredientCopy.Amount;
+				}
+				else if (ingredientCopy.Unit == "L")
+				{
+					amountMl = ingredientCopy.Amount * new Amount(1000M);
+				}
 			}
 
-			if (ingredient.Unit == "ml")
+			if (amountMl.IsEmpty)
 			{
-				amountMl = ingredient.Amount;
-			}
-			else if (ingredient.Unit == "L")
-			{
-				amountMl = ingredient.Amount * new Amount(1000M);
-			}
-			else
-			{
-				return; // cannot work with this unit type
+				if (ingredient.Unit == "ml")
+				{
+					amountMl = ingredient.Amount;
+				}
+				else if (ingredient.Unit == "L")
+				{
+					amountMl = ingredient.Amount * new Amount(1000M);
+				}
+				else
+				{
+					return; // cannot work with this unit type
+				}
 			}
 
 			string cleanIngredientName = ingredient.GetCleanName();
@@ -156,12 +169,12 @@ namespace Common.Processors
 					Tuple<string, double> longestCommonSubsequence = cleanIngredientName.LongestCommonSubsequence(name);
 					double diceCoefficient = cleanIngredientName.DiceCoefficient(name);
 
-					if (levenshteinDistance < bestLevenshteinDistanceScore)
-					{
-						bestLevenshteinDistanceScore = levenshteinDistance;
-						bestLevenshteinDistanceName = name;
-						bestLevenshteinDistanceDensity = volumeToMassConversion.Density;
-					}
+					//if (levenshteinDistance < bestLevenshteinDistanceScore)
+					//{
+					//	bestLevenshteinDistanceScore = levenshteinDistance;
+					//	bestLevenshteinDistanceName = name;
+					//	bestLevenshteinDistanceDensity = volumeToMassConversion.Density;
+					//}
 
 					if (longestCommonSubsequence.Item2 > bestLongestCommonSubsequenceScore)
 					{
@@ -179,13 +192,48 @@ namespace Common.Processors
 				}
 			}
 
-			//if (string.IsNullOrEmpty(bestLongestCommonSubsequenceName))
-			//	return; // No matches found
-
-			if (bestLongestCommonSubsequenceScore > 0.60)
+			Amount newAmount = new Amount();
+			string matchedName = null;
+			if (bestDiceCoefficientScore >= 0.6)
 			{
+				newAmount = amountMl * new Amount(bestDiceCoefficientDensity);
+				matchedName = bestDiceCoefficientName;
+			}
+			else if (bestLongestCommonSubsequenceScore >= 0.6)
+			{
+				newAmount = amountMl * new Amount(bestLongestCommonSubsequenceDensity);
+				matchedName = bestLongestCommonSubsequenceName;
+			}
+			//else if (bestLevenshteinDistanceScore < cleanIngredientName.Length * 0.5)
+			//{
+			//	newAmount = amountMl * new Amount(bestLevenshteinDistanceDensity);
+			//newName = bestLevenshteinDistanceName;
+			//}
+			else
+			{
+				// Figure out which is best
+				//if (bestLevenshteinDistanceName == bestLongestCommonSubsequenceName
+				//	&& bestLongestCommonSubsequenceName == bestDiceCoefficientName)
+				//{
+				//	newAmount = amountMl * new Amount(bestLevenshteinDistanceName);
+				//}
+				//else
+				//{
+				return; // No good match
+						//}
+			}
+
+			if (!newAmount.IsEmpty)
+			{
+				if (amountMl < _volumeToMassConversionMinGrams)
+					return; // Too small to convert
+
+				// We found a match!
 				ingredient.Unit = "g";
-				ingredient.Amount *= new Amount(bestLongestCommonSubsequenceDensity);
+				ingredient.Amount = newAmount;
+				if (!cleanIngredientName.Equals(matchedName, StringComparison.InvariantCultureIgnoreCase))
+					ingredient.Name += $" (mass of {matchedName})"; // add a hint if the name does not match exactly
+
 				ConvertUnit(ingredient, _unitAppropriations);
 			}
 		}

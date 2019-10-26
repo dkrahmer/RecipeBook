@@ -49,7 +49,7 @@ namespace RecipeBookApi.Controllers
 		[ProducesResponseType((int) HttpStatusCode.NotModified)]
 		[ProducesResponseType((int) HttpStatusCode.NotFound)]
 		[ProducesResponseType(typeof(RecipeViewModel), (int) HttpStatusCode.OK)]
-		public async Task<IActionResult> GetRecipe(int recipeId, [FromQuery] string scale, [FromQuery] string system, [FromQuery] string mass)
+		public async Task<IActionResult> GetRecipe(int recipeId, [FromQuery] string scale, [FromQuery] string system, [FromQuery] string convertToMass)
 		{
 			var recipe = await _recipesService.Get(recipeId);
 			if (recipe == null)
@@ -70,8 +70,8 @@ namespace RecipeBookApi.Controllers
 					ingredient.Amount *= scaleAmount;
 
 				bool allMetric = "metric".Equals(system, StringComparison.InvariantCultureIgnoreCase);
-				bool convertToMass = mass == "1";
-				_appOptions.IngredientUnitStandardizer.StandardizeUnit(ingredient,allMetric: allMetric, convertToMass: convertToMass);
+				bool isConvertToMass = convertToMass == "1";
+				_appOptions.IngredientUnitStandardizer.StandardizeUnit(ingredient, allMetric: allMetric, convertToMass: isConvertToMass);
 			}
 
 			return Ok(recipe);

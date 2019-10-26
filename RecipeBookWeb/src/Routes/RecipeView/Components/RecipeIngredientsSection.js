@@ -38,7 +38,6 @@ export function RecipeIngredientsSection(props) {
 	});
 
 	let scale = props.scale;
-	let system = props.system;
 
 	if (!scale)
 		scale = "1";
@@ -48,8 +47,12 @@ export function RecipeIngredientsSection(props) {
 		scaleClassName += " scale-label-changed";
 
 	let systemClassName = "scale-label";
-	if (system)
+	if (props.system)
 		systemClassName += " scale-label-changed";
+
+	let convertToMassClassName = "scale-label";
+	if (props.convertToMass)
+		convertToMassClassName += " scale-label-changed";
 
 	let newScale = null;
 
@@ -58,11 +61,20 @@ export function RecipeIngredientsSection(props) {
 	}
 
 	function toggleSystem() {
-		if (system !== "metric") {
+		if (props.system !== "metric") {
 			props.setSystem("metric");
 		}
 		else {
 			props.setSystem(null);
+		}
+	}
+
+	function toggleConvertToMass() {
+		if (props.convertToMass !== "1") {
+			props.setConvertToMass("1");
+		}
+		else {
+			props.setConvertToMass(null);
 		}
 	}
 
@@ -83,12 +95,13 @@ export function RecipeIngredientsSection(props) {
 	}
 
 	let scaleLabel = (<span className={scaleClassName}>(<button className="link-button" onClick={showScaleDialog}>{`scale: x ${scale}`}</button>)</span>);
-	let systemLabel = (<span className={systemClassName}>(<button className="link-button" onClick={toggleSystem}>{`measurements: ${system || "normal"}`}</button>)</span>);
+	let systemLabel = (<span className={systemClassName}>(<button className="link-button" onClick={toggleSystem}>{`metric: ${props.system === "metric" ? "on" : "off"}`}</button>)</span>);
+	let convertToMassLabel = (<span className={convertToMassClassName}>(<button className="link-button" onClick={toggleConvertToMass}>{`mass: ${props.convertToMass ? "on" : "off"}`}</button>)</span>);
 
 	return (
 		<div className="rb-recipe-info">
 			<Typography variant="h6" color="primary">
-				{props.title} {scaleLabel} {systemLabel}
+				{props.title} {scaleLabel} {systemLabel} {convertToMassLabel}
 			</Typography>
 			<Linkify properties={{ target: "_blank" }}>
 				<Table className={"rb-recipe-info-body rb-recipe-ingredient-list" + (scale === "1" ? "" : " rb-scale-enabled")}>
