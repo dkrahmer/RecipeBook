@@ -4,9 +4,16 @@
 	<title>Recipe Book</title>
 	<meta name="viewport" content="minimum-scale=1, width=device-width, initial-scale=1, shrink-to-fit=no" />
 	<link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico" />
+	<script type="text/javascript" src="%PUBLIC_URL%/config.js"></script>
+	<script type="text/javascript">document.title = _config.appName;</script>
 </head>
 <body>
 	<noscript>You need to enable JavaScript to run this app.</noscript>
 	<div id="root"></div>
+	<script>
+		document.addEventListener("DOMContentLoaded", function () {
+			window.RenderApp(_config);
+		});
+	</script>
 </body>
 </html>

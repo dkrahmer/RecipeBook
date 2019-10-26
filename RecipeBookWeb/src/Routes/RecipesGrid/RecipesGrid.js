@@ -14,7 +14,7 @@ import MoodBadIcon from "@material-ui/icons/MoodBad";
 
 export function RecipesGrid(props) {
 	const user = useUserContext();
-	const recipeService = useRecipeService();
+	const recipeService = useRecipeService(props.config);
 	const [isLoading, setIsLoading] = useState(true);
 	const [allRecipes, setAllRecipes] = useState([]);
 

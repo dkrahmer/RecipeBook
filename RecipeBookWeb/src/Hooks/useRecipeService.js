@@ -5,21 +5,21 @@ import {
 	useEffect
 } from "react";
 
-export function useRecipeService() {
+export function useRecipeService(config) {
 	const user = useUserContext();
 	const [recipeService, setRecipeService] = useState(() => {
-		return createRecipeService(user);
+		return createRecipeService(user, config);
 	});
 
 	useEffect(() => {
-		setRecipeService(createRecipeService(user));
+		setRecipeService(createRecipeService(user, config));
 	}, [user.authToken]); // eslint-disable-line react-hooks/exhaustive-deps
 
 	return recipeService;
 }
 
-function createRecipeService(user) {
-	const api = createAxiosApi("Recipes", user);
+function createRecipeService(user, config) {
+	const api = createAxiosApi("Recipes", user, config);
 
 	function getAllRecipes(handleResponse, handleError) {
 		api.get("/")

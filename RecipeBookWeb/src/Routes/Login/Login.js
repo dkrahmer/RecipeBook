@@ -1,9 +1,6 @@
-import { GoogleClientId } from "../../config";
 import { useUserContext } from "../../Hooks/useUserContext";
 import { LoadingWrapper } from "../../Shared/LoadingWrapper";
-import React, {
-	useState
-} from "react";
+import React, { useState } from "react";
 import {
 	Card,
 	CardHeader,
@@ -39,7 +36,7 @@ export function Login(props) {
 					</CardContent>
 					<CardActions>
 						<GoogleLogin
-							clientId={GoogleClientId}
+							clientId={props.config.googleClientId}
 							buttonText="Google Login"
 							onSuccess={handleGoogleSuccessResponse} />
 					</CardActions>

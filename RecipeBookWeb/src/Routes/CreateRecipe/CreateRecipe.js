@@ -6,7 +6,7 @@ import React, {
 } from "react";
 
 export function CreateRecipe(props) {
-	const recipeService = useRecipeService();
+	const recipeService = useRecipeService(props.config);
 	const [recipe, setRecipe] = useState(setInitialRecipe());
 	const [toastOpen, setToastOpen] = useState(false);
 	const [isExecuting, setIsExecuting] = useState(false);

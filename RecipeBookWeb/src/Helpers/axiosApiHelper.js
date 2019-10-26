@@ -1,9 +1,8 @@
-import { ApiUrl } from "../config";
 import axios from "axios";
 
-export function createAxiosApi(resource, user) {
+export function createAxiosApi(resource, user, config) {
 	const api = axios.create({
-		baseURL: `${ApiUrl}/${resource}`
+		baseURL: `${config.apiUrl}/${resource}`
 	});
 
 	if (user.isLoggedIn) {

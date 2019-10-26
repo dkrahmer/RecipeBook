@@ -4,13 +4,10 @@ import { RecipeForm } from "../CreateRecipe/Components/RecipeForm";
 import {
 	RecipeSavedSnackbar
 } from "../CreateRecipe/Components/RecipeSavedSnackbar";
-import React, {
-	useState,
-	useEffect
-} from "react";
+import React, { useState, useEffect } from "react";
 
 export function EditRecipe(props) {
-	const recipeService = useRecipeService();
+	const recipeService = useRecipeService(props.config);
 	const [isLoading, setIsLoading] = useState(true);
 	const [toastOpen, setToastOpen] = useState(false);
 	const [isExecuting, setIsExecuting] = useState(false);

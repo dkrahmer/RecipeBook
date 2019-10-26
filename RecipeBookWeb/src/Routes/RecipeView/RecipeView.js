@@ -13,7 +13,7 @@ import queryString from "query-string";
 import _ from "lodash";
 
 export function RecipeView(props) {
-	const recipeService = useRecipeService();
+	const recipeService = useRecipeService(props.config);
 	const [isLoading, setIsLoading] = useState(true);
 	const [recipe, setRecipe] = useState({ name: "" });
 	const [ownerBlurb, setOwnerBlurb] = useState("");
