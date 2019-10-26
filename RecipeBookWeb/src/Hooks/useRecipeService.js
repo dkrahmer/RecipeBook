@@ -28,7 +28,9 @@ function createRecipeService(user) {
 	}
 
 	function getRecipeById(recipeId, queryString, handleResponse, handleError) {
-		api.get(`/${recipeId}?${queryString}`)
+		queryString = queryString ? `?${queryString}` : "";
+
+		api.get(`/${recipeId}${queryString}`)
 			.then(handleResponse)
 			.catch(handleError);
 	}
