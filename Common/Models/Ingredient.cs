@@ -60,10 +60,12 @@ namespace Common.Models
 			get => _unit;
 			set
 			{
+				value = value ?? "";
 				if (!string.IsNullOrEmpty(_unit) && !string.IsNullOrEmpty(Name) && Name.Length >= _unit.Length)
 				{
-					Name = $"{value}{Name.Substring(_unit.Length + 1 - _unitTrimCharCount, _unitTrimCharCount)} {Name.Substring(_unit.Length + _unitTrimCharCount).TrimStart()}".TrimEnd();
+					Name = $"{value}{Name.Substring(_unit.Length, _unitTrimCharCount)} {Name.Substring(_unit.Length + _unitTrimCharCount).TrimStart()}".TrimEnd();
 				}
+
 				string unit = value;
 				if (unit != null)
 				{
