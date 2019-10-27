@@ -1,13 +1,10 @@
 import { useRecipeService } from "../../Hooks/useRecipeService";
 import { PageHeader } from "../../Shared/PageHeader";
-import { LoadingWrapper } from "../../Shared/LoadingWrapper";
+import PageOverlay from "../../Shared/PageOverlay";
 import { RecipeInfo } from "./Components/RecipeInfo";
 import { RecipeViewActions } from "./Components/RecipeViewActions";
 import YesNoModal from "../../Shared/YesNoModal";
-import React, {
-	useState,
-	useEffect
-} from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import { Paper, Typography } from "@material-ui/core";
 import queryString from "query-string";
 import _ from "lodash";
@@ -15,7 +12,7 @@ import _ from "lodash";
 export function RecipeView(props) {
 	const recipeService = useRecipeService(props.config);
 	const [isLoading, setIsLoading] = useState(true);
-	const [recipe, setRecipe] = useState({ name: "" });
+	const [recipe, setRecipe] = useState({ name: "Loading Recipe...", placeholder: true });
 	const [ownerBlurb, setOwnerBlurb] = useState("");
 	const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -82,21 +79,26 @@ export function RecipeView(props) {
 	return (
 		<React.Fragment>
 			<PageHeader text={recipe.name} />
-			<Paper style={{ padding: 12 }}>
-				<RecipeInfo
-					recipe={recipe}
-					scale={scale}
-					setScale={setScale}
-					system={system}
-					setSystem={setSystem}
-					convertToMass={convertToMass}
-					setConvertToMass={setConvertToMass}
-					setOwnerBlurb={setOwnerBlurb} />
-				<RecipeViewActions
-					editRecipe={editRecipe}
-					cloneRecipe={cloneRecipe}
-					deleteRecipe={confirmDeleteRequest} />
-			</Paper>
+			<PageOverlay showOverlay={isLoading} />
+			{!recipe.placeholder ?
+				<Paper style={{ padding: 12 }}>
+					<RecipeInfo
+						recipe={recipe}
+						scale={scale}
+						setScale={setScale}
+						system={system}
+						setSystem={setSystem}
+						convertToMass={convertToMass}
+						setConvertToMass={setConvertToMass}
+						setOwnerBlurb={setOwnerBlurb} />
+
+					<RecipeViewActions
+						editRecipe={editRecipe}
+						cloneRecipe={cloneRecipe}
+						deleteRecipe={confirmDeleteRequest} />
+				</Paper>
+				: <Fragment />
+			}
 			<YesNoModal
 				isOpen={isModalOpen}
 				title="Delete Recipe"
@@ -106,6 +108,6 @@ export function RecipeView(props) {
 			<Typography variant="subtitle2" color="textSecondary">
 				{ownerBlurb}
 			</Typography>
-		</React.Fragment>
+		</React.Fragment >
 	);
 }
