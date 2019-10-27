@@ -12,7 +12,7 @@ namespace RecipeBookApi.Options
 		public string MySqlConnectionString { get; set; }
 		public bool DebugMode { get; set; }
 		public List<List<string>> UnitEquivalents { get; set; }
-		public List<string> AlwaysDecimalUnits { get; set; }
+		public Dictionary<string, int> AlwaysDecimalUnits { get; set; }
 		public List<UnitConversionRule> UnitAppropriations { get; set; }
 		public List<UnitConversionRule> MetricConversions { get; set; }
 		public decimal VolumeToMassConversionMinGrams { get; set; }

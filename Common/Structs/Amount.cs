@@ -47,12 +47,28 @@ namespace Common.Structs
 			_fraction = amount._fraction;
 		}
 
+		public decimal ToDecimal(int decimals = 2)
+		{
+			if (IsDecimal)
+				return _decimal.Value;
+
+			return decimal.Round((decimal) _fraction.Value.Numerator / (decimal) _fraction.Value.Denominator, decimals);
+		}
+
+		public Rational ToRational()
+		{
+			if (IsFraction)
+				return _fraction.Value;
+
+			return Rational.ParseDecimal(_decimal.ToString(), FRACTION_TOLERANCE);
+		}
+
 		public Amount ToDecimalAmount(int decimals = 2)
 		{
 			if (IsDecimal)
 				return this;
 
-			return new Amount() { _decimal = decimal.Round((decimal) _fraction.Value.Numerator / (decimal) _fraction.Value.Denominator, decimals) };
+			return new Amount() { _decimal = ToDecimal(decimals) };
 		}
 
 		public Amount ToFractionAmount()
@@ -60,7 +76,7 @@ namespace Common.Structs
 			if (IsFraction)
 				return this;
 
-			return new Amount() { _fraction = Rational.ParseDecimal(_decimal.ToString(), FRACTION_TOLERANCE) };
+			return new Amount() { _fraction = ToRational() };
 		}
 
 		public static Amount Parse(string value)
@@ -320,6 +336,17 @@ namespace Common.Structs
 		public static bool operator !=(Amount x, Amount y)
 		{
 			return !(x == y);
+		}
+
+		/// <summary>
+		/// Converts to string.
+		/// </summary>
+		/// <returns>
+		/// A <see cref="System.String" /> that represents this instance.
+		/// </returns>
+		public override string ToString()
+		{
+			return ToString(decimalFormat: "G29", fractionFormat: "W");
 		}
 
 		/// <summary>

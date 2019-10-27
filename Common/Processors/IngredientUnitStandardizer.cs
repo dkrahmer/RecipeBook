@@ -12,11 +12,11 @@ namespace Common.Processors
 		private readonly Dictionary<string, string> _unitMap;
 		private readonly List<UnitConversionRule> _unitAppropriations;
 		private readonly List<UnitConversionRule> _metricConversions;
-		private readonly HashSet<string> _alwaysDecimalUnits;
+		private readonly Dictionary<string, int> _alwaysDecimalUnits;
 		private readonly List<DensityMap> _volumeToMassConversions;
 		private readonly Amount _volumeToMassConversionMinGrams;
 
-		public IngredientUnitStandardizer(List<List<string>> unitEquivalents, List<UnitConversionRule> unitAppropriations, List<UnitConversionRule> metricConversions, List<string> alwaysDecimalUnits, List<DensityMap> volumeToMassConversions, decimal volumeToMassConversionMinGrams)
+		public IngredientUnitStandardizer(List<List<string>> unitEquivalents, List<UnitConversionRule> unitAppropriations, List<UnitConversionRule> metricConversions, Dictionary<string, int> alwaysDecimalUnits, List<DensityMap> volumeToMassConversions, decimal volumeToMassConversionMinGrams)
 		{
 			_unitMap = new Dictionary<string, string>();
 
@@ -39,7 +39,7 @@ namespace Common.Processors
 
 			_unitAppropriations = unitAppropriations ?? new List<UnitConversionRule>();
 			_metricConversions = metricConversions ?? new List<UnitConversionRule>();
-			_alwaysDecimalUnits = new HashSet<string>(alwaysDecimalUnits ?? new List<string>(), StringComparer.InvariantCultureIgnoreCase);
+			_alwaysDecimalUnits = alwaysDecimalUnits ?? new Dictionary<string, int>();
 			_volumeToMassConversions = volumeToMassConversions ?? new List<DensityMap>();
 			_volumeToMassConversionMinGrams = new Amount(volumeToMassConversionMinGrams);
 		}
@@ -82,12 +82,21 @@ namespace Common.Processors
 				ConvertUnit(ingredient, _metricConversions);
 			}
 
-			if (_alwaysDecimalUnits.Contains(ingredient.Unit) && !ingredient.Amount.IsDecimal)
+			// Convert to decimal if needed with rounding
+			if (_alwaysDecimalUnits.TryGetValue(ingredient.Unit, out int roundingDecimals))
 			{
-				ingredient.Amount = ingredient.Amount.ToDecimalAmount();
-				changed = true;
+				string before = ingredient.Amount.ToString();
+				ingredient.Amount = ingredient.Amount.ToDecimalAmount(roundingDecimals);
+				changed = before != ingredient.Amount.ToString();
 			}
 
+			changed |= Depluralize(ingredient);
+
+			return changed;
+		}
+
+		private bool Depluralize(Ingredient ingredient)
+		{
 			if (ingredient.Unit.EndsWith("s") &&
 				(ingredient.Amount == One
 					|| (ingredient.Amount < Two && ingredient.Amount != Zero && ingredient.Amount.IsFraction)))
@@ -97,11 +106,11 @@ namespace Common.Processors
 				{
 					// The updated unit with the "s" removed from the end is a valid unit
 					ingredient.Unit = singularUnit;
-					changed = true;
+					return true;
 				}
 			}
 
-			return changed;
+			return false;
 		}
 
 		private void ConvertUnitToMass(Ingredient ingredient)
@@ -218,6 +227,10 @@ namespace Common.Processors
 					return; // Too small to convert
 
 				// We found a match!
+				Depluralize(ingredient);
+				string originalAmountWithUnit = $"{ingredient.Amount.ToString()} {ingredient.Unit}";
+
+				ingredient.Name = $"{ingredient.Unit} ({originalAmountWithUnit}) {ingredient.Name.Substring(ingredient.Unit.Length).Trim()}";
 				ingredient.Unit = "g";
 				ingredient.Amount = newAmount;
 				if (!cleanIngredientName.Equals(matchedName, StringComparison.InvariantCultureIgnoreCase))
