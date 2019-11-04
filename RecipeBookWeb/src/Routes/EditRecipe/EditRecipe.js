@@ -65,6 +65,7 @@ export function EditRecipe(props) {
 		<React.Fragment>
 			<LoadingWrapper isLoading={isLoading}>
 				<RecipeForm
+					config={props.config}
 					pageTitle={`${props.title || "Edit"} ${recipe.name}`}
 					recipe={recipe}
 					onSaveClick={props.saveRecipe || saveRecipe}

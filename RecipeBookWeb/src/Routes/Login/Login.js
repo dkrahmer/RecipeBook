@@ -12,7 +12,7 @@ import { GoogleLogin } from "react-google-login";
 
 export function Login(props) {
 	const [isLoading, setIsLoading] = useState(false);
-	const user = useUserContext();
+	const user = useUserContext(props.config);
 
 	function handleGoogleSuccessResponse(response) {
 		setIsLoading(true);

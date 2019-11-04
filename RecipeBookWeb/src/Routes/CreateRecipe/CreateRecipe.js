@@ -46,6 +46,7 @@ export function CreateRecipe(props) {
 	return (
 		<React.Fragment>
 			<RecipeForm
+				config={props.config}
 				pageTitle="Create a new Recipe"
 				recipe={recipe}
 				onSaveClick={createRecipe}

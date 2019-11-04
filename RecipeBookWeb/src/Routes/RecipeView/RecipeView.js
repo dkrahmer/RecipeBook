@@ -78,7 +78,7 @@ export function RecipeView(props) {
 
 	return (
 		<React.Fragment>
-			<PageHeader text={recipe.name} />
+			<PageHeader text={recipe.name} config={props.config} />
 			<PageOverlay showOverlay={isLoading} />
 			{!recipe.placeholder ?
 				<Paper style={{ padding: 12 }}>
@@ -93,6 +93,7 @@ export function RecipeView(props) {
 						setOwnerBlurb={setOwnerBlurb} />
 
 					<RecipeViewActions
+						config={props.config}
 						editRecipe={editRecipe}
 						cloneRecipe={cloneRecipe}
 						deleteRecipe={confirmDeleteRequest} />

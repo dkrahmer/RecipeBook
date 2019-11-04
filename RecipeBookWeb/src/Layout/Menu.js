@@ -17,9 +17,9 @@ import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import CreateIcon from "@material-ui/icons/Create";
 
-export function Menu() {
+export function Menu(props) {
 	const [isOpenDrawer, setIsOpenDrawer] = useState(false);
-	const user = useUserContext();
+	const user = useUserContext(props.config);
 
 	const alwaysActions = [{
 		text: "Recipes",

@@ -5,7 +5,7 @@ import { DateTime } from "luxon";
 import Cookies from "js-cookie";
 import jwt from "jsonwebtoken";
 
-export function useUserContext(props) {
+export function useUserContext(config) {
 	const [user, triggerResetUserFromToken] = useContext(UserContext);
 
 	function login(newAuthToken, handleResponse) {
@@ -13,11 +13,11 @@ export function useUserContext(props) {
 			token: newAuthToken
 		};
 
-		createAxiosApi("Auth", user, props.config)
+		createAxiosApi("Auth", user, config)
 			.post("/login", body)
 			.then((response) => {
 				if (response && response.status === 200 && response.data.token) {
-					setUserToken(response.data.token, props.config.authTokenKey);
+					setUserToken(response.data.token, config.authTokenKey);
 					triggerResetUserFromToken();
 					handleResponse(true);
 				}
@@ -34,7 +34,7 @@ export function useUserContext(props) {
 	}
 
 	function logout() {
-		removeUserToken(props.config.authTokenKey);
+		removeUserToken(config.authTokenKey);
 		triggerResetUserFromToken();
 	}
 
@@ -54,5 +54,5 @@ function setUserToken(token, authTokenKey) {
 }
 
 function removeUserToken(authTokenKey) {
-	Cookies.remove();
+	Cookies.remove(authTokenKey);
 }

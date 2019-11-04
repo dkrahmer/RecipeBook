@@ -6,7 +6,7 @@ import SaveIcon from "@material-ui/icons/Save";
 import CancelIcon from "@material-ui/icons/Cancel";
 
 export function RecipeFormActions(props) {
-	const user = useUserContext();
+	const user = useUserContext(props.config);
 
 	return (
 		<PaperActions

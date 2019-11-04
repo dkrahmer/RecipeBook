@@ -9,7 +9,7 @@ import CloneIcon from "@material-ui/icons/FileCopy";
 import DeleteIcon from "@material-ui/icons/Delete";
 
 export function RecipeViewActions(props) {
-	const user = useUserContext();
+	const user = useUserContext(props.config);
 
 	return (
 		<PaperActions

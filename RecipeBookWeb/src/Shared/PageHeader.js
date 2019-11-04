@@ -6,7 +6,7 @@ import {
 } from "@material-ui/core";
 
 export function PageHeader(props) {
-	const user = useUserContext();
+	const user = useUserContext(props.config);
 
 	return (
 		<div className="rb-page-header-container">

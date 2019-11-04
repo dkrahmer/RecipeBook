@@ -6,7 +6,7 @@ import {
 } from "react";
 
 export function useRecipeService(config) {
-	const user = useUserContext();
+	const user = useUserContext(config);
 	const [recipeService, setRecipeService] = useState(() => {
 		return createRecipeService(user, config);
 	});

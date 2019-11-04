@@ -33,7 +33,7 @@ export default function App(props) {
 		<BrowserRouter>
 			<CssBaseline />
 			<UserContextProvider config={config}>
-				<Menu />
+				<Menu config={config} />
 				<main id="main-content">
 					<Switch>
 						<Route exact path="/" render={() => (<Redirect to="/recipes" />)} />
