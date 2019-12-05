@@ -9,9 +9,7 @@ RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^ index.html [QSA,L]
 
-# DISABLE CACHING
-#<IfModule mod_headers.c>
-#	Header set Cache-Control "no-cache, no-store, must-revalidate"
-#	Header set Pragma "no-cache"
-#	Header set Expires 0
-#</IfModule>
+# Force browsers to check for updates on page load (304 is returned if not changed). This will make updates load seemlessly for users without requiring them to purge their browser cache.
+<IfModule mod_headers.c>
+	Header set Cache-Control "no-cache"
+</IfModule>
