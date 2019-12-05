@@ -29,23 +29,26 @@ export function RecipeInstructionsSection(props) {
 		const newCheckedRows = { ...checkedRows };
 
 		if (newCheckedRows[key]) {
+			delete newCheckedRows[key];
 			// uncheck the seleted row and subsequent rows in the same section
-			for (let i = key; i < tableRows.length; i++) {
-				if (headerRowKeys[i])
-					break; // stop if we hit a header row
-
-				if (i >= key)
-					delete newCheckedRows[i];
-			}
+			// for (let i = key; i < tableRows.length; i++) {
+			// 	if (headerRowKeys[i])
+			// 		break; // stop if we hit a header row
+			// 
+			// 	if (i >= key)
+			// 		delete newCheckedRows[i];
+			// }
 		}
 		else {
-			// Check the seleted row and previous rows in the same section
-			for (let i = key; i >= 0; i--) {
-				if (headerRowKeys[i])
-					break; // stop if we hit a header row
+			newCheckedRows[key] = true;
 
-				newCheckedRows[i] = true;
-			}
+			// Check the selected row and previous rows in the same section
+			// for (let i = key; i >= 0; i--) {
+			// 	if (headerRowKeys[i])
+			// 		break; // stop if we hit a header row
+			// 
+			// 	newCheckedRows[i] = true;
+			// }
 		}
 
 		setCheckedRows(newCheckedRows);
