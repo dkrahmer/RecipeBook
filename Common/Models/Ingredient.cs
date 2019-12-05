@@ -11,7 +11,7 @@ namespace Common.Models
 		private static readonly string FRACTION_REGEX_PARTIAL = @"(?<Fraction>(([0-9]+\s+)?(([0-9]+\/[1-9]+[0-9]*)|([" + REGEX_FRACTION_STRINGS + @"]+))))";
 		private static readonly string DECIMAL_REGEX_PARTIAL = @"(?<Decimal>([0-9]+\.[0-9]*)|([0-9]*\.[0-9]+)|[0-9]+)";
 		private static readonly string AMOUNT_REGEX_PARTIAL = "(?<Amount>" + FRACTION_REGEX_PARTIAL + "|" + DECIMAL_REGEX_PARTIAL + ")";
-		private const string RECIPE_UNIT_NAME_REGEX_PARTIAL = @"(?<Name>(?<Unit>[^\s]*).*)";
+		private const string RECIPE_UNIT_NAME_REGEX_PARTIAL = @"(?i)(?<Name>(?<Unit>((fl(uid)? o(z|unce(s)?) )|([^\s]*))).*)";
 
 		protected static readonly Regex IngredientLineRegEx =
 			new Regex($"^({AMOUNT_REGEX_PARTIAL}\\s*)?{RECIPE_UNIT_NAME_REGEX_PARTIAL}$", RegexOptions.Compiled);
@@ -60,7 +60,7 @@ namespace Common.Models
 			get => _unit;
 			set
 			{
-				value = value ?? "";
+				value = (value ?? "").Trim(' ');
 				if (!string.IsNullOrEmpty(_unit) && !string.IsNullOrEmpty(Name) && Name.Length >= _unit.Length)
 				{
 					Name = $"{value}{Name.Substring(_unit.Length, _unitTrimCharCount)} {Name.Substring(_unit.Length + _unitTrimCharCount).TrimStart()}".TrimEnd();
