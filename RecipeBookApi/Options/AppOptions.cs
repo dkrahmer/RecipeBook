@@ -1,6 +1,7 @@
 ﻿using Common.Models;
 using Common.Processors;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace RecipeBookApi.Options
 {
@@ -16,24 +17,36 @@ namespace RecipeBookApi.Options
 		public List<UnitConversionRule> UnitAppropriations { get; set; }
 		public List<UnitConversionRule> MetricConversions { get; set; }
 		public decimal VolumeToMassConversionMinGrams { get; set; }
+		public IngredientUnitStandardizer IngredientUnitStandardizer { get; private set; }
 
-		/// <summary>
-		/// Volume to mass conversions. (ml -> g)
-		/// </summary>
-		public List<DensityMap> VolumeToMassConversions { get; set; }
-
-		private IngredientUnitStandardizer _ingredientUnitStandardizer;
-		public IngredientUnitStandardizer IngredientUnitStandardizer
+		public void SetIngredientUnitStandardizer(IEnumerable<DensityMapData> volumeToMassConversionData)
 		{
-			get
-			{
-				if (_ingredientUnitStandardizer == null)
-				{
-					_ingredientUnitStandardizer = new IngredientUnitStandardizer(UnitEquivalents, UnitAppropriations, MetricConversions, AlwaysDecimalUnits, VolumeToMassConversions, VolumeToMassConversionMinGrams);
-				}
+			if (volumeToMassConversionData == null)
+				volumeToMassConversionData = new List<DensityMapData>();
 
-				return _ingredientUnitStandardizer;
-			}
+			var volumeToMassConversions = volumeToMassConversionData.Select(d =>
+			{
+				var names = (d.Name + '|' + (d.AlternateNames ?? ""))
+					.Split('|')
+					.Select(a => a.Trim())
+					.Where(a => !string.IsNullOrEmpty(a));
+
+				return new DensityMap()
+				{
+					Names = new List<string>(names),
+					Density = d.Density
+				};
+			}).ToList();
+
+			SetIngredientUnitStandardizer(volumeToMassConversions);
+		}
+
+		public void SetIngredientUnitStandardizer(List<DensityMap> volumeToMassConversions)
+		{
+			if (volumeToMassConversions == null)
+				volumeToMassConversions = new List<DensityMap>();
+
+			IngredientUnitStandardizer = new IngredientUnitStandardizer(UnitEquivalents, UnitAppropriations, MetricConversions, AlwaysDecimalUnits, volumeToMassConversions, VolumeToMassConversionMinGrams);
 		}
 	}
 }

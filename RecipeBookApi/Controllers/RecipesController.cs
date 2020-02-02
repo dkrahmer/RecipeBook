@@ -71,7 +71,7 @@ namespace RecipeBookApi.Controllers
 
 				bool allMetric = "metric".Equals(system, StringComparison.InvariantCultureIgnoreCase);
 				bool isConvertToMass = convertToMass == "1";
-				_appOptions.IngredientUnitStandardizer.StandardizeUnit(ingredient, allMetric: allMetric, convertToMass: isConvertToMass);
+				_appOptions.IngredientUnitStandardizer?.StandardizeUnit(ingredient, allMetric: allMetric, convertToMass: isConvertToMass);
 			}
 
 			return Ok(recipe);

@@ -102,6 +102,8 @@ namespace RecipeBookApi
 			using (var db = new MySqlDbContext(options.MySqlConnectionString))
 			{
 				db.Database.EnsureCreated();
+
+				options.SetIngredientUnitStandardizer(db.VolumeToMassConversions);
 			}
 		}
 

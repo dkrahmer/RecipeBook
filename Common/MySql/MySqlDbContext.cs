@@ -12,6 +12,8 @@ namespace Common.MySql
 
 		public DbSet<AppUser> AppUsers { get; set; }
 
+		public DbSet<DensityMapData> VolumeToMassConversions { get; set; }
+
 		public MySqlDbContext(string connectionString) : base()
 		{
 			_connectionString = connectionString;
@@ -50,6 +52,15 @@ namespace Common.MySql
 				entity.Property(e => e.CanViewRecipe).HasConversion<int>();
 				entity.Property(e => e.CanEditRecipe).HasConversion<int>();
 				entity.Property(e => e.IsAdmin).HasConversion<int>();
+			});
+
+			modelBuilder.Entity<DensityMapData>(entity =>
+			{
+				entity.ForMySQLHasCharset("utf8").ForMySQLHasCollation("utf8_unicode_ci");
+
+				entity.HasKey(e => e.Name);
+
+				entity.Property(e => e.Density).IsRequired();
 			});
 		}
 	}
