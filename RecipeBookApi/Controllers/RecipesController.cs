@@ -20,7 +20,7 @@ namespace RecipeBookApi.Controllers
 		private readonly IRecipesService _recipesService;
 		private readonly AppOptions _appOptions;
 
-		public RecipesController(IAuthService authService, IRecipesService recipesService, IOptions<AppOptions> appOptions)
+		public RecipesController(IAuthService authService, IRecipesService recipesService, IOptionsSnapshot<AppOptions> appOptions)
 					: base(authService)
 		{
 			_recipesService = recipesService;
@@ -71,7 +71,7 @@ namespace RecipeBookApi.Controllers
 
 				bool allMetric = "metric".Equals(system, StringComparison.InvariantCultureIgnoreCase);
 				bool isConvertToMass = convertToMass == "1";
-				_appOptions.IngredientUnitStandardizer.StandardizeUnit(ingredient, allMetric: allMetric, convertToMass: isConvertToMass);
+				_appOptions.IngredientUnitStandardizer?.StandardizeUnit(ingredient, allMetric: allMetric, convertToMass: isConvertToMass);
 			}
 
 			return Ok(recipe);

@@ -14,7 +14,7 @@ namespace RecipeBookApi.Services
 	public class MySqlRecipesService : IRecipesService
 	{
 		private AppOptions _options;
-		public MySqlRecipesService(IOptions<AppOptions> options)
+		public MySqlRecipesService(IOptionsSnapshot<AppOptions> options)
 		{
 			_options = options.Value;
 		}
