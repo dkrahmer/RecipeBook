@@ -27,7 +27,7 @@ CREATE TABLE `AppUsers` (
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 DEFAULT COLLATE=utf8_unicode_ci;
 
 
-CREATE TABLE `AppUsers` (
+CREATE TABLE `DensityMapData` (
   `Name` varchar(100) NOT NULL,
   `AlternateNames` varchar(8000) DEFAULT NULL,
   `Density` decimal(16,13) NOT NULL,

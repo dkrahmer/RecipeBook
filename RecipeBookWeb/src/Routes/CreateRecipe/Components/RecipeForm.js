@@ -2,7 +2,7 @@ import { PageHeader } from "../../../Shared/PageHeader";
 import YesNoModal from "../../../Shared/YesNoModal";
 import { useRecipeForm } from "../../../Hooks/useRecipeForm";
 import { RecipeFormFields } from "./RecipeFormFields";
-import { RecipeFormActions } from "./RecipeFormActions";
+import { FormActions } from "../../../Shared/FormActions";
 import { RecipeValidationSummary } from "./RecipeValidationSummary";
 import React, {
 	useState
@@ -67,7 +67,7 @@ export function RecipeForm(props) {
 					onInstructionsChange={onInstructionsChange} />
 				<Divider className="rb-divider" />
 				{props.isSaveExecuting ? (<LinearProgress />) : (null)}
-				<RecipeFormActions
+				<FormActions
 					config={props.config}
 					onSaveClick={onSaveClick}
 					onCancelClick={onCancelClick} />

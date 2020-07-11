@@ -16,5 +16,10 @@
 		/// Density in g/ml
 		/// </summary>
 		public decimal Density { get; set; }
+
+		/// <summary>
+		/// Notes.
+		/// </summary>
+		public string Notes { get; set; }
 	}
 }
