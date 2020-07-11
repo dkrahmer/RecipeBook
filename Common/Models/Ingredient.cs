@@ -93,7 +93,7 @@ namespace Common.Models
 			if (removeNotes)
 			{
 				// Get rid of extra notes in the name
-				int dividerIndex = cleanName.IndexOfAny(new char[] { ',', '(', '[', '<', '-', '*', ';', '~', '@' });
+				int dividerIndex = cleanName.IndexOfAny(new char[] { ',', '(', '[', '<', '*', ';', '~', '@' });
 				if (dividerIndex > -1)
 				{
 					cleanName = cleanName.Substring(0, dividerIndex);
