@@ -51,6 +51,10 @@ namespace RecipeBookApi
 					"}";
 				File.WriteAllText(userConfigPath, emptyUserConfigFileContents);
 			}
+			else
+			{
+				Console.WriteLine($"User config file: {userConfigPath}");
+			}
 
 			var configurationBuilder = new ConfigurationBuilder()
 				.SetBasePath(_currentEnvironment.ContentRootPath)
@@ -69,13 +73,13 @@ namespace RecipeBookApi
 
 		public void ConfigureServices(IServiceCollection services)
 		{
+			services.Configure<AppOptions>(_configuration);
+			var options = services.BuildServiceProvider().GetService<IOptionsSnapshot<AppOptions>>().Value;
+
 			services.AddMvc(o =>
 			{
 				o.Filters.Add(new ResponseCacheAttribute { NoStore = true, Location = ResponseCacheLocation.None, Duration = 0 }); // disable caching for GET requests
 			}).SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-
-			services.Configure<AppOptions>(_configuration);
-			var options = services.BuildServiceProvider().GetService<IOptionsSnapshot<AppOptions>>().Value;
 
 			services.AddSwaggerGen(swaggerGenOptions =>
 			{
