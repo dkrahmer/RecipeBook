@@ -7,7 +7,6 @@ namespace Common.Models
 	{
 		public int RecipeId { get; set; }
 		public string Name { get; set; }
-		//public string Description { get; set; }
 
 		private string _ingredients;
 		public string Ingredients
@@ -38,6 +37,9 @@ namespace Common.Models
 		public string Instructions { get; set; }
 
 		public string Notes { get; set; }
+
+		public int RecipeGroupId { get; set; }
+
 		public DateTime CreateDateTime { get; set; }
 		public DateTime UpdateDateTime { get; set; }
 	}

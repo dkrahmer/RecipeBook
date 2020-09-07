@@ -12,6 +12,8 @@ namespace Common.MySql
 
 		public DbSet<AppUser> AppUsers { get; set; }
 
+		public DbSet<AppUserRecipeGroup> AppUserRecipeGroup { get; set; }
+
 		public MySqlDbContext(string connectionString) : base()
 		{
 			_connectionString = connectionString;
@@ -34,6 +36,7 @@ namespace Common.MySql
 				entity.Property(e => e.RecipeId).UseMySQLAutoIncrementColumn("INT");
 
 				entity.Property(e => e.Name).IsRequired().HasMaxLength(50);
+				entity.Property(e => e.RecipeGroupId).IsRequired();
 				entity.Property(e => e.CreateDateTime).IsRequired();
 				entity.Property(e => e.UpdateDateTime).IsRequired();
 			});
@@ -46,6 +49,14 @@ namespace Common.MySql
 				entity.Property(e => e.AppUserId).UseMySQLAutoIncrementColumn("INT");
 
 				entity.Property(e => e.Username).IsRequired();
+				entity.Property(e => e.DefaultRecipeGroupId).IsRequired();
+			});
+
+			modelBuilder.Entity<AppUserRecipeGroup>(entity =>
+			{
+				entity.ForMySQLHasCharset("utf8").ForMySQLHasCollation("utf8_unicode_ci");
+
+				entity.HasKey(e => new { e.AppUserId, e.RecipeGroupId });
 
 				entity.Property(e => e.CanViewRecipe).HasConversion<int>();
 				entity.Property(e => e.CanEditRecipe).HasConversion<int>();

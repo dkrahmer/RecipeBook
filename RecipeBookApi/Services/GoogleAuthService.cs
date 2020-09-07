@@ -42,10 +42,10 @@ namespace RecipeBookApi.Services
 				AppUserId = int.Parse(CryptoFactory.Decrypt(_appOptions.GoogleClientSecret, userClaims.FindFirst(nameof(AppUserClaimModel.AppUserId)).Value)),
 				Username = userClaims.FindFirst(nameof(AppUserClaimModel.Username)).Value,
 				FirstName = userClaims.FindFirst(nameof(AppUserClaimModel.FirstName)).Value,
-				LastName = userClaims.FindFirst(nameof(AppUserClaimModel.LastName)).Value,
-				CanViewRecipe = Convert.ToBoolean(userClaims.FindFirst(nameof(AppUserClaimModel.CanViewRecipe)).Value),
-				CanEditRecipe = Convert.ToBoolean(userClaims.FindFirst(nameof(AppUserClaimModel.CanEditRecipe)).Value),
-				IsAdmin = Convert.ToBoolean(userClaims.FindFirst(nameof(AppUserClaimModel.IsAdmin)).Value)
+				LastName = userClaims.FindFirst(nameof(AppUserClaimModel.LastName)).Value
+				//CanViewRecipe = Convert.ToBoolean(userClaims.FindFirst(nameof(AppUserClaimModel.CanViewRecipe)).Value),
+				//CanEditRecipe = Convert.ToBoolean(userClaims.FindFirst(nameof(AppUserClaimModel.CanEditRecipe)).Value),
+				//IsAdmin = Convert.ToBoolean(userClaims.FindFirst(nameof(AppUserClaimModel.IsAdmin)).Value)
 			};
 		}
 
@@ -80,10 +80,10 @@ namespace RecipeBookApi.Services
 				new Claim(nameof(AppUserClaimModel.AppUserId), CryptoFactory.Encrypt(_appOptions.GoogleClientSecret, appUser.AppUserId.ToString())),
 				new Claim(nameof(AppUserClaimModel.Username), appUser.Username),
 				new Claim(nameof(AppUserClaimModel.FirstName), appUser.FirstName),
-				new Claim(nameof(AppUserClaimModel.LastName), appUser.LastName),
-				new Claim(nameof(AppUserClaimModel.CanViewRecipe), appUser.CanViewRecipe.ToString()),
-				new Claim(nameof(AppUserClaimModel.CanEditRecipe), appUser.CanEditRecipe.ToString()),
-				new Claim(nameof(AppUserClaimModel.IsAdmin), appUser.IsAdmin.ToString())
+				new Claim(nameof(AppUserClaimModel.LastName), appUser.LastName)
+				//new Claim(nameof(AppUserClaimModel.CanViewRecipe), appUser.CanViewRecipe.ToString()),
+				//new Claim(nameof(AppUserClaimModel.CanEditRecipe), appUser.CanEditRecipe.ToString()),
+				//new Claim(nameof(AppUserClaimModel.IsAdmin), appUser.IsAdmin.ToString())
 			};
 
 			var key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_appOptions.GoogleClientSecret));

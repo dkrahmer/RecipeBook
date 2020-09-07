@@ -9,15 +9,12 @@ namespace Common.Models
 		public string Username { get; set; }
 		public string FirstName { get; set; }
 		public string LastName { get; set; }
-		public bool CanViewRecipe { get; set; }
-		public bool CanEditRecipe { get; set; }
-		public bool IsAdmin { get; set; }
+		public int DefaultRecipeGroupId { get; set; }
 		public DateTime? LastLoggedInDate { get; set; }
 		public DateTime CreateDateTime { get; set; }
 		public DateTime UpdateDateTime { get; set; }
 
 		[NotMapped]
 		public string FullName => $"{FirstName} {LastName}";
-
 	}
 }
