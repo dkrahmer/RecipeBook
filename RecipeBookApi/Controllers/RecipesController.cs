@@ -32,15 +32,18 @@ namespace RecipeBookApi.Controllers
 		[Route("")]
 		[ProducesResponseType((int) HttpStatusCode.NotModified)]
 		[ProducesResponseType(typeof(IEnumerable<RecipeViewModel>), (int) HttpStatusCode.OK)]
-		public async Task<IActionResult> GetRecipeList()
+		public async Task<IActionResult> GetRecipeList([FromQuery] string nameSearch)
 		{
-			var allRecipes = await _recipesService.GetAll();
+			var recipes = await _recipesService.Find(nameSearch);
 
-			DateTime lastRecipeUpdate = allRecipes.Max(r => r.UpdateDateTime);
-			if (TryGetNotModifiedResult(lastRecipeUpdate, out IActionResult notModifiedResult))
-				return notModifiedResult;
+			if (recipes.Any())
+			{
+				DateTime lastRecipeUpdate = recipes.Max(r => r.UpdateDateTime);
+				if (TryGetNotModifiedResult(lastRecipeUpdate, out IActionResult notModifiedResult))
+					return notModifiedResult;
+			}
 
-			return Ok(allRecipes);
+			return Ok(recipes);
 		}
 
 		[RequirePermission("CanViewRecipe")]

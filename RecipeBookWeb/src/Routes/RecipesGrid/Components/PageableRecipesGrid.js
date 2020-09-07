@@ -16,7 +16,8 @@ import {
 } from "@material-ui/core";
 import MoodBadIcon from "@material-ui/icons/MoodBad";
 
-export function PageableRecipesGrid({ recipes }) {
+export function PageableRecipesGrid(props) {
+	const { recipes } = props;
 	const createInitialStateCallback = useCallback(() => {
 		return {
 			pageSize: 999, // divisible by 3
@@ -63,10 +64,20 @@ export function PageableRecipesGrid({ recipes }) {
 						</Grid>))
 						: (
 							<Grid item xs={12} className="rb-no-recipe-results-container">
-								<MoodBadIcon fontSize="large" />
-								<Typography variant="subtitle1">
-									No recipes found!
-								</Typography>
+								{!props.nameQuery ?
+									<React.Fragment>
+										<Typography variant="subtitle1">
+											Type a partial recipe name. Enter '.' or '*' to show all recipes.
+										</Typography>
+									</React.Fragment>
+									:
+									<React.Fragment>
+										<MoodBadIcon fontSize="large" />
+										<Typography variant="subtitle1">
+											No recipes found!
+										</Typography>
+									</React.Fragment>
+								}
 							</Grid>
 						)}
 				</Grid>

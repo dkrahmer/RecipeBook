@@ -27,6 +27,12 @@ function createRecipeService(user, config) {
 			.catch(handleError);
 	}
 
+	function getRecipes(nameSearch, handleResponse, handleError) {
+		api.get(`/?nameSearch=${encodeURIComponent(nameSearch)}`)
+			.then(handleResponse)
+			.catch(handleError);
+	}
+
 	function getRecipeById(recipeId, queryString, handleResponse, handleError) {
 		queryString = queryString ? `?${queryString}` : "";
 
@@ -55,6 +61,7 @@ function createRecipeService(user, config) {
 
 	return {
 		getAllRecipes,
+		getRecipes,
 		getRecipeById,
 		createRecipe,
 		updateRecipe,

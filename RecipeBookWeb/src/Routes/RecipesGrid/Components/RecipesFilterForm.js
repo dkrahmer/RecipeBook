@@ -8,7 +8,7 @@ export function RecipesFilterForm(props) {
 	let setNameQueryDebounced =
 		_.debounce((e) => {
 			props.setNameQuery(e.target.value);
-		}, 200);
+		}, 500);
 
 	return (
 		<React.Fragment>

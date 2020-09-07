@@ -12,23 +12,25 @@ import {
 
 export function FilterableRecipesGrid(props) {
 	const [nameQuery, setNameQuery] = useState("");
-	const [matchingRecipes, setMatchingRecipes] = useState(() => {
-		sortRecipesByUpdateDateTime(props.allRecipes);
-		return props.allRecipes;
-	});
+	const [matchingRecipes, setMatchingRecipes] = useState([]);
+	const [isLoading, setIsLoading] = useState(false);
 
 	useEffect(() => {
-		let workingRecipes = [...props.allRecipes];
-		if (nameQuery) {
-			workingRecipes = workingRecipes.filter(r => {
-				return r.name.toLowerCase().includes(nameQuery.toLowerCase());
-			});
+		if (!nameQuery) {
+			setMatchingRecipes([]);
+			return;
 		}
 
-		sortRecipesByUpdateDateTime(workingRecipes);
-
-		setMatchingRecipes(workingRecipes);
-	}, [nameQuery, props.allRecipes]);
+		setIsLoading(true);
+		props.recipeService.getRecipes(nameQuery, (response) => {
+			const recipes = response.data;
+			sortRecipesByUpdateDateTime(recipes);
+			setMatchingRecipes(recipes);
+			setIsLoading(false);
+		}, (response) => {
+			alert("Error getting recipes!");
+		});
+	}, [nameQuery, props.recipeService]);
 
 	return (
 		<Grid container spacing={24}>
@@ -39,8 +41,8 @@ export function FilterableRecipesGrid(props) {
 						setNameQuery={setNameQuery} />
 				</Paper>
 			</Grid>
-			<LoadingWrapper isLoading={props.isLoading}>
-				<PageableRecipesGrid recipes={matchingRecipes} />
+			<LoadingWrapper isLoading={isLoading}>
+				<PageableRecipesGrid recipes={matchingRecipes} nameQuery={nameQuery} />
 			</LoadingWrapper>
 		</Grid>
 	);
