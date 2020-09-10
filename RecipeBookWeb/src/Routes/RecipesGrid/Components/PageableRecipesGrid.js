@@ -10,6 +10,7 @@ import React, {
 	useReducer,
 	useCallback
 } from "react";
+import { Link } from "react-router-dom";
 import {
 	Grid,
 	Typography
@@ -64,17 +65,20 @@ export function PageableRecipesGrid(props) {
 						</Grid>))
 						: (
 							<Grid item xs={12} className="rb-no-recipe-results-container">
-								{!props.nameQuery ?
-									<React.Fragment>
-										<Typography variant="subtitle1">
-											Type a partial recipe name. Enter '.' or '*' to show all recipes.
-										</Typography>
-									</React.Fragment>
-									:
+								{props.isNameQuery ?
 									<React.Fragment>
 										<MoodBadIcon fontSize="large" />
 										<Typography variant="subtitle1">
 											No recipes found!
+										</Typography>
+									</React.Fragment>
+									:
+									<React.Fragment>
+										<Typography variant="subtitle1">
+											Type a partial recipe name.
+										</Typography>
+										<Typography variant="subtitle1">
+											<Link onClick={() => props.setNameQuery("*")} to="#">Show all recipes</Link>
 										</Typography>
 									</React.Fragment>
 								}

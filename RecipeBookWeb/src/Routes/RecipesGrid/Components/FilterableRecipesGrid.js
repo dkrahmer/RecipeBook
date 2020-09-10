@@ -9,13 +9,21 @@ import {
 	Grid,
 	Paper
 } from "@material-ui/core";
+import queryString from "query-string";
+import _ from "lodash";
 
 export function FilterableRecipesGrid(props) {
-	const [nameQuery, setNameQuery] = useState("");
+	const queryStringValues = queryString.parse(props.location.search);
+	const [nameQuery, setNameQuery] = useState(queryStringValues.nameQuery);
+	const [isNameQuery, setIsNameQuery] = useState(!!nameQuery);
 	const [matchingRecipes, setMatchingRecipes] = useState([]);
 	const [isLoading, setIsLoading] = useState(false);
 
 	useEffect(() => {
+		setIsNameQuery(false);
+		const qs = queryString.stringify(_.pickBy({ nameQuery }));
+		props.history.replace({ search: qs }); // update the URL QS
+
 		if (!nameQuery) {
 			setMatchingRecipes([]);
 			return;
@@ -23,14 +31,16 @@ export function FilterableRecipesGrid(props) {
 
 		setIsLoading(true);
 		props.recipeService.getRecipes(nameQuery, (response) => {
+			setIsNameQuery(true);
 			const recipes = response.data;
 			sortRecipesByUpdateDateTime(recipes);
 			setMatchingRecipes(recipes);
 			setIsLoading(false);
 		}, (response) => {
+			setIsNameQuery(true);
 			alert("Error getting recipes!");
 		});
-	}, [nameQuery, props.recipeService]);
+	}, [nameQuery, props.recipeService]); // eslint-disable-line react-hooks/exhaustive-deps
 
 	return (
 		<Grid container spacing={24}>
@@ -42,7 +52,7 @@ export function FilterableRecipesGrid(props) {
 				</Paper>
 			</Grid>
 			<LoadingWrapper isLoading={isLoading}>
-				<PageableRecipesGrid recipes={matchingRecipes} nameQuery={nameQuery} />
+				<PageableRecipesGrid recipes={matchingRecipes} setNameQuery={setNameQuery} isNameQuery={isNameQuery} history={props.history} />
 			</LoadingWrapper>
 		</Grid>
 	);

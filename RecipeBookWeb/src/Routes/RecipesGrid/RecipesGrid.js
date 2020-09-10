@@ -45,7 +45,7 @@ export function RecipesGrid(props) {
 
 	return (
 		<React.Fragment>
-			<FilterableRecipesGrid recipeService={recipeService} />
+			<FilterableRecipesGrid recipeService={recipeService} location={props.location} history={props.history} />
 		</React.Fragment>
 	);
 }
