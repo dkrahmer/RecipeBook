@@ -50,9 +50,9 @@ namespace Common.Structs
 		public decimal ToDecimal(int decimals = 2)
 		{
 			if (IsDecimal)
-				return _decimal.Value;
+				return decimal.Round(_decimal.Value, decimals, MidpointRounding.AwayFromZero);
 
-			return decimal.Round((decimal) _fraction.Value.Numerator / (decimal) _fraction.Value.Denominator, decimals);
+			return decimal.Round((decimal) _fraction.Value.Numerator / (decimal) _fraction.Value.Denominator, decimals, MidpointRounding.AwayFromZero);
 		}
 
 		public Rational ToRational()
