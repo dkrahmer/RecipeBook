@@ -2,6 +2,8 @@ import React from "react";
 import { TextField } from "@material-ui/core";
 
 export function RecipeFormFields(props) {
+	const scalableHelper = "Enter scalable numbers in triangle brackets. Example: <2> = auto -- <2:/> = fraction -- <2:.3> = decimal with 3 decimal places.";
+
 	return (
 		<React.Fragment>
 			<TextField
@@ -20,7 +22,7 @@ export function RecipeFormFields(props) {
 				value={props.recipe.ingredients}
 				onChange={props.onIngredientsChange}
 				label="Ingredients"
-				helperText="One ingredient per line. Use brackets for Ingredient Groups. Example: [For Crust] and [For Filling]"
+				helperText={<span>One ingredient per line. Use brackets for Ingredient Groups. Example: [For Crust] and [For Filling]<br />{scalableHelper}</span>}
 				placeholder=""
 				margin="normal"
 				variant="outlined" />
@@ -30,7 +32,7 @@ export function RecipeFormFields(props) {
 				value={props.recipe.instructions}
 				onChange={props.onInstructionsChange}
 				label="Instructions"
-				helperText="Use brackets for Instruction Groups. Example: [For Crust] and [For Filling]"
+				helperText={<span>Use brackets for Instruction Groups. Example: [For Crust] and [For Filling]<br />{scalableHelper}</span>}
 				placeholder=""
 				margin="normal"
 				variant="outlined" />
@@ -40,6 +42,7 @@ export function RecipeFormFields(props) {
 				value={props.recipe.notes || ""}
 				onChange={props.onNotesChange}
 				label="Notes"
+				helperText={scalableHelper}
 				placeholder=""
 				margin="normal"
 				variant="outlined" />
