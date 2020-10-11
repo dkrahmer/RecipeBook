@@ -21,7 +21,7 @@ export function EditRecipe(props) {
 
 	useEffect(() => {
 		setIsLoading(true);
-		recipeService.getRecipeById(props.match.params.recipeId, null, (response) => {
+		recipeService.getRecipeById(props.match.params.recipeId, "editing=1", (response) => {
 			setRecipe(response.data);
 			setIsLoading(false);
 		}, (error) => {
