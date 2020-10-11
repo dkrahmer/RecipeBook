@@ -1,4 +1,5 @@
-﻿using Common.Models;
+﻿using Common;
+using Common.Models;
 using Common.Structs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -52,7 +53,7 @@ namespace RecipeBookApi.Controllers
 		[ProducesResponseType((int) HttpStatusCode.NotModified)]
 		[ProducesResponseType((int) HttpStatusCode.NotFound)]
 		[ProducesResponseType(typeof(RecipeViewModel), (int) HttpStatusCode.OK)]
-		public async Task<IActionResult> GetRecipe(int recipeId, [FromQuery] string scale, [FromQuery] string system, [FromQuery] string convertToMass)
+		public async Task<IActionResult> GetRecipe(int recipeId, [FromQuery] string scale, [FromQuery] string system, [FromQuery] string convertToMass, [FromQuery] string editing)
 		{
 			var recipe = await _recipesService.Get(recipeId);
 			if (recipe == null)
@@ -61,6 +62,7 @@ namespace RecipeBookApi.Controllers
 			if (TryGetNotModifiedResult(recipe.UpdateDateTime, out IActionResult notModifiedResult))
 				return notModifiedResult;
 
+			bool isEditing = !string.IsNullOrWhiteSpace(editing) && (editing == "1" || editing.Equals("true", StringComparison.InvariantCultureIgnoreCase));
 			Amount scaleAmount = new Amount(1M);
 			bool needScaling = !string.IsNullOrEmpty(scale) && Amount.TryParse(scale, out scaleAmount) && scaleAmount.ToString() != "1";
 
@@ -72,9 +74,18 @@ namespace RecipeBookApi.Controllers
 				if (needScaling)
 					ingredient.Amount *= scaleAmount;
 
+				if (!isEditing)
+					ingredient.Name = Helpers.UpdateScalableNumbers(ingredient.Name, scaleAmount);
+
 				bool allMetric = "metric".Equals(system, StringComparison.InvariantCultureIgnoreCase);
 				bool isConvertToMass = convertToMass == "1";
 				_appOptions.IngredientUnitStandardizer?.StandardizeUnit(ingredient, allMetric: allMetric, convertToMass: isConvertToMass);
+			}
+
+			if (!isEditing)
+			{
+				recipe.Instructions = Helpers.UpdateScalableNumbers(recipe.Instructions, scaleAmount);
+				recipe.Notes = Helpers.UpdateScalableNumbers(recipe.Notes, scaleAmount);
 			}
 
 			return Ok(recipe);
