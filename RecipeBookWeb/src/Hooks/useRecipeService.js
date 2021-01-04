@@ -19,16 +19,19 @@ export function useRecipeService(config) {
 }
 
 function createRecipeService(user, config) {
-	const api = createAxiosApi("Recipes", user, config);
+	const api = createAxiosApi("", user, config);
 
 	function getAllRecipes(handleResponse, handleError) {
-		api.get("/")
+		api.get("Recipes/")
 			.then(handleResponse)
 			.catch(handleError);
 	}
 
-	function getRecipes(nameSearch, handleResponse, handleError) {
-		api.get(`/?nameSearch=${encodeURIComponent(nameSearch)}`)
+	function getRecipes(nameSearch, tagQuery, handleResponse, handleError) {
+		nameSearch = nameSearch || "";
+		tagQuery = tagQuery || "";
+
+		api.get(`Recipes/?nameSearch=${encodeURIComponent(nameSearch)}&tags=${encodeURIComponent(tagQuery)}`)
 			.then(handleResponse)
 			.catch(handleError);
 	}
@@ -36,25 +39,31 @@ function createRecipeService(user, config) {
 	function getRecipeById(recipeId, queryString, handleResponse, handleError) {
 		queryString = queryString ? `?${queryString}` : "";
 
-		api.get(`/${recipeId}${queryString}`)
+		api.get(`Recipes/${recipeId}${queryString}`)
 			.then(handleResponse)
 			.catch(handleError);
 	}
 
 	function createRecipe(recipe, handleResponse, handleError) {
-		api.post("/", recipe)
+		api.post("Recipes/", recipe)
 			.then(handleResponse)
 			.catch(handleError);
 	}
 
 	function updateRecipe(id, recipe, handleResponse, handleError) {
-		api.put(`/${id}`, recipe)
+		api.put(`Recipes/${id}`, recipe)
 			.then(handleResponse)
 			.catch(handleError);
 	}
 
 	function deleteRecipe(id, handleResponse, handleError) {
-		api.delete(`/${id}`)
+		api.delete(`Recipes/${id}`)
+			.then(handleResponse)
+			.catch(handleError);
+	}
+
+	function getTags(handleResponse, handleError) {
+		api.get("Tags")
 			.then(handleResponse)
 			.catch(handleError);
 	}
@@ -65,6 +74,7 @@ function createRecipeService(user, config) {
 		getRecipeById,
 		createRecipe,
 		updateRecipe,
-		deleteRecipe
+		deleteRecipe,
+		getTags
 	};
 }

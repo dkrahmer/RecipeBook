@@ -32,10 +32,15 @@ namespace RecipeBookApi.Controllers
 		[HttpGet]
 		[Route("")]
 		[ProducesResponseType((int) HttpStatusCode.NotModified)]
-		[ProducesResponseType(typeof(IEnumerable<RecipeViewModel>), (int) HttpStatusCode.OK)]
-		public async Task<IActionResult> GetRecipeList([FromQuery] string nameSearch)
+		[ProducesResponseType(typeof(IEnumerable<Recipe>), (int) HttpStatusCode.OK)]
+		public async Task<IActionResult> GetRecipeList([FromQuery] string nameSearch, [FromQuery] string tags)
 		{
-			var recipes = await _recipesService.Find(nameSearch);
+			var tagsArray = tags?.Split(',')
+				.Where(t=>!string.IsNullOrWhiteSpace(t))
+				.Select(t => t.Trim())
+				.ToArray() ?? new string[0];
+
+			var recipes = await _recipesService.Find(nameSearch, tagsArray);
 
 			if (recipes.Any())
 			{
@@ -52,7 +57,7 @@ namespace RecipeBookApi.Controllers
 		[Route("{recipeId}")]
 		[ProducesResponseType((int) HttpStatusCode.NotModified)]
 		[ProducesResponseType((int) HttpStatusCode.NotFound)]
-		[ProducesResponseType(typeof(RecipeViewModel), (int) HttpStatusCode.OK)]
+		[ProducesResponseType(typeof(Recipe), (int) HttpStatusCode.OK)]
 		public async Task<IActionResult> GetRecipe(int recipeId, [FromQuery] string scale, [FromQuery] string system, [FromQuery] string convertToMass, [FromQuery] string editing)
 		{
 			var recipe = await _recipesService.Get(recipeId);

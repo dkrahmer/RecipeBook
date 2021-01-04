@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Common.Models
@@ -36,6 +37,8 @@ namespace Common.Models
 
 		public string Instructions { get; set; }
 
+		[NotMapped]
+		public List<string> Tags { get; set; }
 		public string Notes { get; set; }
 		public DateTime CreateDateTime { get; set; }
 		public DateTime UpdateDateTime { get; set; }

@@ -15,32 +15,56 @@ import _ from "lodash";
 export function FilterableRecipesGrid(props) {
 	const queryStringValues = queryString.parse(props.location.search);
 	const [nameQuery, setNameQuery] = useState(queryStringValues.nameQuery);
+	const [tagQuery, setTagQuery] = useState(queryStringValues.tagQuery);
 	const [isNameQuery, setIsNameQuery] = useState(!!nameQuery);
 	const [matchingRecipes, setMatchingRecipes] = useState([]);
+	const [tags, setTags] = useState([]);
+	const [selectedTags, setSelectedTags] = useState([]);
 	const [isLoading, setIsLoading] = useState(false);
+	const [areTagsRequested, setAreTagsRequested] = useState(false);
 
 	useEffect(() => {
+		if (!areTagsRequested) {
+			if (tagQuery) {
+				const selectedTags = tagQuery.split(",");
+				setSelectedTags(selectedTags);
+			}
+			props.recipeService.getTags((response) => {
+				setTags(response.data);
+			}, (error) => {
+				console.error(error);
+				alert("Error getting tags!");
+			});
+			setAreTagsRequested(true);
+		}
+
 		setIsNameQuery(false);
-		const qs = queryString.stringify(_.pickBy({ nameQuery }));
+		const qs = queryString.stringify(_.pickBy({ nameQuery, tagQuery }));
 		props.history.replace({ search: qs }); // update the URL QS
 
-		if (!nameQuery) {
+		if (!nameQuery && !tagQuery) {
 			setMatchingRecipes([]);
 			return;
 		}
 
 		setIsLoading(true);
-		props.recipeService.getRecipes(nameQuery, (response) => {
+		props.recipeService.getRecipes(nameQuery, tagQuery, (response) => {
 			setIsNameQuery(true);
 			const recipes = response.data;
 			sortRecipesByUpdateDateTime(recipes);
 			setMatchingRecipes(recipes);
 			setIsLoading(false);
-		}, (response) => {
+		}, (error) => {
+			console.error(error);
 			setIsNameQuery(true);
 			alert("Error getting recipes!");
 		});
-	}, [nameQuery, props.recipeService]); // eslint-disable-line react-hooks/exhaustive-deps
+	}, [nameQuery, tagQuery]); // eslint-disable-line react-hooks/exhaustive-deps
+
+	function onSelectedTagsChange(e) {
+		setSelectedTags(e.target.value);
+		setTagQuery(e.target.value.join(","));
+	}
 
 	return (
 		<Grid container spacing={24}>
@@ -48,11 +72,19 @@ export function FilterableRecipesGrid(props) {
 				<Paper style={{ padding: 12 }}>
 					<RecipesFilterForm
 						nameQuery={nameQuery}
-						setNameQuery={setNameQuery} />
+						setNameQuery={setNameQuery}
+						tags={tags}
+						selectedTags={selectedTags}
+						onSelectedTagsChange={onSelectedTagsChange}
+					/>
 				</Paper>
 			</Grid>
 			<LoadingWrapper isLoading={isLoading}>
-				<PageableRecipesGrid recipes={matchingRecipes} setNameQuery={setNameQuery} isNameQuery={isNameQuery} history={props.history} />
+				<PageableRecipesGrid
+					recipes={matchingRecipes}
+					setNameQuery={setNameQuery}
+					isNameQuery={isNameQuery}
+					history={props.history} />
 			</LoadingWrapper>
 		</Grid>
 	);

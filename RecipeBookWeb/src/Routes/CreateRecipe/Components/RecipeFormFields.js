@@ -1,5 +1,6 @@
 import React from "react";
 import { TextField } from "@material-ui/core";
+import FancyComboBoxWithCreate from "../../../Shared/FancyComboBoxWithCreate";
 
 export function RecipeFormFields(props) {
 	const scalableHelper = "Enter scalable numbers in triangle brackets. Example: <2> = auto -- <2:/> = fraction -- <2:.3> = decimal with 3 decimal places.";
@@ -16,6 +17,12 @@ export function RecipeFormFields(props) {
 				placeholder=""
 				margin="normal"
 				variant="outlined" />
+			<FancyComboBoxWithCreate
+				value={props.recipe.tags}
+				options={props.tagOptions}
+				name="tags"
+				onChange={props.onTagsChange}
+				label="Tags"/>
 			<TextField
 				fullWidth
 				multiline

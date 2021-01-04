@@ -57,6 +57,10 @@ export function useRecipeForm(initialRecipe) {
 		markFieldDirty("name");
 	}
 
+	function handleTagsChange(value) {
+		setRecipe({ ...recipe, tags: value });
+	}
+
 	function handleIngredientsChange(value) {
 		setRecipe({ ...recipe, ingredients: value });
 	}
@@ -65,19 +69,15 @@ export function useRecipeForm(initialRecipe) {
 		setRecipe({ ...recipe, instructions: value });
 	}
 
-	function handleNotesChange(value) {
-		setRecipe({ ...recipe, notes: value });
-	}
-
 	return {
 		recipe,
 		errors,
 		isValid,
 		reset: resetCallback,
 		handleNameChange,
+		handleTagsChange,
 		handleIngredientsChange,
-		handleInstructionsChange,
-		handleNotesChange
+		handleInstructionsChange
 	};
 }
 
