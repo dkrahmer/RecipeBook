@@ -11,7 +11,7 @@ import { Logout } from "./Routes/Logout/Logout";
 import { RouteNotFound } from "./Shared/RouteNotFound";
 import { Redirect } from "react-router";
 import "typeface-roboto";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
 	BrowserRouter,
 	Switch,
@@ -20,27 +20,35 @@ import {
 import CssBaseline from "@material-ui/core/CssBaseline";
 import "./Content/site.scss";
 
-export default function App() {
+export default function App(props) {
+	const [config, setConfig] = useState(props.config);
+
+	useEffect(() => {
+		setConfig(props.config);
+	}, [config]); // eslint-disable-line react-hooks/exhaustive-deps
+
+	const moreProps = { config: config };
+
 	return (
 		<BrowserRouter>
 			<CssBaseline />
-			<UserContextProvider>
-				<Menu />
+			<UserContextProvider config={config}>
+				<Menu config={config} />
 				<main id="main-content">
 					<Switch>
 						<Route exact path="/" render={() => (<Redirect to="/recipes" />)} />
-						<Route exact path="/recipes" component={RecipesGrid} />
-						<Route exact path="/recipes/create" component={CreateRecipe} />
-						<Route exact path="/recipes/:recipeId" component={RecipeView} />
-						<Route exact path="/recipes/:recipeId/edit" component={EditRecipe} />
-						<Route exact path="/recipes/:recipeId/clone" component={CloneRecipe} />
-						<Route exact path="/login" component={Login} />
-						<Route exact path="/logout" component={Logout} />
+						<Route exact path="/recipes" render={(props) => <RecipesGrid {...{ ...props, ...moreProps }} />} />
+						<Route exact path="/recipes/create" render={(props) => <CreateRecipe {...{ ...props, ...moreProps }} />} />
+						<Route exact path="/recipes/:recipeId" render={(props) => <RecipeView {...{ ...props, ...moreProps }} />} />
+						<Route exact path="/recipes/:recipeId/edit" render={(props) => <EditRecipe {...{ ...props, ...moreProps }} />} />
+						<Route exact path="/recipes/:recipeId/clone" render={(props) => <CloneRecipe {...{ ...props, ...moreProps }} />} />
+						<Route exact path="/login" render={(props) => <Login {...{ ...props, ...moreProps }} />} />
+						<Route exact path="/logout" render={(props) => <Logout {...{ ...props, ...moreProps }} />} />
 						<Route component={RouteNotFound} />
 					</Switch>
 				</main>
 				<Footer />
 			</UserContextProvider>
-		</BrowserRouter>
+		</BrowserRouter >
 	);
 }

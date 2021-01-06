@@ -7,15 +7,20 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Primitives;
 using Microsoft.IdentityModel.Tokens;
 using RecipeBookApi.Models;
 using RecipeBookApi.Options;
 using RecipeBookApi.Services;
 using RecipeBookApi.Services.Contracts;
 using Swashbuckle.AspNetCore.Swagger;
+using System;
+using System.IO;
+using System.Reflection;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Environment;
 
 namespace RecipeBookApi
 {
@@ -23,15 +28,39 @@ namespace RecipeBookApi
 	{
 		private readonly IConfiguration _configuration;
 		private readonly IHostingEnvironment _currentEnvironment;
+		private readonly DateTime _lastConfigChangeDateTime = DateTime.UtcNow;
 
 		public Startup(IHostingEnvironment env)
 		{
 			_currentEnvironment = env;
 
+			string userConfigPath = Path.Combine(GetFolderPath(SpecialFolder.ApplicationData), Assembly.GetExecutingAssembly().GetName().Name, "appsettings.json");
+			if (!File.Exists(userConfigPath))
+			{
+				Console.WriteLine($"Creating user config file: {userConfigPath}");
+				// Create the directory
+				Directory.CreateDirectory(Directory.GetParent(userConfigPath).FullName);
+
+				// Create an empty config file
+				string emptyUserConfigFileContents =
+					"// These settings will override default application settings." + Environment.NewLine +
+					"// See appsettings.json in the application directory for available settings and default values." + Environment.NewLine +
+					Environment.NewLine +
+					"{" + Environment.NewLine +
+					"\t" + Environment.NewLine +
+					"}";
+				File.WriteAllText(userConfigPath, emptyUserConfigFileContents);
+			}
+			else
+			{
+				Console.WriteLine($"User config file: {userConfigPath}");
+			}
+
 			var configurationBuilder = new ConfigurationBuilder()
 				.SetBasePath(_currentEnvironment.ContentRootPath)
 				.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
 				.AddJsonFile($"appsettings.{_currentEnvironment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+				.AddJsonFile(userConfigPath, optional: true, reloadOnChange: true)
 				.AddEnvironmentVariables();
 
 			if (_currentEnvironment.IsDevelopment())
@@ -44,10 +73,13 @@ namespace RecipeBookApi
 
 		public void ConfigureServices(IServiceCollection services)
 		{
-			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-
 			services.Configure<AppOptions>(_configuration);
-			var options = services.BuildServiceProvider().GetService<IOptions<AppOptions>>().Value;
+			var options = services.BuildServiceProvider().GetService<IOptionsSnapshot<AppOptions>>().Value;
+
+			services.AddMvc(o =>
+			{
+				o.Filters.Add(new ResponseCacheAttribute { NoStore = true, Location = ResponseCacheLocation.None, Duration = 0 }); // disable caching for GET requests
+			}).SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
 			services.AddSwaggerGen(swaggerGenOptions =>
 			{
@@ -102,8 +134,12 @@ namespace RecipeBookApi
 			}
 		}
 
-		public void Configure(IApplicationBuilder app)
+		public void Configure(IApplicationBuilder app, IHostingEnvironment env)
 		{
+			ChangeToken.OnChange(
+				() => _configuration.GetReloadToken(),
+				(state) => ConfigurationChanged(state), env);
+
 			if (_currentEnvironment.IsDevelopment())
 			{
 				app.UseDeveloperExceptionPage();
@@ -120,7 +156,14 @@ namespace RecipeBookApi
 			app.UseCors();
 			app.UseMvc();
 		}
+
+		private void ConfigurationChanged(IHostingEnvironment env)
+		{
+			if (DateTime.UtcNow - _lastConfigChangeDateTime > TimeSpan.FromSeconds(1)) // Debounce the event (2 per change)
+				Console.WriteLine("Configuration change detected. Reloaded configuration values.");
+		}
 	}
+
 
 	internal class NoAuthService : IAuthService
 	{

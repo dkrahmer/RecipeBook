@@ -8,10 +8,10 @@ namespace Common.Models
 	public class Ingredient
 	{
 		private static readonly string REGEX_FRACTION_STRINGS = string.Join("", Amount.FractionMap.Select(m => Regex.Escape(m.Key)));
-		private static readonly string FRACTION_REGEX_PARTIAL = @"(?<Fraction>(([0-9]+\s+)?(([0-9]+\/[1-9]+[0-9]*)|([0-9" + REGEX_FRACTION_STRINGS + @"]+))))";
+		private static readonly string FRACTION_REGEX_PARTIAL = @"(?<Fraction>(([0-9]+\s+)?(([0-9]+\/[1-9]+[0-9]*)|([" + REGEX_FRACTION_STRINGS + @"]+))))";
 		private static readonly string DECIMAL_REGEX_PARTIAL = @"(?<Decimal>([0-9]+\.[0-9]*)|([0-9]*\.[0-9]+)|[0-9]+)";
 		private static readonly string AMOUNT_REGEX_PARTIAL = "(?<Amount>" + FRACTION_REGEX_PARTIAL + "|" + DECIMAL_REGEX_PARTIAL + ")";
-		private const string RECIPE_UNIT_NAME_REGEX_PARTIAL = @"(?<Name>(?<Unit>[^\s]*).*)";
+		private const string RECIPE_UNIT_NAME_REGEX_PARTIAL = @"(?i)(?<Name>(?<Unit>((fl(uid)? o(z|unce(s)?) )|([^\s]*))).*)";
 
 		protected static readonly Regex IngredientLineRegEx =
 			new Regex($"^({AMOUNT_REGEX_PARTIAL}\\s*)?{RECIPE_UNIT_NAME_REGEX_PARTIAL}$", RegexOptions.Compiled);
@@ -50,9 +50,72 @@ namespace Common.Models
 
 		public Amount Amount { get; set; }
 
+		private int _unitTrimCharCount;
+
+		private string _unit;
+
 		[JsonIgnore]
-		public string Unit { get; private set; }
+		public string Unit
+		{
+			get => _unit;
+			set
+			{
+				value = (value ?? "").Trim(' ');
+				if (!string.IsNullOrEmpty(_unit) && !string.IsNullOrEmpty(Name) && Name.Length >= _unit.Length)
+				{
+					Name = $"{value}{Name.Substring(_unit.Length, _unitTrimCharCount)} {Name.Substring(_unit.Length + _unitTrimCharCount).TrimStart()}".TrimEnd();
+				}
+
+				string unit = value;
+				if (unit != null)
+				{
+					unit = unit.Trim(new char[] { ',' });
+					_unitTrimCharCount = value.Length - unit.Length;
+				}
+				else
+				{
+					_unitTrimCharCount = 0;
+				}
+
+				_unit = unit;
+			}
+		}
 		public string Name { get; set; }
 		public bool IsHeading { get; set; }
+
+		public string GetCleanName(bool removeNotes = true)
+		{
+			if (string.IsNullOrEmpty(Name) || string.IsNullOrEmpty(Unit) || Name.Length <= Unit.Length)
+				return Name;
+
+			string cleanName = Name.Substring(Unit.Length);
+
+			if (removeNotes)
+			{
+				// Get rid of extra notes in the name
+				int dividerIndex = cleanName.IndexOfAny(new char[] { ',', '(', '[', '<', '*', ';', '~', '@' });
+				if (dividerIndex > -1)
+				{
+					cleanName = cleanName.Substring(0, dividerIndex);
+				}
+
+				var dividerStrings = new string[] { " or ", " at ", " with ", "- ", " -" };
+				foreach (string dividerWord in dividerStrings)
+				{
+					dividerIndex = cleanName.IndexOf(dividerWord);
+					if (dividerIndex > -1)
+					{
+						cleanName = cleanName.Substring(0, dividerIndex);
+					}
+				}
+			}
+
+			return cleanName.Trim();
+		}
+
+		public override string ToString()
+		{
+			return $"{Amount.ToString()} {Name}";
+		}
 	}
 }

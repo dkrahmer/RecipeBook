@@ -4,13 +4,10 @@ import { RecipeForm } from "../CreateRecipe/Components/RecipeForm";
 import {
 	RecipeSavedSnackbar
 } from "../CreateRecipe/Components/RecipeSavedSnackbar";
-import React, {
-	useState,
-	useEffect
-} from "react";
+import React, { useState, useEffect } from "react";
 
 export function EditRecipe(props) {
-	const recipeService = useRecipeService();
+	const recipeService = useRecipeService(props.config);
 	const [isLoading, setIsLoading] = useState(true);
 	const [toastOpen, setToastOpen] = useState(false);
 	const [isExecuting, setIsExecuting] = useState(false);
@@ -24,7 +21,7 @@ export function EditRecipe(props) {
 
 	useEffect(() => {
 		setIsLoading(true);
-		recipeService.getRecipeById(props.match.params.recipeId, null, (response) => {
+		recipeService.getRecipeById(props.match.params.recipeId, "editing=1", (response) => {
 			setRecipe(response.data);
 			setIsLoading(false);
 		}, (error) => {
@@ -68,6 +65,7 @@ export function EditRecipe(props) {
 		<React.Fragment>
 			<LoadingWrapper isLoading={isLoading}>
 				<RecipeForm
+					config={props.config}
 					pageTitle={`${props.title || "Edit"} ${recipe.name}`}
 					recipe={recipe}
 					onSaveClick={props.saveRecipe || saveRecipe}

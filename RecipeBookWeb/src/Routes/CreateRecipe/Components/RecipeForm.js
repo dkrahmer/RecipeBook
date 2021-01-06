@@ -55,7 +55,7 @@ export function RecipeForm(props) {
 
 	return (
 		<React.Fragment>
-			<PageHeader text={props.pageTitle} />
+			<PageHeader text={props.pageTitle} config={props.config} />
 			<Paper style={{ padding: 12 }}>
 				<RecipeValidationSummary errors={recipeForm.errors} />
 				<RecipeFormFields
@@ -68,6 +68,7 @@ export function RecipeForm(props) {
 				<Divider className="rb-divider" />
 				{props.isSaveExecuting ? (<LinearProgress />) : (null)}
 				<RecipeFormActions
+					config={props.config}
 					onSaveClick={onSaveClick}
 					onCancelClick={onCancelClick} />
 				<YesNoModal

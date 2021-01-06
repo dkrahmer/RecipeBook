@@ -22,6 +22,12 @@ namespace Common.Structs
 
 		public bool IsEmpty => !IsDecimal && !IsFraction;
 
+		public Amount(Amount value) : this()
+		{
+			_decimal = value._decimal;
+			_fraction = value._fraction;
+		}
+
 		public Amount(decimal value) : this()
 		{
 			_decimal = decimal.Parse(value.ToString("G29"));
@@ -41,12 +47,28 @@ namespace Common.Structs
 			_fraction = amount._fraction;
 		}
 
+		public decimal ToDecimal(int decimals = 2)
+		{
+			if (IsDecimal)
+				return decimal.Round(_decimal.Value, decimals, MidpointRounding.AwayFromZero);
+
+			return decimal.Round((decimal) _fraction.Value.Numerator / (decimal) _fraction.Value.Denominator, decimals, MidpointRounding.AwayFromZero);
+		}
+
+		public Rational ToRational()
+		{
+			if (IsFraction)
+				return _fraction.Value;
+
+			return Rational.ParseDecimal(_decimal.ToString(), FRACTION_TOLERANCE);
+		}
+
 		public Amount ToDecimalAmount(int decimals = 2)
 		{
 			if (IsDecimal)
 				return this;
 
-			return new Amount() { _decimal = decimal.Round((decimal) _fraction.Value.Numerator / (decimal) _fraction.Value.Denominator, 2) };
+			return new Amount() { _decimal = ToDecimal(decimals) };
 		}
 
 		public Amount ToFractionAmount()
@@ -54,7 +76,7 @@ namespace Common.Structs
 			if (IsFraction)
 				return this;
 
-			return new Amount() { _fraction = Rational.ParseDecimal(_decimal.ToString(), FRACTION_TOLERANCE) };
+			return new Amount() { _fraction = ToRational() };
 		}
 
 		public static Amount Parse(string value)
@@ -222,19 +244,122 @@ namespace Common.Structs
 			return new Amount(x._fraction.Value / y._fraction.Value);
 		}
 
-		public override string ToString()
+		public static bool operator <=(Amount x, Amount y)
 		{
-			return ToString(useFractionSlash: true);
+			if (x.IsEmpty && y.IsEmpty)
+				return true;
+
+			if (x.IsEmpty || y.IsEmpty)
+				return false;
+
+			if (x.IsDecimal && y.IsDecimal)
+				return x._decimal.Value <= y._decimal.Value;
+
+			if (x.IsDecimal)
+				return Rational.ParseDecimal(x._decimal.ToString(), FRACTION_TOLERANCE) <= y._fraction.Value;
+
+			if (y.IsDecimal)
+				return x._fraction.Value <= Rational.ParseDecimal(y._decimal.ToString(), FRACTION_TOLERANCE);
+
+			return x._fraction.Value <= y._fraction.Value;
 		}
 
-		public string ToString(bool useFractionSlash = true)
+		public static bool operator >=(Amount x, Amount y)
 		{
-			string output = _decimal?.ToString("G29") ?? _fraction?.ToString("W").Replace(" + ", " ") ?? "";
+			if (x.IsEmpty && y.IsEmpty)
+				return true;
 
-			if (useFractionSlash)
-				output = output.Replace("/", "\x2044"); // x2044 is the fraction slash char
+			if (x.IsEmpty || y.IsEmpty)
+				return false;
 
-			return output;
+			if (x.IsDecimal && y.IsDecimal)
+				return x._decimal.Value >= y._decimal.Value;
+
+			if (x.IsDecimal)
+				return Rational.ParseDecimal(x._decimal.ToString(), FRACTION_TOLERANCE) >= y._fraction.Value;
+
+			if (y.IsDecimal)
+				return x._fraction.Value >= Rational.ParseDecimal(y._decimal.ToString(), FRACTION_TOLERANCE);
+
+			return x._fraction.Value >= y._fraction.Value;
+		}
+
+		public static bool operator ==(Amount x, Amount y)
+		{
+			if (x.IsEmpty && y.IsEmpty)
+				return true;
+
+			if (x.IsEmpty || y.IsEmpty)
+				return false;
+
+			if (x.IsDecimal && y.IsDecimal)
+				return x._decimal.Value == y._decimal.Value;
+
+			if (x.IsDecimal)
+				return Rational.ParseDecimal(x._decimal.ToString(), FRACTION_TOLERANCE) == y._fraction.Value;
+
+			if (y.IsDecimal)
+				return x._fraction.Value == Rational.ParseDecimal(y._decimal.ToString(), FRACTION_TOLERANCE);
+
+			return x._fraction.Value == y._fraction.Value;
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (obj == null || !(obj is Amount))
+				return false;
+
+			return (Amount) obj == this;
+		}
+
+		public override int GetHashCode()
+		{
+			if (IsDecimal)
+				return _decimal.GetHashCode();
+
+			if (IsFraction)
+				return _fraction.GetHashCode();
+
+			return base.GetHashCode();
+		}
+
+		public static bool operator <(Amount x, Amount y)
+		{
+			return !(x >= y);
+		}
+
+		public static bool operator >(Amount x, Amount y)
+		{
+			return !(x <= y);
+		}
+
+		public static bool operator !=(Amount x, Amount y)
+		{
+			return !(x == y);
+		}
+
+		/// <summary>
+		/// Converts to string.
+		/// </summary>
+		/// <returns>
+		/// A <see cref="System.String" /> that represents this instance.
+		/// </returns>
+		public override string ToString()
+		{
+			return ToString(decimalFormat: "G29", fractionFormat: "W");
+		}
+
+		/// <summary>
+		/// Converts to string.
+		/// </summary>
+		/// <param name="decimalFormat">Use decimal type format.</param>
+		/// <param name="fractionFormat">F for normal fraction, C for canonical fraction, W for whole+fractional.</param>
+		/// <returns>
+		/// A <see cref="System.String" /> that represents this instance.
+		/// </returns>
+		public string ToString(string decimalFormat = "G29", string fractionFormat = "W")
+		{
+			return _decimal?.ToString(decimalFormat) ?? _fraction?.ToString(fractionFormat).Replace(" + ", " ") ?? "";
 		}
 	}
 }

@@ -9,7 +9,6 @@ using RecipeBookApi.Services.Contracts;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,7 +20,7 @@ namespace RecipeBookApi.Services
 		private readonly AppOptions _appOptions;
 		private IAppUsersService _appUserStorage;
 
-		public GoogleAuthService(IOptions<AppOptions> appOptions, IAppUsersService appUserStorage)
+		public GoogleAuthService(IOptionsSnapshot<AppOptions> appOptions, IAppUsersService appUserStorage)
 		{
 			_appOptions = appOptions.Value;
 			_appUserStorage = appUserStorage;

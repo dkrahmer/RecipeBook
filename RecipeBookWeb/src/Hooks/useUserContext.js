@@ -1,4 +1,3 @@
-import { AuthTokenKey } from "../config";
 import { createAxiosApi } from "../Helpers/axiosApiHelper";
 import { UserContext } from "../Contexts/UserContext";
 import { useContext } from "react";
@@ -6,7 +5,7 @@ import { DateTime } from "luxon";
 import Cookies from "js-cookie";
 import jwt from "jsonwebtoken";
 
-export function useUserContext() {
+export function useUserContext(config) {
 	const [user, triggerResetUserFromToken] = useContext(UserContext);
 
 	function login(newAuthToken, handleResponse) {
@@ -14,11 +13,11 @@ export function useUserContext() {
 			token: newAuthToken
 		};
 
-		createAxiosApi("Auth", user)
+		createAxiosApi("Auth", user, config)
 			.post("/login", body)
 			.then((response) => {
 				if (response && response.status === 200 && response.data.token) {
-					setUserToken(response.data.token);
+					setUserToken(response.data.token, config.authTokenKey);
 					triggerResetUserFromToken();
 					handleResponse(true);
 				}
@@ -35,7 +34,7 @@ export function useUserContext() {
 	}
 
 	function logout() {
-		removeUserToken();
+		removeUserToken(config.authTokenKey);
 		triggerResetUserFromToken();
 	}
 
@@ -47,13 +46,13 @@ export function useUserContext() {
 	};
 }
 
-function setUserToken(token) {
+function setUserToken(token, authTokenKey) {
 	const decodedToken = jwt.decode(token);
 	const expireDate = DateTime.fromMillis(decodedToken.exp * 1000);
 
-	Cookies.set(AuthTokenKey, token, { expires: expireDate.toJSDate() });
+	Cookies.set(authTokenKey, token, { expires: expireDate.toJSDate() });
 }
 
-function removeUserToken() {
-	Cookies.remove(AuthTokenKey);
+function removeUserToken(authTokenKey) {
+	Cookies.remove(authTokenKey);
 }

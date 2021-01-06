@@ -1,5 +1,3 @@
-import { AuthTokenKey } from "../config";
-import { DebugMode } from "../config";
 import React, {
 	useState
 } from "react";
@@ -9,10 +7,10 @@ import jwt from "jsonwebtoken";
 export const UserContext = React.createContext([{}, () => { }]);
 
 export function UserContextProvider(props) {
-	const [user, setUser] = useState(() => getUserFromToken());
+	const [user, setUser] = useState(() => getUserFromToken(props.config));
 
 	function triggerResetUserFromToken() {
-		setUser(getUserFromToken());
+		setUser(getUserFromToken(props.config));
 	}
 
 	return (
@@ -22,10 +20,10 @@ export function UserContextProvider(props) {
 	);
 }
 
-function getUserFromToken() {
+function getUserFromToken(config) {
 	let userInfo;
 
-	if (DebugMode) {
+	if (config.debugMode) {
 		userInfo = {
 			isLoggedIn: true,
 			id: 1,
@@ -37,7 +35,7 @@ function getUserFromToken() {
 		};
 	}
 	else {
-		const token = Cookies.get(AuthTokenKey);
+		const token = Cookies.get(config.authTokenKey);
 		userInfo = {
 			isLoggedIn: !!token,
 			canViewRecipe: false,

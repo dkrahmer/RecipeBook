@@ -9,26 +9,38 @@ import {
 	Grid,
 	Paper
 } from "@material-ui/core";
+import queryString from "query-string";
+import _ from "lodash";
 
 export function FilterableRecipesGrid(props) {
-	const [nameQuery, setNameQuery] = useState("");
-	const [matchingRecipes, setMatchingRecipes] = useState(() => {
-		sortRecipesByUpdateDateTime(props.allRecipes);
-		return props.allRecipes;
-	});
+	const queryStringValues = queryString.parse(props.location.search);
+	const [nameQuery, setNameQuery] = useState(queryStringValues.nameQuery);
+	const [isNameQuery, setIsNameQuery] = useState(!!nameQuery);
+	const [matchingRecipes, setMatchingRecipes] = useState([]);
+	const [isLoading, setIsLoading] = useState(false);
 
 	useEffect(() => {
-		let workingRecipes = [...props.allRecipes];
-		if (nameQuery) {
-			workingRecipes = workingRecipes.filter(r => {
-				return r.name.toLowerCase().includes(nameQuery.toLowerCase());
-			});
+		setIsNameQuery(false);
+		const qs = queryString.stringify(_.pickBy({ nameQuery }));
+		props.history.replace({ search: qs }); // update the URL QS
+
+		if (!nameQuery) {
+			setMatchingRecipes([]);
+			return;
 		}
 
-		sortRecipesByUpdateDateTime(workingRecipes);
-
-		setMatchingRecipes(workingRecipes);
-	}, [nameQuery, props.allRecipes]);
+		setIsLoading(true);
+		props.recipeService.getRecipes(nameQuery, (response) => {
+			setIsNameQuery(true);
+			const recipes = response.data;
+			sortRecipesByUpdateDateTime(recipes);
+			setMatchingRecipes(recipes);
+			setIsLoading(false);
+		}, (response) => {
+			setIsNameQuery(true);
+			alert("Error getting recipes!");
+		});
+	}, [nameQuery, props.recipeService]); // eslint-disable-line react-hooks/exhaustive-deps
 
 	return (
 		<Grid container spacing={24}>
@@ -39,8 +51,8 @@ export function FilterableRecipesGrid(props) {
 						setNameQuery={setNameQuery} />
 				</Paper>
 			</Grid>
-			<LoadingWrapper isLoading={props.isLoading}>
-				<PageableRecipesGrid recipes={matchingRecipes} />
+			<LoadingWrapper isLoading={isLoading}>
+				<PageableRecipesGrid recipes={matchingRecipes} setNameQuery={setNameQuery} isNameQuery={isNameQuery} history={props.history} />
 			</LoadingWrapper>
 		</Grid>
 	);

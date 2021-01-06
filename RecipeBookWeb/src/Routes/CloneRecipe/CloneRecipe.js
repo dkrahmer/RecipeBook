@@ -5,7 +5,7 @@ import React, {
 } from "react";
 
 export function CloneRecipe(props) {
-	const recipeService = useRecipeService();
+	const recipeService = useRecipeService(props.config);
 	const [isExecuting, setIsExecuting] = useState(false);
 
 	function createRecipe(newRecipe) {
@@ -36,6 +36,7 @@ export function CloneRecipe(props) {
 			saveRecipe={createRecipe}
 			isExecuting={isExecuting}
 			match={{ params: { recipeId: props.match.params.recipeId } }}
+			config={props.config}
 		/>
 	);
 }

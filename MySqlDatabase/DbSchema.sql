@@ -1,4 +1,4 @@
-﻿CREATE TABLE `RecipesTest` (
+﻿CREATE TABLE `Recipes` (
   `RecipeId` int(11) NOT NULL AUTO_INCREMENT,
   `Name` varchar(50) NOT NULL,
   `Description` text,

@@ -14,23 +14,31 @@ namespace RecipeBookApi.Services
 	public class MySqlRecipesService : IRecipesService
 	{
 		private AppOptions _options;
-		public MySqlRecipesService(IOptions<AppOptions> options)
+		public MySqlRecipesService(IOptionsSnapshot<AppOptions> options)
 		{
 			_options = options.Value;
+		}
+		public async Task<IEnumerable<RecipeSummary>> Find(string nameSearch)
+		{
+			bool noSearch = string.IsNullOrWhiteSpace(nameSearch) || nameSearch == "*" || nameSearch == ".";
+
+			using (var db = new MySqlDbContext(_options.MySqlConnectionString))
+			{
+				return await db.Recipes
+					.Where(r => noSearch || r.Name.Contains(nameSearch))
+					.Select(r => new RecipeSummary()
+					{
+						RecipeId = r.RecipeId,
+						Name = r.Name,
+						CreateDateTime = DateTime.SpecifyKind(r.CreateDateTime, DateTimeKind.Utc),
+						UpdateDateTime = DateTime.SpecifyKind(r.UpdateDateTime, DateTimeKind.Utc)
+					}).ToArrayAsync();
+			}
 		}
 
 		public async Task<IEnumerable<RecipeSummary>> GetAll()
 		{
-			using (var db = new MySqlDbContext(_options.MySqlConnectionString))
-			{
-				return await db.Recipes.Select(r => new RecipeSummary()
-				{
-					RecipeId = r.RecipeId,
-					Name = r.Name,
-					CreateDateTime = DateTime.SpecifyKind(r.CreateDateTime, DateTimeKind.Utc),
-					UpdateDateTime = DateTime.SpecifyKind(r.UpdateDateTime, DateTimeKind.Utc)
-				}).ToArrayAsync();
-			}
+			return await Find(null);
 		}
 
 		public async Task<Recipe> Get(int recipeId)

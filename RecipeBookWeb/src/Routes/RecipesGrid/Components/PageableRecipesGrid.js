@@ -10,13 +10,15 @@ import React, {
 	useReducer,
 	useCallback
 } from "react";
+import { Link } from "react-router-dom";
 import {
 	Grid,
 	Typography
 } from "@material-ui/core";
 import MoodBadIcon from "@material-ui/icons/MoodBad";
 
-export function PageableRecipesGrid({ recipes }) {
+export function PageableRecipesGrid(props) {
+	const { recipes } = props;
 	const createInitialStateCallback = useCallback(() => {
 		return {
 			pageSize: 999, // divisible by 3
@@ -63,10 +65,23 @@ export function PageableRecipesGrid({ recipes }) {
 						</Grid>))
 						: (
 							<Grid item xs={12} className="rb-no-recipe-results-container">
-								<MoodBadIcon fontSize="large" />
-								<Typography variant="subtitle1">
-									No recipes found!
-								</Typography>
+								{props.isNameQuery ?
+									<React.Fragment>
+										<MoodBadIcon fontSize="large" />
+										<Typography variant="subtitle1">
+											No recipes found!
+										</Typography>
+									</React.Fragment>
+									:
+									<React.Fragment>
+										<Typography variant="subtitle1">
+											Type a partial recipe name.
+										</Typography>
+										<Typography variant="subtitle1">
+											<Link onClick={() => props.setNameQuery("*")} to="#">Show all recipes</Link>
+										</Typography>
+									</React.Fragment>
+								}
 							</Grid>
 						)}
 				</Grid>

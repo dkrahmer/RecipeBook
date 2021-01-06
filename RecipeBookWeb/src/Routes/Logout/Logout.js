@@ -6,9 +6,9 @@ import React, {
 } from "react";
 import { Redirect } from "react-router-dom";
 
-export function Logout() {
+export function Logout(props) {
 	const [isLoading, setIsLoading] = useState(true);
-	const user = useUserContext();
+	const user = useUserContext(props.config);
 
 	useEffect(() => {
 		setIsLoading(true);

@@ -2,7 +2,6 @@ import { useUserContext } from "../../Hooks/useUserContext";
 import { useRecipeService } from "../../Hooks/useRecipeService";
 import { FilterableRecipesGrid } from "./Components/FilterableRecipesGrid";
 import React, {
-	useState,
 	useEffect
 } from "react";
 import {
@@ -13,20 +12,12 @@ import { RouterLink } from "../../Shared/RouterLink";
 import MoodBadIcon from "@material-ui/icons/MoodBad";
 
 export function RecipesGrid(props) {
-	const user = useUserContext();
-	const recipeService = useRecipeService();
-	const [isLoading, setIsLoading] = useState(true);
-	const [allRecipes, setAllRecipes] = useState([]);
+	const user = useUserContext(props.config);
+	const recipeService = useRecipeService(props.config);
 
 	useEffect(() => {
 		if (!user || !user.canViewRecipe)
 			return;
-
-		setIsLoading(true);
-		recipeService.getAllRecipes((response) => {
-			setAllRecipes(response.data);
-			setIsLoading(false);
-		});
 	}, []); // eslint-disable-line react-hooks/exhaustive-deps
 
 	if (!user || !user.canViewRecipe)
@@ -54,7 +45,7 @@ export function RecipesGrid(props) {
 
 	return (
 		<React.Fragment>
-			<FilterableRecipesGrid allRecipes={allRecipes} isLoading={isLoading} />
+			<FilterableRecipesGrid recipeService={recipeService} location={props.location} history={props.history} />
 		</React.Fragment>
 	);
 }

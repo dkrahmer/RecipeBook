@@ -5,21 +5,21 @@ import {
 	useEffect
 } from "react";
 
-export function useRecipeService() {
-	const user = useUserContext();
+export function useRecipeService(config) {
+	const user = useUserContext(config);
 	const [recipeService, setRecipeService] = useState(() => {
-		return createRecipeService(user);
+		return createRecipeService(user, config);
 	});
 
 	useEffect(() => {
-		setRecipeService(createRecipeService(user));
+		setRecipeService(createRecipeService(user, config));
 	}, [user.authToken]); // eslint-disable-line react-hooks/exhaustive-deps
 
 	return recipeService;
 }
 
-function createRecipeService(user) {
-	const api = createAxiosApi("Recipes", user);
+function createRecipeService(user, config) {
+	const api = createAxiosApi("Recipes", user, config);
 
 	function getAllRecipes(handleResponse, handleError) {
 		api.get("/")
@@ -27,8 +27,16 @@ function createRecipeService(user) {
 			.catch(handleError);
 	}
 
-	function getRecipeById(recipeId, scale, handleResponse, handleError) {
-		api.get(`/${recipeId}${scale ? `?scale=${scale}` : ""}`)
+	function getRecipes(nameSearch, handleResponse, handleError) {
+		api.get(`/?nameSearch=${encodeURIComponent(nameSearch)}`)
+			.then(handleResponse)
+			.catch(handleError);
+	}
+
+	function getRecipeById(recipeId, queryString, handleResponse, handleError) {
+		queryString = queryString ? `?${queryString}` : "";
+
+		api.get(`/${recipeId}${queryString}`)
 			.then(handleResponse)
 			.catch(handleError);
 	}
@@ -53,6 +61,7 @@ function createRecipeService(user) {
 
 	return {
 		getAllRecipes,
+		getRecipes,
 		getRecipeById,
 		createRecipe,
 		updateRecipe,

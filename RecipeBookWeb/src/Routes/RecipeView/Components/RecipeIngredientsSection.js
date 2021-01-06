@@ -27,8 +27,8 @@ export function RecipeIngredientsSection(props) {
 		e.preventDefault();
 		return false;
 	}
-
-	let tableRows = props.ingredientsList.map((item, key) => {
+	const ingredientsList = props.ingredientsList || [];
+	let tableRows = ingredientsList.map((item, key) => {
 		if (item.isHeading) {
 			return (<tr key={key}><td colSpan="2" className="rb-recipe-ingredient-list-heading">{item.name}</td></tr>);
 		}
@@ -46,15 +46,42 @@ export function RecipeIngredientsSection(props) {
 	if (scale !== "1")
 		scaleClassName += " scale-label-changed";
 
+	let systemClassName = "scale-label";
+	if (props.system)
+		systemClassName += " scale-label-changed";
+
+	let convertToMassClassName = "scale-label";
+	if (props.convertToMass)
+		convertToMassClassName += " scale-label-changed";
+
 	let newScale = null;
 
 	function showScaleDialog() {
 		setIsScaleModalOpen(true);
 	}
 
+	function toggleSystem() {
+		if (props.system !== "metric") {
+			props.setSystem("metric");
+		}
+		else {
+			props.setSystem(null);
+		}
+	}
+
+	function toggleConvertToMass() {
+		if (props.convertToMass !== "1") {
+			props.setConvertToMass("1");
+		}
+		else {
+			props.setConvertToMass(null);
+		}
+	}
+
 	function onScaleEntryModalApply() {
 		if (newScale)
 			props.setScale(newScale);
+
 		setIsScaleModalOpen(false);
 	}
 
@@ -68,11 +95,13 @@ export function RecipeIngredientsSection(props) {
 	}
 
 	let scaleLabel = (<span className={scaleClassName}>(<button className="link-button" onClick={showScaleDialog}>{`scale: x ${scale}`}</button>)</span>);
+	let systemLabel = (<span className={systemClassName}>(<button className="link-button" onClick={toggleSystem}>{`metric: ${props.system === "metric" ? "on" : "off"}`}</button>)</span>);
+	let convertToMassLabel = (<span className={convertToMassClassName}>(<button className="link-button" onClick={toggleConvertToMass}>{`mass: ${props.convertToMass ? "on" : "off"}`}</button>)</span>);
 
 	return (
 		<div className="rb-recipe-info">
 			<Typography variant="h6" color="primary">
-				{props.title} {scaleLabel}
+				{props.title} {scaleLabel} {systemLabel} {convertToMassLabel}
 			</Typography>
 			<Linkify properties={{ target: "_blank" }}>
 				<Table className={"rb-recipe-info-body rb-recipe-ingredient-list" + (scale === "1" ? "" : " rb-scale-enabled")}>

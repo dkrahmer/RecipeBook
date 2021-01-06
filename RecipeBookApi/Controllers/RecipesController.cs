@@ -1,8 +1,11 @@
-﻿using Common.Models;
+﻿using Common;
+using Common.Models;
 using Common.Structs;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using RecipeBookApi.Attributes;
 using RecipeBookApi.Models;
+using RecipeBookApi.Options;
 using RecipeBookApi.Services.Contracts;
 using System;
 using System.Collections.Generic;
@@ -16,11 +19,13 @@ namespace RecipeBookApi.Controllers
 	public class RecipesController : BaseApiController
 	{
 		private readonly IRecipesService _recipesService;
+		private readonly AppOptions _appOptions;
 
-		public RecipesController(IAuthService authService, IRecipesService recipesService)
+		public RecipesController(IAuthService authService, IRecipesService recipesService, IOptionsSnapshot<AppOptions> appOptions)
 					: base(authService)
 		{
 			_recipesService = recipesService;
+			_appOptions = appOptions.Value;
 		}
 
 		[RequirePermission("CanViewRecipe")]
@@ -28,15 +33,18 @@ namespace RecipeBookApi.Controllers
 		[Route("")]
 		[ProducesResponseType((int) HttpStatusCode.NotModified)]
 		[ProducesResponseType(typeof(IEnumerable<RecipeViewModel>), (int) HttpStatusCode.OK)]
-		public async Task<IActionResult> GetRecipeList()
+		public async Task<IActionResult> GetRecipeList([FromQuery] string nameSearch)
 		{
-			var allRecipes = await _recipesService.GetAll();
+			var recipes = await _recipesService.Find(nameSearch);
 
-			DateTime lastRecipeUpdate = allRecipes.Max(r => r.UpdateDateTime);
-			if (TryGetNotModifiedResult(lastRecipeUpdate, out IActionResult notModifiedResult))
-				return notModifiedResult;
+			if (recipes.Any())
+			{
+				DateTime lastRecipeUpdate = recipes.Max(r => r.UpdateDateTime);
+				if (TryGetNotModifiedResult(lastRecipeUpdate, out IActionResult notModifiedResult))
+					return notModifiedResult;
+			}
 
-			return Ok(allRecipes);
+			return Ok(recipes);
 		}
 
 		[RequirePermission("CanViewRecipe")]
@@ -45,7 +53,7 @@ namespace RecipeBookApi.Controllers
 		[ProducesResponseType((int) HttpStatusCode.NotModified)]
 		[ProducesResponseType((int) HttpStatusCode.NotFound)]
 		[ProducesResponseType(typeof(RecipeViewModel), (int) HttpStatusCode.OK)]
-		public async Task<IActionResult> GetRecipe(int recipeId, [FromQuery] string scale)
+		public async Task<IActionResult> GetRecipe(int recipeId, [FromQuery] string scale, [FromQuery] string system, [FromQuery] string convertToMass, [FromQuery] string editing)
 		{
 			var recipe = await _recipesService.Get(recipeId);
 			if (recipe == null)
@@ -54,24 +62,34 @@ namespace RecipeBookApi.Controllers
 			if (TryGetNotModifiedResult(recipe.UpdateDateTime, out IActionResult notModifiedResult))
 				return notModifiedResult;
 
-			if (!string.IsNullOrEmpty(scale) && Amount.TryParse(scale, out Amount scaleAmount) && scaleAmount.ToString() != "1")
-			{
-				foreach (var ingredient in recipe.IngredientsList)
-				{
-					if (ingredient.Amount.IsEmpty)
-						continue;
+			bool isEditing = !string.IsNullOrWhiteSpace(editing) && (editing == "1" || editing.Equals("true", StringComparison.InvariantCultureIgnoreCase));
+			Amount scaleAmount = new Amount(1M);
+			bool needScaling = !string.IsNullOrEmpty(scale) && Amount.TryParse(scale, out scaleAmount) && scaleAmount.ToString() != "1";
 
+			foreach (var ingredient in recipe.IngredientsList)
+			{
+				if (ingredient.Amount.IsEmpty)
+					continue;
+
+				if (needScaling)
 					ingredient.Amount *= scaleAmount;
 
-					if (_alwaysDecimalUnits.Contains(ingredient.Unit))
-						ingredient.Amount = ingredient.Amount.ToDecimalAmount();
-				}
+				if (!isEditing)
+					ingredient.Name = Helpers.UpdateScalableNumbers(ingredient.Name, scaleAmount);
+
+				bool allMetric = "metric".Equals(system, StringComparison.InvariantCultureIgnoreCase);
+				bool isConvertToMass = convertToMass == "1";
+				_appOptions.IngredientUnitStandardizer?.StandardizeUnit(ingredient, allMetric: allMetric, convertToMass: isConvertToMass);
+			}
+
+			if (!isEditing)
+			{
+				recipe.Instructions = Helpers.UpdateScalableNumbers(recipe.Instructions, scaleAmount);
+				recipe.Notes = Helpers.UpdateScalableNumbers(recipe.Notes, scaleAmount);
 			}
 
 			return Ok(recipe);
 		}
-
-		private HashSet<string> _alwaysDecimalUnits = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase) { "g", "mg", "kg", "l", "ml" };
 
 		[RequirePermission("CanEditRecipe")]
 		[HttpPost]
