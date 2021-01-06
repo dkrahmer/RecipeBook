@@ -180,6 +180,18 @@ main#main-content {
 	align-items: center;
 }
 
+div.tag-list {
+	margin-bottom: 6px;
+
+	span {
+		display: inline-block;
+		padding: 2px 6px;
+		border-radius: 4px;
+		margin-right: 2px;
+		background-color: #E0E0E0;
+	}
+}
+
 .link-button {
 	background: none !important;
 	border: none;
@@ -214,7 +226,7 @@ main#main-content {
 }
 
 tr.unchecked-row td {
-	cursor:pointer;
+	cursor: pointer;
 }
 
 tr.checked-row td {

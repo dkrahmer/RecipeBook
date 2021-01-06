@@ -18,15 +18,24 @@ export function EditRecipe(props) {
 		instructions: "",
 		notes: ""
 	});
+	const [tags, setTags] = useState([]);
 
 	useEffect(() => {
 		setIsLoading(true);
 		recipeService.getRecipeById(props.match.params.recipeId, "editing=1", (response) => {
 			setRecipe(response.data);
-			setIsLoading(false);
+			recipeService.getTags((response) => {
+				setTags(response.data);
+				setIsLoading(false);
+			}, (error) => {
+				alert("Error getting list of tags.");
+			});
 		}, (error) => {
-			if (error.response.status === 404) {
+			if (error.response && error.response.status === 404) {
 				props.history.push("/notfound");
+			}
+			else {
+				console.error(error);
 			}
 		});
 	}, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -68,6 +77,7 @@ export function EditRecipe(props) {
 					config={props.config}
 					pageTitle={`${props.title || "Edit"} ${recipe.name}`}
 					recipe={recipe}
+					tagOptions={tags}
 					onSaveClick={props.saveRecipe || saveRecipe}
 					onCancel={cancelRecipe}
 					isSaveExecuting={props.isExecuting || isExecuting} />

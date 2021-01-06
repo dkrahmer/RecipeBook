@@ -3,6 +3,7 @@ import {
 	TextField
 } from "@material-ui/core";
 import _ from "lodash";
+import ComboBox from "../../../Shared/ComboBox";
 
 export function RecipesFilterForm(props) {
 	let setNameQueryDebounced =
@@ -20,6 +21,19 @@ export function RecipesFilterForm(props) {
 				placeholder="Recipe Name..."
 				margin="normal"
 				variant="outlined" />
+			<ComboBox
+				value={(props.selectedTags || []).map((x) => { return { label: x, value: x }; })}
+				options={(props.tags || []).map((x) => { return { label: x, value: x }; })}
+				name="tags"
+				onChange={props.onSelectedTagsChange}
+				label="Tags"
+				isClearable={true}
+				isMulti={true}
+				isSearchable={true}
+				closeMenuOnSelect={true}
+				backspaceRemovesValue={true}
+				placeholder="Select tags..."
+			/>
 		</React.Fragment>
 	);
 }

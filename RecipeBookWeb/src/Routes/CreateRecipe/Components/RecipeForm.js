@@ -21,6 +21,10 @@ export function RecipeForm(props) {
 		recipeForm.handleNameChange(e.target.value);
 	}
 
+	function onTagsChange(e) {
+		recipeForm.handleTagsChange(e.target.value);
+	}
+
 	function onNotesChange(e) {
 		recipeForm.handleNotesChange(e.target.value);
 	}
@@ -60,8 +64,10 @@ export function RecipeForm(props) {
 				<RecipeValidationSummary errors={recipeForm.errors} />
 				<RecipeFormFields
 					recipe={recipeForm.recipe}
+					tagOptions={props.tagOptions}
 					errors={recipeForm.errors}
 					onNameChange={onNameChange}
+					onTagsChange={onTagsChange}
 					onNotesChange={onNotesChange}
 					onIngredientsChange={onIngredientsChange}
 					onInstructionsChange={onInstructionsChange} />

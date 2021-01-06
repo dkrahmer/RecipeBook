@@ -9,8 +9,9 @@ namespace RecipeBookApi.Services.Contracts
 		Task<int> Create(Recipe model);
 		Task Delete(int recipeId);
 		Task<IEnumerable<RecipeSummary>> GetAll();
-		Task<IEnumerable<RecipeSummary>> Find(string nameSearch);
+		Task<IEnumerable<RecipeSummary>> Find(string nameSearch, IEnumerable<string> tags);
 		Task<Recipe> Get(int recipeId);
 		Task Update(Recipe model);
+		Task<List<string>> GetTags();
 	}
 }

@@ -1,3 +1,4 @@
+import { RecipeTagsSection } from "./RecipeTagsSection";
 import { RecipeIngredientsSection } from "./RecipeIngredientsSection";
 import { RecipeInstructionsSection } from "./RecipeInstructionsSection";
 import { RecipeInfoSection } from "./RecipeInfoSection";
@@ -9,6 +10,9 @@ export function RecipeInfo({ recipe, scale, setScale, system, setSystem, convert
 
 	return (
 		<React.Fragment>
+			{(!recipe.tags || recipe.tags.length === 0) ? "" : (
+				<RecipeTagsSection tags={recipe.tags} />
+			)}
 			{!recipe.ingredientsList ? "" : (
 				<RecipeIngredientsSection
 					title="Ingredients"
@@ -18,7 +22,7 @@ export function RecipeInfo({ recipe, scale, setScale, system, setSystem, convert
 					setSystem={setSystem}
 					convertToMass={convertToMass}
 					setConvertToMass={setConvertToMass}
-					ingredientsList={recipe.ingredientsList}/>
+					ingredientsList={recipe.ingredientsList} />
 			)}
 			{!recipe.instructions ? "" : (
 				<RecipeInstructionsSection
