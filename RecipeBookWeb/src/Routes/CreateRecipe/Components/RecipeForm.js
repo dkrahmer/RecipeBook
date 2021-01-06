@@ -25,6 +25,10 @@ export function RecipeForm(props) {
 		recipeForm.handleTagsChange(e.target.value);
 	}
 
+	function onNotesChange(e) {
+		recipeForm.handleNotesChange(e.target.value);
+	}
+
 	function onIngredientsChange(e) {
 		recipeForm.handleIngredientsChange(e.target.value);
 	}
@@ -64,6 +68,7 @@ export function RecipeForm(props) {
 					errors={recipeForm.errors}
 					onNameChange={onNameChange}
 					onTagsChange={onTagsChange}
+					onNotesChange={onNotesChange}
 					onIngredientsChange={onIngredientsChange}
 					onInstructionsChange={onInstructionsChange} />
 				<Divider className="rb-divider" />

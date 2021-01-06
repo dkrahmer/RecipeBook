@@ -15,7 +15,8 @@ export function EditRecipe(props) {
 		id: "",
 		name: "",
 		ingredients: "",
-		instructions: ""
+		instructions: "",
+		notes: ""
 	});
 	const [tags, setTags] = useState([]);
 

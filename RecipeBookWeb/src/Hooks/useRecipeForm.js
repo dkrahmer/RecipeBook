@@ -69,6 +69,10 @@ export function useRecipeForm(initialRecipe) {
 		setRecipe({ ...recipe, instructions: value });
 	}
 
+	function handleNotesChange(value) {
+		setRecipe({ ...recipe, notes: value });
+	}
+
 	return {
 		recipe,
 		errors,
@@ -77,7 +81,8 @@ export function useRecipeForm(initialRecipe) {
 		handleNameChange,
 		handleTagsChange,
 		handleIngredientsChange,
-		handleInstructionsChange
+		handleInstructionsChange,
+		handleNotesChange
 	};
 }
 
