@@ -28,6 +28,7 @@ export function EditRecipe(props) {
 				setTags(response.data);
 				setIsLoading(false);
 			}, (error) => {
+				console.error(error);
 				alert("Error getting list of tags.");
 			});
 		}, (error) => {

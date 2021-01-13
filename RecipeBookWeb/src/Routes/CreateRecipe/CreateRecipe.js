@@ -1,9 +1,8 @@
 import { useRecipeService } from "../../Hooks/useRecipeService";
+import { LoadingWrapper } from "../../Shared/LoadingWrapper";
 import { RecipeSavedSnackbar } from "./Components/RecipeSavedSnackbar";
 import { RecipeForm } from "./Components/RecipeForm";
-import React, {
-	useState
-} from "react";
+import React, { useState, useEffect } from "react";
 
 export function CreateRecipe(props) {
 	const recipeService = useRecipeService(props.config);
@@ -11,6 +10,19 @@ export function CreateRecipe(props) {
 	const [toastOpen, setToastOpen] = useState(false);
 	const [isExecuting, setIsExecuting] = useState(false);
 	const [newRecipeId, setNewRecipeId] = useState("");
+	const [isLoading, setIsLoading] = useState(true);
+	const [tags, setTags] = useState([]);
+
+	useEffect(() => {
+		setIsLoading(true);
+		recipeService.getTags((response) => {
+			setTags(response.data);
+			setIsLoading(false);
+		}, (error) => {
+			console.error(error);
+			alert("Error getting list of tags.");
+		});
+	}, []); // eslint-disable-line react-hooks/exhaustive-deps
 
 	function onToastClose() {
 		setToastOpen(false);
@@ -45,17 +57,20 @@ export function CreateRecipe(props) {
 
 	return (
 		<React.Fragment>
-			<RecipeForm
-				config={props.config}
-				pageTitle="Create a new Recipe"
-				recipe={recipe}
-				onSaveClick={createRecipe}
-				onCancel={cancelCreateRecipe}
-				isSaveExecuting={isExecuting} />
-			<RecipeSavedSnackbar
-				toastOpen={toastOpen}
-				onToastClose={onToastClose}
-				recipeId={newRecipeId} />
+			<LoadingWrapper isLoading={isLoading}>
+				<RecipeForm
+					config={props.config}
+					pageTitle="Create a new Recipe"
+					recipe={recipe}
+					tagOptions={tags}
+					onSaveClick={createRecipe}
+					onCancel={cancelCreateRecipe}
+					isSaveExecuting={isExecuting} />
+				<RecipeSavedSnackbar
+					toastOpen={toastOpen}
+					onToastClose={onToastClose}
+					recipeId={newRecipeId} />
+			</LoadingWrapper>
 		</React.Fragment>
 	);
 }
