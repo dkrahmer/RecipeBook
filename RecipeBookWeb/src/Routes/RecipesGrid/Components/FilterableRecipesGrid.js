@@ -51,6 +51,10 @@ export function FilterableRecipesGrid(props) {
 		props.recipeService.getRecipes(nameQuery, tagQuery, (response) => {
 			setIsNameQuery(true);
 			const recipes = response.data;
+			if (recipes.length === 1 && queryStringValues["auto"]) {
+				props.history.replace(`/recipes/${recipes[0].recipeId}`);
+				return;
+			}
 			sortRecipesByUpdateDateTime(recipes);
 			setMatchingRecipes(recipes);
 			setIsLoading(false);
