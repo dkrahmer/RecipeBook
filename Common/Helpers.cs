@@ -1,4 +1,5 @@
 ﻿using Common.Structs;
+using System;
 using System.Text.RegularExpressions;
 
 namespace Common
@@ -17,38 +18,46 @@ namespace Common
 			{
 				var findValue = match.Value;
 				var matchParts = findValue.Trim(new char[] { '<', '>' }).Split(':');
-				var replacementValue = new Amount(matchParts[0]) * scaleAmount;
-				char convertType = '\0';
-				int decimalPlaces = 3; // default
-				if (matchParts.Length >= 2)
-				{
-					string convertTypePhrase = matchParts[1];
-					if (convertTypePhrase.StartsWith('.'))
-					{
-						convertType = '.';
-						if (convertTypePhrase.Length > 1)
-						{
-							int.TryParse(convertTypePhrase.Substring(1), out decimalPlaces);
-						}
-					}
-					else if (convertTypePhrase.StartsWith('/'))
-					{
-						convertType = '/';
-					}
-				}
 
 				string replacementValueStr;
-				if (convertType == '.')
+				try
 				{
-					replacementValueStr = replacementValue.ToDecimal(decimalPlaces).ToString();
+					var replacementValue = new Amount(matchParts[0]) * scaleAmount;
+					char convertType = '\0';
+					int decimalPlaces = 3; // default
+					if (matchParts.Length >= 2)
+					{
+						string convertTypePhrase = matchParts[1];
+						if (convertTypePhrase.StartsWith('.'))
+						{
+							convertType = '.';
+							if (convertTypePhrase.Length > 1)
+							{
+								int.TryParse(convertTypePhrase.Substring(1), out decimalPlaces);
+							}
+						}
+						else if (convertTypePhrase.StartsWith('/'))
+						{
+							convertType = '/';
+						}
+					}
+
+					if (convertType == '.')
+					{
+						replacementValueStr = replacementValue.ToDecimal(decimalPlaces).ToString();
+					}
+					else if (convertType == '/')
+					{
+						replacementValueStr = replacementValue.ToRational().ToString("W");
+					}
+					else
+					{
+						replacementValueStr = replacementValue.ToString();
+					}
 				}
-				else if (convertType == '/')
+				catch (Exception ex)
 				{
-					replacementValueStr = replacementValue.ToRational().ToString("W");
-				}
-				else
-				{
-					replacementValueStr = replacementValue.ToString();
+					replacementValueStr = $"<error: {ex.Message}>";
 				}
 
 				str = str.Replace(findValue, replacementValueStr);
