@@ -89,6 +89,7 @@ namespace RecipeBookApi.Controllers
 
 			if (!isEditing)
 			{
+				recipe.Instructions = Helpers.GetCleanLines(recipe.Instructions);
 				recipe.Instructions = Helpers.UpdateScalableNumbers(recipe.Instructions, scaleAmount);
 				recipe.Notes = Helpers.UpdateScalableNumbers(recipe.Notes, scaleAmount);
 			}

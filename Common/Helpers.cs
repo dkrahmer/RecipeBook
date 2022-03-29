@@ -1,5 +1,7 @@
 ﻿using Common.Structs;
 using System;
+using System.IO;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Common
@@ -64,6 +66,26 @@ namespace Common
 			}
 
 			return str;
+		}
+
+		private static readonly Regex CleanLineRegex = new Regex(@"^(?<Number>[0-9]+[ \t]*[-\.\)\]\}\>][ \t]*)(?<Text>.+)$", RegexOptions.Compiled);
+
+		public static string GetCleanLines(string lines)
+		{
+			var outString = new StringBuilder();
+			using (var reader = new StringReader(lines))
+			{
+				for (string line = reader.ReadLine(); line != null; line = reader.ReadLine())
+				{
+					var match = CleanLineRegex.Match(line);
+					if (match.Success)
+						line = match.Groups["Text"].Value;
+					outString.Append(line);
+					outString.Append("\n");
+				}
+			}
+
+			return outString.ToString();
 		}
 	}
 }
