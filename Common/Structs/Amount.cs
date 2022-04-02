@@ -15,6 +15,10 @@ namespace Common.Structs
 
 		private const int DIGITS_CONVERT_TO_FRACTION_THRESHOLD = 3;
 		private const decimal FRACTION_TOLERANCE = 0.01m;
+		[JsonIgnore]
+		public const char FRACTION_SLASH_CHAR = '\x2044'; // Fraction slash char: ⁄
+
+		private bool _useFractionSlash;
 
 		public bool IsDecimal => _decimal.HasValue;
 
@@ -45,6 +49,11 @@ namespace Common.Structs
 
 			_decimal = amount._decimal;
 			_fraction = amount._fraction;
+		}
+
+		public void SetUseFractionSlash(bool useFractionSlash)
+		{
+			_useFractionSlash = useFractionSlash;
 		}
 
 		public decimal ToDecimal(int decimals = 2)
@@ -86,7 +95,7 @@ namespace Common.Structs
 
 			value = GetNormalizedValue(value);
 
-			if (value.Contains("/"))
+			if (value.Contains('/'))
 			{
 				// this is a fraction. Format it the way the Rationals library likes it
 				Regex regex = new Regex("[ ]{2,}");
@@ -108,27 +117,27 @@ namespace Common.Structs
 		public static readonly Dictionary<string, string> FractionMap = new Dictionary<string, string>()
 		{
 			// Fraction characters
-			{ "\x2044", "/"},		// Fraction Slash
-			{ "\x215F", "1/"},
-			{ "\x00BC", "1/4"},
-			{ "\x00BD", "1/2"},
-			{ "\x00BE", "3/4"},
-			{ "\x2150", "1/7"},
-			{ "\x2151", "1/9"},
-			{ "\x2152", "1/10"},
-			{ "\x2153", "1/3"},
-			{ "\x2154", "2/3"},
-			{ "\x2155", "1/5"},
-			{ "\x2156", "2/5"},
-			{ "\x2157", "3/5"},
-			{ "\x2158", "4/5"},
-			{ "\x2159", "1/6"},
-			{ "\x215A", "5/6"},
-			{ "\x215B", "1/8"},
-			{ "\x215C", "3/8"},
-			{ "\x215D", "5/8"},
-			{ "\x215E", "7/8"},
-			{ "\x2189", "0"}		// Char: "0/8"
+			{ $"{FRACTION_SLASH_CHAR}", "/"},
+			{ "\x215F", $"1/"},
+			{ "\x00BC", $"1/4"},
+			{ "\x00BD", $"1/2"},
+			{ "\x00BE", $"3/4"},
+			{ "\x2150", $"1/7"},
+			{ "\x2151", $"1/9"},
+			{ "\x2152", $"1/10"},
+			{ "\x2153", $"1/3"},
+			{ "\x2154", $"2/3"},
+			{ "\x2155", $"1/5"},
+			{ "\x2156", $"2/5"},
+			{ "\x2157", $"3/5"},
+			{ "\x2158", $"4/5"},
+			{ "\x2159", $"1/6"},
+			{ "\x215A", $"5/6"},
+			{ "\x215B", $"1/8"},
+			{ "\x215C", $"3/8"},
+			{ "\x215D", $"5/8"},
+			{ "\x215E", $"7/8"},
+			{ "\x2189", $"0/8"}
 		};
 
 		private static string GetNormalizedValue(string value)
@@ -148,7 +157,7 @@ namespace Common.Structs
 
 			value = GetNormalizedValue(value);
 
-			if (value.Contains("/"))
+			if (value.Contains('/'))
 			{
 				// this is a fraction. Format it the way the Rationals library likes it
 				Regex regex = new Regex("[ ]{2,}");
@@ -359,7 +368,7 @@ namespace Common.Structs
 		/// </returns>
 		public string ToString(string decimalFormat = "G29", string fractionFormat = "W")
 		{
-			return _decimal?.ToString(decimalFormat) ?? _fraction?.ToString(fractionFormat).Replace(" + ", " ") ?? "";
+			return _decimal?.ToString(decimalFormat) ?? _fraction?.ToString(fractionFormat).Replace(" + ", " ")?.Replace('/', _useFractionSlash ? FRACTION_SLASH_CHAR : '/') ?? "";
 		}
 	}
 }

@@ -8,7 +8,7 @@ namespace Common.Models
 	public class Ingredient
 	{
 		private static readonly string REGEX_FRACTION_STRINGS = string.Join("", Amount.FractionMap.Select(m => Regex.Escape(m.Key)));
-		private static readonly string FRACTION_REGEX_PARTIAL = @"(?<Fraction>(([0-9]+\s+)?(([0-9]+\/[1-9]+[0-9]*)|([" + REGEX_FRACTION_STRINGS + @"]+))))";
+		private static readonly string FRACTION_REGEX_PARTIAL = @"(?<Fraction>(([0-9]+\s+)?(([0-9]+[\/⁄][1-9]+[0-9]*)|([" + REGEX_FRACTION_STRINGS + @"]+))))";
 		private static readonly string DECIMAL_REGEX_PARTIAL = @"(?<Decimal>([0-9]+\.[0-9]*)|([0-9]*\.[0-9]+)|[0-9]+)";
 		private static readonly string AMOUNT_REGEX_PARTIAL = "(?<Amount>" + FRACTION_REGEX_PARTIAL + "|" + DECIMAL_REGEX_PARTIAL + ")";
 		private const string RECIPE_UNIT_NAME_REGEX_PARTIAL = @"(?i)(?<Name>(?<Unit>((fl(uid)? o(z|unce(s)?) )|([^\s]*))).*)";
@@ -48,7 +48,16 @@ namespace Common.Models
 			return ingredient;
 		}
 
-		public Amount Amount { get; set; }
+		private Amount _amount;
+		public Amount Amount
+		{
+			get => _amount;
+			set
+			{
+				value.SetUseFractionSlash(false);
+				_amount = value;
+			}
+		}
 
 		private int _unitTrimCharCount;
 
