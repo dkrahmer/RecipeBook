@@ -2,6 +2,7 @@
 using Rationals;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -15,7 +16,6 @@ namespace Common.Structs
 
 		private const int DIGITS_CONVERT_TO_FRACTION_THRESHOLD = 3;
 		private const decimal FRACTION_TOLERANCE = 0.01m;
-		[JsonIgnore]
 		public const char FRACTION_SLASH_CHAR = '\x2044'; // Fraction slash char: ⁄
 
 		private bool _useFractionSlash;
@@ -114,35 +114,37 @@ namespace Common.Structs
 			}
 		}
 
-		public static readonly Dictionary<string, string> FractionMap = new Dictionary<string, string>()
+		private static readonly Dictionary<string, string> _fractionMap = new Dictionary<string, string>()
 		{
 			// Fraction characters
 			{ $"{FRACTION_SLASH_CHAR}", "/"},
-			{ "\x215F", $"1/"},
-			{ "\x00BC", $"1/4"},
-			{ "\x00BD", $"1/2"},
-			{ "\x00BE", $"3/4"},
-			{ "\x2150", $"1/7"},
-			{ "\x2151", $"1/9"},
-			{ "\x2152", $"1/10"},
-			{ "\x2153", $"1/3"},
-			{ "\x2154", $"2/3"},
-			{ "\x2155", $"1/5"},
-			{ "\x2156", $"2/5"},
-			{ "\x2157", $"3/5"},
-			{ "\x2158", $"4/5"},
-			{ "\x2159", $"1/6"},
-			{ "\x215A", $"5/6"},
-			{ "\x215B", $"1/8"},
-			{ "\x215C", $"3/8"},
-			{ "\x215D", $"5/8"},
-			{ "\x215E", $"7/8"},
-			{ "\x2189", $"0/8"}
+			{ "\x215F", $" 1/"},
+			{ "\x00BC", $" 1/4"},
+			{ "\x00BD", $" 1/2"},
+			{ "\x00BE", $" 3/4"},
+			{ "\x2150", $" 1/7"},
+			{ "\x2151", $" 1/9"},
+			{ "\x2152", $" 1/10"},
+			{ "\x2153", $" 1/3"},
+			{ "\x2154", $" 2/3"},
+			{ "\x2155", $" 1/5"},
+			{ "\x2156", $" 2/5"},
+			{ "\x2157", $" 3/5"},
+			{ "\x2158", $" 4/5"},
+			{ "\x2159", $" 1/6"},
+			{ "\x215A", $" 5/6"},
+			{ "\x215B", $" 1/8"},
+			{ "\x215C", $" 3/8"},
+			{ "\x215D", $" 5/8"},
+			{ "\x215E", $" 7/8"},
+			{ "\x2189", $" 0/8"}
 		};
+
+		internal static readonly ReadOnlyDictionary<string, string> FractionMap = new ReadOnlyDictionary<string, string>(_fractionMap);
 
 		private static string GetNormalizedValue(string value)
 		{
-			string output = FractionMap.Aggregate(value, (current, map) => current.Replace(map.Key, map.Value));
+			string output = FractionMap.Aggregate(value, (current, map) => current.Replace(map.Key, map.Value)).Trim();
 
 			return output;
 		}
@@ -361,14 +363,27 @@ namespace Common.Structs
 		/// <summary>
 		/// Converts to string.
 		/// </summary>
+		/// <returns>
+		/// <param name="useFractionSlash">Use fraction slash instead of standard forward slash.</param>
+		/// A <see cref="System.String" /> that represents this instance.
+		/// </returns>
+		public string ToString(bool useFractionSlash)
+		{
+			return ToString(decimalFormat: "G29", fractionFormat: "W", useFractionSlash: useFractionSlash);
+		}
+
+		/// <summary>
+		/// Converts to string.
+		/// </summary>
 		/// <param name="decimalFormat">Use decimal type format.</param>
 		/// <param name="fractionFormat">F for normal fraction, C for canonical fraction, W for whole+fractional.</param>
+		/// <param name="useFractionSlash">Use fraction slash instead of standard forward slash. Null for default.</param>
 		/// <returns>
 		/// A <see cref="System.String" /> that represents this instance.
 		/// </returns>
-		public string ToString(string decimalFormat = "G29", string fractionFormat = "W")
+		public string ToString(string decimalFormat = "G29", string fractionFormat = "W", bool? useFractionSlash = null)
 		{
-			return _decimal?.ToString(decimalFormat) ?? _fraction?.ToString(fractionFormat).Replace(" + ", " ")?.Replace('/', _useFractionSlash ? FRACTION_SLASH_CHAR : '/') ?? "";
+			return _decimal?.ToString(decimalFormat) ?? _fraction?.ToString(fractionFormat).Replace(" + ", " ")?.Replace('/', (useFractionSlash ?? _useFractionSlash) ? FRACTION_SLASH_CHAR : '/') ?? "";
 		}
 	}
 }
