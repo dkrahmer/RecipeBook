@@ -165,24 +165,38 @@ namespace CommonTests
 		{
 			var volumeToMassConversion = new List<DensityMap>()
 			{
-				new DensityMap() { Names = new List<string>(){ "flour", "white flour", "all-purpose flour" }, Density = 0.55M },
+				new DensityMap() { Names = new List<string>(){ "flour", "white flour", "all-purpose flour", "AP flour" }, Density = 0.55M },
 				new DensityMap() { Names = new List<string>(){ "almond flour" }, Density = 0.406M },
-				new DensityMap() { Names = new List<string>(){ "whole wheat flour" }, Density = 0.593M },
+				new DensityMap() { Names = new List<string>(){ "whole wheat flour" }, Density = 0.593M }
 			};
 
 			var ingredientUnitStandardizer = new IngredientUnitStandardizer(null, null, null, null, volumeToMassConversion, 20);
 
 			Ingredient ingredient;
-			ingredient = Ingredient.Parse("100 ml white almond flour (sifted)");
+
+			ingredient = Ingredient.Parse("100 ml wheat flour (sifted)");
 			ingredientUnitStandardizer.StandardizeUnit(ingredient, convertToMass: true);
 			Assert.AreEqual("g", ingredient.Unit);
-			Assert.AreEqual("40.6", ingredient.Amount.ToString());
+			Assert.AreEqual("59.3", ingredient.Amount.ToString());
 
-			ingredient = Ingredient.Parse("100 ml flour - warm");
+			ingredient = Ingredient.Parse("100 ml flour - sifted");
 			ingredientUnitStandardizer.StandardizeUnit(ingredient, convertToMass: true);
 			Assert.AreEqual("g", ingredient.Unit);
 			Assert.AreEqual("55", ingredient.Amount.ToString());
 
+			ingredient = Ingredient.Parse("100 ml all purpose flour");
+			ingredientUnitStandardizer.StandardizeUnit(ingredient, convertToMass: true);
+			Assert.AreEqual("g", ingredient.Unit);
+			Assert.AreEqual("55", ingredient.Amount.ToString());
+
+			ingredient = Ingredient.Parse("100 ml AP flour");
+			ingredientUnitStandardizer.StandardizeUnit(ingredient, convertToMass: true);
+			Assert.AreEqual("g", ingredient.Unit);
+			Assert.AreEqual("55", ingredient.Amount.ToString());
+
+			ingredient = Ingredient.Parse("100 ml almonds");
+			ingredientUnitStandardizer.StandardizeUnit(ingredient, convertToMass: true);
+			Assert.AreEqual("ml", ingredient.Unit); // no match - unit remains volumetric
 		}
 	}
 }

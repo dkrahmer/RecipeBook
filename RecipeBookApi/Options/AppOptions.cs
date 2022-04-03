@@ -28,9 +28,7 @@ namespace RecipeBookApi.Options
 			get
 			{
 				if (_ingredientUnitStandardizer == null)
-				{
 					_ingredientUnitStandardizer = new IngredientUnitStandardizer(UnitEquivalents, UnitAppropriations, MetricConversions, AlwaysDecimalUnits, VolumeToMassConversions, VolumeToMassConversionMinGrams);
-				}
 
 				return _ingredientUnitStandardizer;
 			}

@@ -116,7 +116,7 @@ namespace Common.Processors
 		private void ConvertUnitToMass(Ingredient ingredient)
 		{
 			if (ingredient.Unit == "g" || ingredient.Unit == "kg" || ingredient.Unit == "oz" || ingredient.Unit == "lbs") // TODO: add a config value for these
-				return; // unit is alread in mass
+				return; // unit is already a mass unit
 
 			Amount amountMl = new Amount();
 
