@@ -68,6 +68,12 @@ function createRecipeService(user, config) {
 			.catch(handleError);
 	}
 
+	function sendTo(target, url, handleResponse, handleError) {
+		api.post(`SendTo/${target}`, { url: url })
+			.then(handleResponse)
+			.catch(handleError);
+	}
+
 	return {
 		getAllRecipes,
 		getRecipes,
@@ -75,6 +81,7 @@ function createRecipeService(user, config) {
 		createRecipe,
 		updateRecipe,
 		deleteRecipe,
-		getTags
+		getTags,
+		sendTo
 	};
 }

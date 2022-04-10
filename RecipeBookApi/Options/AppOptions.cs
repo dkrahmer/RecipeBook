@@ -33,5 +33,7 @@ namespace RecipeBookApi.Options
 				return _ingredientUnitStandardizer;
 			}
 		}
+
+		public Dictionary<string, string> SendToUrls { get; set; }
 	}
 }
