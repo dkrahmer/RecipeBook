@@ -11,6 +11,7 @@ export function Logout(props) {
 	const user = useUserContext(props.config);
 
 	useEffect(() => {
+		document.title = props.config.appName;
 		setIsLoading(true);
 		user.logout();
 		setIsLoading(false);

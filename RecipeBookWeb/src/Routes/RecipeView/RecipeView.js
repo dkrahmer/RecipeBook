@@ -22,6 +22,8 @@ export function RecipeView(props) {
 	var [convertToMass, setConvertToMass] = useState(queryStringValues.convertToMass);
 
 	useEffect(() => {
+		const title = `View Recipe - ${props.config.appName}`;
+		document.title = title;
 		if (scale === "1") {
 			setScale(null);
 			return;
@@ -32,9 +34,11 @@ export function RecipeView(props) {
 
 		setIsLoading(true);
 		recipeService.getRecipeById(props.match.params.recipeId, qs, (response) => {
+			document.title = `${response.data.name} - ${props.config.appName}`;
 			setRecipe(response.data);
 			setIsLoading(false);
 		}, (error) => {
+			document.title = title;
 			if (error.response.status === 404) {
 				props.history.push("/notfound");
 			}

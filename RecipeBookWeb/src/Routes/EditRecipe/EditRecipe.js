@@ -21,8 +21,12 @@ export function EditRecipe(props) {
 	const [tags, setTags] = useState([]);
 
 	useEffect(() => {
+		const operation = props.title || "Edit";
+		const title = `${operation} Recipe - ${props.config.appName}`;
+		document.title = title;
 		setIsLoading(true);
 		recipeService.getRecipeById(props.match.params.recipeId, "editing=1", (response) => {
+			document.title = `${response.data.name} (${operation}) - ${props.config.appName}`;
 			setRecipe(response.data);
 			recipeService.getTags((response) => {
 				setTags(response.data);
@@ -32,6 +36,7 @@ export function EditRecipe(props) {
 				alert("Error getting list of tags.");
 			});
 		}, (error) => {
+			document.title = title;
 			if (error.response && error.response.status === 404) {
 				props.history.push("/notfound");
 			}

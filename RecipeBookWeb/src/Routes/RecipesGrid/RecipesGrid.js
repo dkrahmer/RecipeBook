@@ -16,6 +16,7 @@ export function RecipesGrid(props) {
 	const recipeService = useRecipeService(props.config);
 
 	useEffect(() => {
+		document.title = props.config.appName;
 		if (!user || !user.canViewRecipe)
 			return;
 	}, []); // eslint-disable-line react-hooks/exhaustive-deps

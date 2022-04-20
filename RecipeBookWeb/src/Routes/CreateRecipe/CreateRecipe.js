@@ -14,6 +14,7 @@ export function CreateRecipe(props) {
 	const [tags, setTags] = useState([]);
 
 	useEffect(() => {
+		document.title = `New Recipe - ${props.config.appName}`;
 		setIsLoading(true);
 		recipeService.getTags((response) => {
 			setTags(response.data);
