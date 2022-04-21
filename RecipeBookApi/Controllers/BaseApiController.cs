@@ -41,7 +41,7 @@ namespace RecipeBookApi.Controllers
 			}
 			finally // Use finally to make sure to add the Last-Modified header if returning false
 			{
-				// Add the Last-Modified header to allow the client to laster use it in If-Modified-Since
+				// Add the Last-Modified header to allow the client to later use it in If-Modified-Since
 				if (isModified)
 					HttpContext.Response.Headers.Add("Last-Modified", lastUpdate.ToString("r"));
 			}
