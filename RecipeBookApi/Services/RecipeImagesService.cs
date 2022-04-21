@@ -75,7 +75,7 @@ namespace RecipeBookApi.Services
 				string extension = Path.GetExtension(file.FileName).Trim('.').ToLower();
 				var imageFilePath = Path.Combine(_options.RecipeImagesDirectory, GetImageFileMask(recipeId, ORIGINAL, ++lastImageId, extension: extension));
 
-				using (var stream = System.IO.File.Create(imageFilePath))
+				using (var stream = File.Create(imageFilePath))
 				{
 					await file.CopyToAsync(stream);
 				}
@@ -103,9 +103,17 @@ namespace RecipeBookApi.Services
 		{
 			string imageFilePath = null;
 			int maxTries = 100;
+
+			while (!string.IsNullOrEmpty(imageFilePath = GetImageFilePath(recipeId, imageId, ORIGINAL)))
+			{
+				File.Delete(imageFilePath);
+				if (--maxTries <= 0)
+					throw new ApplicationException("Could not delete file(s).");
+			}
+
 			while (!string.IsNullOrEmpty(imageFilePath = GetImageFilePath(recipeId, imageId, "*")))
 			{
-				System.IO.File.Delete(imageFilePath);
+				File.Delete(imageFilePath);
 				if (--maxTries <= 0)
 					throw new ApplicationException("Could not delete file(s).");
 			}
