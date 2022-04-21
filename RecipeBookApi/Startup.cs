@@ -86,7 +86,7 @@ namespace RecipeBookApi
 
 			services.AddMvc(o =>
 			{
-				o.Filters.Add(new ResponseCacheAttribute { NoStore = true, Location = ResponseCacheLocation.None, Duration = 0 }); // disable caching for GET requests
+				o.Filters.Add(new ResponseCacheAttribute { Location = ResponseCacheLocation.None, Duration = 31536000 }); // disable caching for GET requests
 			}).SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
 			services.AddSwaggerGen(swaggerGenOptions =>
