@@ -13,6 +13,7 @@ export function RecipeViewActions(props) {
 
 	return (
 		<PaperActions
+			className="no-print"
 			left={
 				<React.Fragment>
 					<Button

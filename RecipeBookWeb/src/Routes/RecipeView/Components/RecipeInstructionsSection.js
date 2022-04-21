@@ -69,7 +69,7 @@ export function RecipeInstructionsSection(props) {
 					</tbody>
 				</Table>
 			</Linkify>
-			<Divider style={{ marginTop: 12 }} />
+			<Divider className="no-print" style={{ marginTop: 12 }} />
 		</div>
 	);
 }

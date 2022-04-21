@@ -16,7 +16,7 @@ export function RecipeInfoSection(props) {
 					{props.body}
 				</Linkify>
 			</Typography>
-			<Divider style={{ marginTop: 12 }} />
+			<Divider className="no-print" style={{ marginTop: 12 }} />
 		</div>
 	);
 }

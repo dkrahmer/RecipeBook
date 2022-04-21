@@ -10,6 +10,7 @@ export function RecipeFormActions(props) {
 
 	return (
 		<PaperActions
+			className="no-print"
 			style={{ marginTop: 10 }}
 			left={
 				<React.Fragment>

@@ -94,9 +94,9 @@ export function RecipeIngredientsSection(props) {
 		return newScale;
 	}
 
-	let scaleLabel = (<span className={scaleClassName}>(<button className="link-button" onClick={showScaleDialog}>{`scale: x ${scale}`}</button>)</span>);
-	let systemLabel = (<span className={systemClassName}>(<button className="link-button" onClick={toggleSystem}>{`metric: ${props.system === "metric" ? "on" : "off"}`}</button>)</span>);
-	let convertToMassLabel = (<span className={convertToMassClassName}>(<button className="link-button" onClick={toggleConvertToMass}>{`mass: ${props.convertToMass ? "on" : "off"}`}</button>)</span>);
+	let scaleLabel = (<span className={`${scale === "1" ? "no-print" : ""} ${scaleClassName}`}>(<button className="link-button" onClick={showScaleDialog}>{`scale: x ${scale}`}</button>)</span>);
+	let systemLabel = (<span className={`no-print ${systemClassName}`}>(<button className="link-button" onClick={toggleSystem}>{`metric: ${props.system === "metric" ? "on" : "off"}`}</button>)</span>);
+	let convertToMassLabel = (<span className={`no-print ${convertToMassClassName}`}>(<button className="link-button" onClick={toggleConvertToMass}>{`mass: ${props.convertToMass ? "on" : "off"}`}</button>)</span>);
 
 	return (
 		<div className="rb-recipe-info">
@@ -110,7 +110,7 @@ export function RecipeIngredientsSection(props) {
 					</tbody>
 				</Table>
 			</Linkify>
-			<Divider style={{ marginTop: 12 }} />
+			<Divider className="no-print" style={{ marginTop: 12 }} />
 			<ScaleEntryModal
 				isOpen={isScaleModalOpen}
 				scale={scale}
