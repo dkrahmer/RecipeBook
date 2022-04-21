@@ -35,5 +35,6 @@ namespace RecipeBookApi.Options
 		}
 
 		public Dictionary<string, string> SendToUrls { get; set; }
+		public string RecipeImagesDirectory { get; set; }
 	}
 }

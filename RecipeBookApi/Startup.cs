@@ -34,12 +34,14 @@ namespace RecipeBookApi
 		{
 			_currentEnvironment = env;
 
-			string userConfigPath = Path.Combine(GetFolderPath(SpecialFolder.ApplicationData), Assembly.GetExecutingAssembly().GetName().Name, "appsettings.json");
-			if (!File.Exists(userConfigPath))
+			string userConfigDirectory = Path.Combine(GetFolderPath(SpecialFolder.ApplicationData), Assembly.GetExecutingAssembly().GetName().Name);
+			string userConfigFilePath = Path.Combine(userConfigDirectory, "appsettings.json");
+
+			if (!File.Exists(userConfigFilePath))
 			{
-				Console.WriteLine($"Creating user config file: {userConfigPath}");
+				Console.WriteLine($"Creating user config file: {userConfigFilePath}");
 				// Create the directory
-				Directory.CreateDirectory(Directory.GetParent(userConfigPath).FullName);
+				Directory.CreateDirectory(Directory.GetParent(userConfigFilePath).FullName);
 
 				// Create an empty config file
 				string emptyUserConfigFileContents =
@@ -49,18 +51,18 @@ namespace RecipeBookApi
 					"{" + Environment.NewLine +
 					"\t" + Environment.NewLine +
 					"}";
-				File.WriteAllText(userConfigPath, emptyUserConfigFileContents);
+				File.WriteAllText(userConfigFilePath, emptyUserConfigFileContents);
 			}
 			else
 			{
-				Console.WriteLine($"User config file: {userConfigPath}");
+				Console.WriteLine($"User config file: {userConfigFilePath}");
 			}
 
 			var configurationBuilder = new ConfigurationBuilder()
 				.SetBasePath(_currentEnvironment.ContentRootPath)
 				.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
 				.AddJsonFile($"appsettings.{_currentEnvironment.EnvironmentName}.json", optional: true, reloadOnChange: true)
-				.AddJsonFile(userConfigPath, optional: true, reloadOnChange: true)
+				.AddJsonFile(userConfigFilePath, optional: true, reloadOnChange: true)
 				.AddEnvironmentVariables();
 
 			if (_currentEnvironment.IsDevelopment())
@@ -69,12 +71,18 @@ namespace RecipeBookApi
 			}
 
 			_configuration = configurationBuilder.Build();
+
+			if (string.IsNullOrWhiteSpace(_configuration["RecipeImagesDirectory"]))
+				_configuration["RecipeImagesDirectory"] = Path.Combine(userConfigDirectory, "RecipeImages");
 		}
 
 		public void ConfigureServices(IServiceCollection services)
 		{
 			services.Configure<AppOptions>(_configuration);
 			var options = services.BuildServiceProvider().GetService<IOptionsSnapshot<AppOptions>>().Value;
+
+			if (!Directory.Exists(options.RecipeImagesDirectory))
+				Directory.CreateDirectory(options.RecipeImagesDirectory);
 
 			services.AddMvc(o =>
 			{
@@ -127,6 +135,7 @@ namespace RecipeBookApi
 			}
 			services.AddTransient<IAppUsersService, MySqlAppUsersService>();
 			services.AddTransient<IRecipesService, MySqlRecipesService>();
+			services.AddTransient<IRecipeImagesService, RecipeImagesService>();
 
 			using (var db = new MySqlDbContext(options.MySqlConnectionString))
 			{
