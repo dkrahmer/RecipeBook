@@ -61,6 +61,9 @@ namespace CommonTests
 			amount = Amount.Parse("\x00BD");
 			Assert.AreEqual("1/2", amount.ToString());
 
+			amount = Amount.Parse("2½");
+			Assert.AreEqual("2 1/2", amount.ToString());
+
 			amount = Amount.Parse("\x00BC");
 			Assert.AreEqual("1/4", amount.ToString());
 			Assert.AreEqual($"1{Amount.FRACTION_SLASH_CHAR}4", amount.ToString(true)); // fraction slash parameter

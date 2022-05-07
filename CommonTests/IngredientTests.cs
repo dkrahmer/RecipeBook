@@ -68,6 +68,11 @@ namespace CommonTests
 			Assert.AreEqual("cups", ingredient.Unit);
 			Assert.AreEqual("cups Water", ingredient.Name);
 
+			ingredient = Ingredient.Parse("2½ tsp instant yeast");
+			Assert.AreEqual("2 1/2", ingredient.Amount.ToString());
+			Assert.AreEqual("tsp", ingredient.Unit);
+			Assert.AreEqual("instant yeast", ingredient.Name);
+
 			ingredient = Ingredient.Parse("  [Part 1]  ");
 			Assert.AreEqual("", ingredient.Amount.ToString());
 			Assert.AreEqual(null, ingredient.Unit);
