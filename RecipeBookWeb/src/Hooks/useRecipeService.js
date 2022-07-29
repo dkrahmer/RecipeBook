@@ -62,6 +62,12 @@ function createRecipeService(user, config) {
 			.catch(handleError);
 	}
 
+	function getImageIdsByRecipeId(id, handleResponse, handleError) {
+		api.get(`Recipes/${id}/Images`)
+			.then(handleResponse)
+			.catch(handleError);
+	}
+	
 	function getTags(handleResponse, handleError) {
 		api.get("Tags")
 			.then(handleResponse)
@@ -81,6 +87,7 @@ function createRecipeService(user, config) {
 		createRecipe,
 		updateRecipe,
 		deleteRecipe,
+		getImageIdsByRecipeId,
 		getTags,
 		sendTo
 	};

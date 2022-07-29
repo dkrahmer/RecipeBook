@@ -22,6 +22,7 @@ export function RecipeInfo({ recipe, scale, setScale, system, setSystem, convert
 					setSystem={setSystem}
 					convertToMass={convertToMass}
 					setConvertToMass={setConvertToMass}
+					imageUrls={props.imageUrls}
 					ingredientsList={recipe.ingredientsList} />
 			)}
 			{!recipe.instructions ? "" : (

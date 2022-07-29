@@ -13,6 +13,7 @@ export function RecipeView(props) {
 	const recipeService = useRecipeService(props.config);
 	const [isLoading, setIsLoading] = useState(true);
 	const [recipe, setRecipe] = useState({ name: "Loading Recipe...", placeholder: true });
+	const [imageUrls, setImageUrls] = useState([]);
 	const [ownerBlurb, setOwnerBlurb] = useState("");
 	const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -42,6 +43,12 @@ export function RecipeView(props) {
 			if (error.response.status === 404) {
 				props.history.push("/notfound");
 			}
+		});
+
+		recipeService.getImageIdsByRecipeId(props.match.params.recipeId, (response) => {
+			document.title = `${response.data.name} - ${props.config.appName}`;
+			setImageUrls((response.data.ImageIds || []).map(i => `${props.config.apiUrl}/Recipes/${props.match.params.recipeId}/Images/${i}`));
+		}, (error) => {
 		});
 	}, [scale, system, convertToMass]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -88,6 +95,7 @@ export function RecipeView(props) {
 				<Paper style={{ padding: 12 }}>
 					<RecipeInfo
 						recipe={recipe}
+						imageUrls={imageUrls}
 						scale={scale}
 						setScale={setScale}
 						system={system}
