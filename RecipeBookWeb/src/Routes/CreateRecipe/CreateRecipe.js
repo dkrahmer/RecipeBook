@@ -62,6 +62,10 @@ export function CreateRecipe(props) {
 		props.history.replace("/recipes");
 	}
 
+	function cancelImportRecipe() {
+		setIsImport(false);
+	}
+
 	function onImportUrlChange(value) {
 		setImportUrl(value);
 		return value;
@@ -114,7 +118,7 @@ export function CreateRecipe(props) {
 				isOpen={isImport}
 				url={importUrl}
 				onSubmit={onImportUrlEntryModalSubmit}
-				onCancel={cancelCreateRecipe}
+				onCancel={cancelImportRecipe}
 				onUrlChange={onImportUrlChange} />
 		</React.Fragment>
 	);

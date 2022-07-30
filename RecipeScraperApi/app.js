@@ -18,10 +18,10 @@ async function recipeScraperApi() {
 
 			let notes = `Based on: ${recipeUrl}`
 
-			if (scrapedRecipe.totalTime)
+			if (scrapedRecipe.cookTime)
 				notes = `Cook time: ${scrapedRecipe.cookTime}\n` + notes;
 
-			if (scrapedRecipe.totalTime)
+			if (scrapedRecipe.prepTime)
 				notes = `Prep time: ${scrapedRecipe.prepTime}\n` + notes;
 
 			if (scrapedRecipe.totalTime)
