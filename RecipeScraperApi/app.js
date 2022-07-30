@@ -1,6 +1,7 @@
 import express from "express";
 import http from "http";
 import recipeDataScraper from "recipe-data-scraper";
+import { decode } from 'html-entities';
 
 async function recipeScraperApi() {
 	const app = express();
@@ -31,8 +32,8 @@ async function recipeScraperApi() {
 
 			const recipe = {
 				"Name": scrapedRecipe.name,
-				"Ingredients": scrapedRecipe.recipeIngredients.join("\n"),
-				"Instructions": scrapedRecipe.recipeInstructions.join("\n"),
+				"Ingredients": decode(scrapedRecipe.recipeIngredients.join("\n")),
+				"Instructions": decode(scrapedRecipe.recipeInstructions.join("\n")),
 				"Tags": scrapedRecipe.recipeCategories,
 				"Notes": notes,
 				"ImageUrls": [ scrapedRecipe.image ]
