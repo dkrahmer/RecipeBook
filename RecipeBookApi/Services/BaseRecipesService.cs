@@ -36,6 +36,9 @@ namespace RecipeBookApi.Services
 					string json = reader.ReadToEnd();
 					var recipe = JsonConvert.DeserializeObject<Recipe>(json);
 
+					if (recipe.Tags != null)
+						recipe.Tags.Clear(); // We don't want random tags to muck up our tag list
+
 					string ingredients = recipe.Ingredients;
 					bool ingredientsUpdated = false;
 					foreach (var ingredient in recipe.IngredientsList)
