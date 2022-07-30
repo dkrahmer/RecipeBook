@@ -3,15 +3,21 @@ import { LoadingWrapper } from "../../Shared/LoadingWrapper";
 import { RecipeSavedSnackbar } from "./Components/RecipeSavedSnackbar";
 import { RecipeForm } from "./Components/RecipeForm";
 import React, { useState, useEffect } from "react";
+import queryString from "query-string";
+import UrlEntryModal from "./Components/UrlEntryModal";
 
 export function CreateRecipe(props) {
 	const recipeService = useRecipeService(props.config);
+	const queryStringValues = queryString.parse(props.location.search);
 	const [recipe, setRecipe] = useState(setInitialRecipe());
 	const [toastOpen, setToastOpen] = useState(false);
 	const [isExecuting, setIsExecuting] = useState(false);
+	const [isImporting, setIsImporting] = useState(false);
 	const [newRecipeId, setNewRecipeId] = useState("");
 	const [isLoading, setIsLoading] = useState(true);
 	const [tags, setTags] = useState([]);
+	const [isImport, setIsImport] = useState(queryStringValues.import);
+	const [importUrl, setImportUrl] = useState("");
 
 	useEffect(() => {
 		document.title = `New Recipe - ${props.config.appName}`;
@@ -56,9 +62,40 @@ export function CreateRecipe(props) {
 		props.history.replace("/recipes");
 	}
 
+	function onImportUrlChange(value) {
+		setImportUrl(value);
+		return value;
+	}
+
+	function onImportUrlEntryModalSubmit() {
+		setIsImport(false);
+		setIsImporting(true);
+		recipeService.importRecipe(importUrl, (response) => {
+			if (response && response.status === 200 && response.data) {
+				setRecipe(response.data);
+			} else {
+				console.log(response);
+			}
+
+			setIsImporting(false);
+		}, (error) => {
+			console.log(error);
+			if (error.response) {
+				console.log(error.response);
+			}
+
+			setIsImporting(false);
+		});
+	}
+
+	function onImportClick() {
+		setImportUrl("");
+		setIsImport(true);
+	}
+
 	return (
 		<React.Fragment>
-			<LoadingWrapper isLoading={isLoading}>
+			<LoadingWrapper isLoading={isLoading || isImporting}>
 				<RecipeForm
 					config={props.config}
 					pageTitle="Create a new Recipe"
@@ -66,12 +103,19 @@ export function CreateRecipe(props) {
 					tagOptions={tags}
 					onSaveClick={createRecipe}
 					onCancel={cancelCreateRecipe}
-					isSaveExecuting={isExecuting} />
+					onImportClick={onImportClick}
+					isSaveExecuting={isExecuting || isImporting} />
 				<RecipeSavedSnackbar
 					toastOpen={toastOpen}
 					onToastClose={onToastClose}
 					recipeId={newRecipeId} />
 			</LoadingWrapper>
+			<UrlEntryModal
+				isOpen={isImport}
+				url={importUrl}
+				onSubmit={onImportUrlEntryModalSubmit}
+				onCancel={cancelCreateRecipe}
+				onUrlChange={onImportUrlChange} />
 		</React.Fragment>
 	);
 }
