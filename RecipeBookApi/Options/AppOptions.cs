@@ -35,5 +35,6 @@ namespace RecipeBookApi.Options
 		}
 
 		public Dictionary<string, string> SendToUrls { get; set; }
+		public string BaseRecipeScraperApiUrl { get; set; } = @"http://localhost:5091?url={RecipeUrl}";
 	}
 }

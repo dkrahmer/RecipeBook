@@ -146,6 +146,15 @@ namespace Common.Structs
 		{
 			string output = FractionMap.Aggregate(value, (current, map) => current.Replace(map.Key, map.Value)).Trim();
 
+			if (output.Contains('/') && output.Contains('-'))
+			{
+				// fix fraction separator (some incorrectly use a dash)
+				bool isNegative = output.StartsWith('-');
+				if (isNegative)
+					output = output.Substring(1);
+				output = (isNegative ? "-" : "") + output.Replace("-", " ");
+			}
+
 			return output;
 		}
 

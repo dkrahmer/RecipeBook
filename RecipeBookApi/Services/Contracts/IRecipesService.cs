@@ -11,6 +11,7 @@ namespace RecipeBookApi.Services.Contracts
 		Task<IEnumerable<RecipeSummary>> GetAll();
 		Task<IEnumerable<RecipeSummary>> Find(string nameSearch, IEnumerable<string> tags);
 		Task<Recipe> Get(int recipeId);
+		Task<Recipe> Import(string recipeUrl);
 		Task Update(Recipe model);
 		Task<List<string>> GetTags();
 	}

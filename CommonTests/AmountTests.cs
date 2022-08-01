@@ -14,6 +14,9 @@ namespace CommonTests
 			amount = Amount.Parse("4 2/3");
 			Assert.AreEqual("4 2/3", amount.ToString());
 
+			amount = Amount.Parse("4-2/3");
+			Assert.AreEqual("4 2/3", amount.ToString());
+
 			amount = Amount.Parse("00004 0002/03"); // with extra zeros
 			Assert.AreEqual("4 2/3", amount.ToString());
 
