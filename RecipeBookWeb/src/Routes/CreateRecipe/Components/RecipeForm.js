@@ -14,7 +14,7 @@ import {
 } from "@material-ui/core";
 
 export function RecipeForm(props) {
-	const [isModalOpen, setIsCancelModalOpen] = useState(false);
+	const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
 	const recipeForm = useRecipeForm(props.recipe);
 
 	function onNameChange(e) {
@@ -76,9 +76,10 @@ export function RecipeForm(props) {
 				<RecipeFormActions
 					config={props.config}
 					onSaveClick={onSaveClick}
-					onCancelClick={onCancelClick} />
+					onCancelClick={onCancelClick}
+					onImportClick={props.onImportClick} />
 				<YesNoModal
-					isOpen={isModalOpen}
+					isOpen={isCancelModalOpen}
 					title="Cancel Changes"
 					question="Are you sure you want to cancel all changes?"
 					onYes={onCancelModalYes}

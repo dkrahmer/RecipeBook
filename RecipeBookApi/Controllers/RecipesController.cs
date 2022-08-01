@@ -4,7 +4,6 @@ using Common.Structs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using RecipeBookApi.Attributes;
-using RecipeBookApi.Models;
 using RecipeBookApi.Options;
 using RecipeBookApi.Services.Contracts;
 using System;
@@ -36,7 +35,7 @@ namespace RecipeBookApi.Controllers
 		public async Task<IActionResult> GetRecipeList([FromQuery] string nameSearch, [FromQuery] string tags)
 		{
 			var tagsArray = tags?.Split(',')
-				.Where(t=>!string.IsNullOrWhiteSpace(t))
+				.Where(t => !string.IsNullOrWhiteSpace(t))
 				.Select(t => t.Trim())
 				.ToArray() ?? new string[0];
 
@@ -58,8 +57,21 @@ namespace RecipeBookApi.Controllers
 		[ProducesResponseType((int) HttpStatusCode.NotModified)]
 		[ProducesResponseType((int) HttpStatusCode.NotFound)]
 		[ProducesResponseType(typeof(Recipe), (int) HttpStatusCode.OK)]
-		public async Task<IActionResult> GetRecipe(int recipeId, [FromQuery] string scale, [FromQuery] string system, [FromQuery] string convertToMass, [FromQuery] string editing)
+		public async Task<IActionResult> GetRecipe(int recipeId, [FromQuery] string scale, [FromQuery] string system, [FromQuery] string convertToMass, [FromQuery] string editing, [FromQuery] string recipeUrl)
 		{
+			if (recipeId == -1)
+			{
+				try
+				{
+					var importedRecipe = await _recipesService.Import(recipeUrl);
+					return Ok(importedRecipe);
+				}
+				catch (Exception ex)
+				{
+					return BadRequest($"Issue importing recipe: {ex.ToString()}");
+				}
+			}
+
 			var recipe = await _recipesService.Get(recipeId);
 			if (recipe == null)
 				return NotFound();

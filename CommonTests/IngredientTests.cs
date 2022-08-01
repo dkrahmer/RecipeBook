@@ -1,4 +1,4 @@
-using Common.Models;
+﻿using Common.Models;
 using Common.Processors;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
@@ -13,7 +13,17 @@ namespace CommonTests
 		{
 			Ingredient ingredient;
 
+			ingredient = Ingredient.Parse("1⁄3 cup brown sugar"); // this uses a fraction slash
+			Assert.AreEqual("1/3", ingredient.Amount.ToString());
+			Assert.AreEqual("cup", ingredient.Unit);
+			Assert.AreEqual("cup brown sugar", ingredient.Name);
+
 			ingredient = Ingredient.Parse("4 2/3 cups Water");
+			Assert.AreEqual("4 2/3", ingredient.Amount.ToString());
+			Assert.AreEqual("cups", ingredient.Unit);
+			Assert.AreEqual("cups Water", ingredient.Name);
+
+			ingredient = Ingredient.Parse("4-2/3 cups Water");
 			Assert.AreEqual("4 2/3", ingredient.Amount.ToString());
 			Assert.AreEqual("cups", ingredient.Unit);
 			Assert.AreEqual("cups Water", ingredient.Name);

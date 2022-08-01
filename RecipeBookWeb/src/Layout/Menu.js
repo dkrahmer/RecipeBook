@@ -20,6 +20,7 @@ import FastFoodIcon from "@material-ui/icons/Fastfood";
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import CreateIcon from "@material-ui/icons/Create";
+import ImportIcon from "@material-ui/icons/GetApp";
 import LaunchIcon from "@material-ui/icons/Launch";
 import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 import CloseIcon from "@material-ui/icons/Close";
@@ -84,6 +85,11 @@ export function Menu(props) {
 			text: "Create Recipe",
 			url: "/recipes/create",
 			icon: <CreateIcon />
+		},
+		{
+			text: "Import Recipe",
+			url: "/recipes/create?import=1",
+			icon: <ImportIcon />
 		},
 		"divider",
 		{
