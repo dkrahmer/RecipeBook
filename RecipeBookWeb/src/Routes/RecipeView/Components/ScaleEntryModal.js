@@ -10,13 +10,6 @@ import {
 } from "@material-ui/core";
 
 function ScaleEntryModal({ isOpen, onApply, onCancel, scale, onScaleChange, ...props }) {
-	//const setDefaultFocus = el => {
-	//  if (el) {
-	//    el.focus();
-	//    el.select();
-	//  }
-	//};
-
 	function onScaleKeyPress(e) {
 		if (e.key === "Enter") {
 			onApply();
@@ -49,6 +42,7 @@ function ScaleEntryModal({ isOpen, onApply, onCancel, scale, onScaleChange, ...p
 					})}
 				</DialogContentText>
 				<TextField
+					autoFocus
 					defaultValue={scale}
 					//inputProps={{inputMode:"decimal", pattern:"^(?<Amount>(?<Fraction>(([0-9]+\\s+)?[0-9]+\\/[1-9]+[0-9]*))|(?<Decimal>([0-9]+\\.[0-9]*)|([0-9]*\\.[0-9]+)|[0-9]+))$"}}
 					label="Scale factor"
