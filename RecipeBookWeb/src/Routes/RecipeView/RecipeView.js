@@ -85,7 +85,7 @@ export function RecipeView(props) {
 			<PageHeader text={recipe.name} config={props.config} />
 			<PageOverlay showOverlay={isLoading} />
 			{!recipe.placeholder ?
-				<Paper style={{ padding: 12 }}>
+				<Paper className="print-no-padding" style={{ padding: 12 }}>
 					<RecipeInfo
 						recipe={recipe}
 						scale={scale}

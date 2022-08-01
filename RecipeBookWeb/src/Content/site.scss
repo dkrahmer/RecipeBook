@@ -1,5 +1,18 @@
 $layout-padding-size: 24px;
 
+@media print {
+	* {
+		box-shadow: none !important;
+		background-color: #ffffff;
+	}
+	.no-print, .no-print * {
+		display: none !important;
+	}
+	.print-no-padding {
+		padding: 0 !important;
+	}
+}
+
 #root {
 	display: flex;
 	flex-direction: column;

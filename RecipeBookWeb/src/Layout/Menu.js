@@ -113,11 +113,12 @@ export function Menu(props) {
 		<React.Fragment>
 			<NavigationDrawer
 				header="Recipe Book"
+				className="no-print"
 				isOpen={isOpenDrawer}
 				toggleOpen={toggleDrawer}
 				primaryActions={alwaysActions}
 				otherActions={user.isLoggedIn ? signedInActions : signedOutActions} />
-			<AppBar position="static" color="primary">
+			<AppBar position="static" color="primary" className="no-print">
 				<Toolbar>
 					<IconButton color="inherit" onClick={toggleDrawer}>
 						<MenuIcon />
