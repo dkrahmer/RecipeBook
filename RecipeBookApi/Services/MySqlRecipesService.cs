@@ -15,7 +15,6 @@ namespace RecipeBookApi.Services
 {
 	public class MySqlRecipesService : BaseRecipesService, IRecipesService
 	{
-		private AppOptions _options;
 		private readonly Regex _extractSearchTermsRegex = new Regex("(?<=\")[^\"]*(?=\")|[^\" ]+"); // extract quoted terms and standalone words
 
 		public MySqlRecipesService(IOptionsSnapshot<AppOptions> options) : base(options)
