@@ -8,12 +8,15 @@ using RecipeBookApi.Services.Contracts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace RecipeBookApi.Services
 {
 	public class MySqlRecipesService : BaseRecipesService, IRecipesService
 	{
+		private readonly Regex _extractSearchTermsRegex = new Regex("(?<=\")[^\"]*(?=\")|[^\" ]+"); // extract quoted terms and standalone words
+
 		public MySqlRecipesService(IOptionsSnapshot<AppOptions> options) : base(options)
 		{
 		}
@@ -22,11 +25,12 @@ namespace RecipeBookApi.Services
 		{
 			bool noNameSearch = string.IsNullOrWhiteSpace(nameSearch) || nameSearch == "*" || nameSearch == ".";
 			bool filterByTags = !(tags == null || !tags.Any());
+			var searchTerms = _extractSearchTermsRegex.Matches(nameSearch).Cast<Match>().Select(m => m.Value).ToArray();
 
 			using (var db = new MySqlDbContext(_options.MySqlConnectionString))
 			{
 				var foundRecipes = db.Recipes
-					.Where(r => noNameSearch || r.Name.Contains(nameSearch));
+					.Where(r => noNameSearch || searchTerms.All(st => r.Name.Contains(st, StringComparison.InvariantCultureIgnoreCase)));
 
 				if (filterByTags)
 				{
@@ -39,7 +43,6 @@ namespace RecipeBookApi.Services
 									rt => rt.TagId,
 									t => t.TagId,
 									(rt, t) => new { rt.RecipeId, t.TagName })
-								//.Where(t => tags.Contains(t.TagName))
 								.Where(t => t.TagName == tag)
 								.Select(rt => rt.RecipeId)
 								.Contains(r.RecipeId));
