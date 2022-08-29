@@ -13,17 +13,16 @@ using System.Threading.Tasks;
 
 namespace RecipeBookApi.Services
 {
-	public class MySqlRecipesService : IRecipesService
+	public class MySqlRecipesService : BaseRecipesService, IRecipesService
 	{
 		private AppOptions _options;
 		private readonly Regex _extractSearchTermsRegex = new Regex("(?<=\")[^\"]*(?=\")|[^\" ]+"); // extract quoted terms and standalone words
 
-		public MySqlRecipesService(IOptionsSnapshot<AppOptions> options)
+		public MySqlRecipesService(IOptionsSnapshot<AppOptions> options) : base(options)
 		{
-			_options = options.Value;
 		}
 
-		public async Task<IEnumerable<RecipeSummary>> Find(string nameSearch, IEnumerable<string> tags)
+		public override async Task<IEnumerable<RecipeSummary>> Find(string nameSearch, IEnumerable<string> tags)
 		{
 			bool noNameSearch = string.IsNullOrWhiteSpace(nameSearch) || nameSearch == "*" || nameSearch == ".";
 			bool filterByTags = !(tags == null || !tags.Any());
@@ -63,12 +62,12 @@ namespace RecipeBookApi.Services
 			}
 		}
 
-		public async Task<IEnumerable<RecipeSummary>> GetAll()
+		public override async Task<IEnumerable<RecipeSummary>> GetAll()
 		{
 			return await Find(null, null);
 		}
 
-		public async Task<Recipe> Get(int recipeId)
+		public override async Task<Recipe> Get(int recipeId)
 		{
 			using (var db = new MySqlDbContext(_options.MySqlConnectionString))
 			{
@@ -94,9 +93,10 @@ namespace RecipeBookApi.Services
 			}
 		}
 
-		public async Task<int> Create(Recipe recipe)
+		public override async Task<int> Create(Recipe recipe)
 		{
 			recipe.CreateDateTime = recipe.UpdateDateTime = DateTime.UtcNow;
+			Verify(recipe);
 			using (var db = new MySqlDbContext(_options.MySqlConnectionString))
 			{
 				var addedRecipe = await db.AddAsync(recipe);
@@ -135,9 +135,10 @@ namespace RecipeBookApi.Services
 			await db.SaveChangesAsync();
 		}
 
-		public async Task Update(Recipe recipe)
+		public override async Task Update(Recipe recipe)
 		{
 			recipe.UpdateDateTime = DateTime.UtcNow;
+			Verify(recipe);
 			using (var db = new MySqlDbContext(_options.MySqlConnectionString))
 			{
 				var updatededRecipe = db.Update(recipe);
@@ -147,7 +148,13 @@ namespace RecipeBookApi.Services
 			}
 		}
 
-		public async Task Delete(int recipeId)
+		private void Verify(Recipe recipe)
+		{
+			if (recipe.Name.Length > 50)
+				recipe.Name = recipe.Name.Substring(0, 50);
+		}
+
+		public override async Task Delete(int recipeId)
 		{
 			using (var db = new MySqlDbContext(_options.MySqlConnectionString))
 			{
@@ -158,7 +165,7 @@ namespace RecipeBookApi.Services
 			}
 		}
 
-		public async Task<List<string>> GetTags()
+		public override async Task<List<string>> GetTags()
 		{
 			using (var db = new MySqlDbContext(_options.MySqlConnectionString))
 			{

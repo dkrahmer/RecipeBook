@@ -50,6 +50,12 @@ function createRecipeService(user, config) {
 			.catch(handleError);
 	}
 
+	function importRecipe(recipeUrl, handleResponse, handleError) {
+		api.get(`Recipes/-1?recipeUrl=${encodeURIComponent(recipeUrl)}`)
+			.then(handleResponse)
+			.catch(handleError);
+	}
+
 	function updateRecipe(id, recipe, handleResponse, handleError) {
 		api.put(`Recipes/${id}`, recipe)
 			.then(handleResponse)
@@ -79,6 +85,7 @@ function createRecipeService(user, config) {
 		getRecipes,
 		getRecipeById,
 		createRecipe,
+		importRecipe,
 		updateRecipe,
 		deleteRecipe,
 		getTags,

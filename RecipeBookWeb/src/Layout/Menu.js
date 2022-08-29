@@ -20,6 +20,7 @@ import FastFoodIcon from "@material-ui/icons/Fastfood";
 import ArrowForwardIcon from "@material-ui/icons/ArrowForward";
 import ArrowBackIcon from "@material-ui/icons/ArrowBack";
 import CreateIcon from "@material-ui/icons/Create";
+import ImportIcon from "@material-ui/icons/GetApp";
 import LaunchIcon from "@material-ui/icons/Launch";
 import CheckCircleIcon from "@material-ui/icons/CheckCircle";
 import CloseIcon from "@material-ui/icons/Close";
@@ -85,6 +86,11 @@ export function Menu(props) {
 			url: "/recipes/create",
 			icon: <CreateIcon />
 		},
+		{
+			text: "Import Recipe",
+			url: "/recipes/create?import=1",
+			icon: <ImportIcon />
+		},
 		"divider",
 		{
 			text: "Send to Kitchen",
@@ -107,11 +113,12 @@ export function Menu(props) {
 		<React.Fragment>
 			<NavigationDrawer
 				header="Recipe Book"
+				className="no-print"
 				isOpen={isOpenDrawer}
 				toggleOpen={toggleDrawer}
 				primaryActions={alwaysActions}
 				otherActions={user.isLoggedIn ? signedInActions : signedOutActions} />
-			<AppBar position="static" color="primary">
+			<AppBar position="static" color="primary" className="no-print">
 				<Toolbar>
 					<IconButton color="inherit" onClick={toggleDrawer}>
 						<MenuIcon />
