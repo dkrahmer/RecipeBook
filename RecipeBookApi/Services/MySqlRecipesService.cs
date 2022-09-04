@@ -25,7 +25,7 @@ namespace RecipeBookApi.Services
 		{
 			bool noNameSearch = string.IsNullOrWhiteSpace(nameSearch) || nameSearch == "*" || nameSearch == ".";
 			bool filterByTags = !(tags == null || !tags.Any());
-			var searchTerms = _extractSearchTermsRegex.Matches(nameSearch).Cast<Match>().Select(m => m.Value).ToArray();
+			var searchTerms = noNameSearch ? new string[0] : _extractSearchTermsRegex.Matches(nameSearch).Cast<Match>().Select(m => m.Value).ToArray();
 
 			using (var db = new MySqlDbContext(_options.MySqlConnectionString))
 			{
