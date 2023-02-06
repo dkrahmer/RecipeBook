@@ -46,7 +46,7 @@ namespace RecipeBookApi.Controllers
 				.Replace("{EncodedUrl}", HttpUtility.UrlEncode(url));
 
 			HttpWebRequest request = (HttpWebRequest) WebRequest.Create(targetUrl);
-			using (HttpWebResponse response = (HttpWebResponse) request.GetResponse())
+			using (HttpWebResponse response = (HttpWebResponse) await request.GetResponseAsync())
 			{
 				if (response.StatusCode != HttpStatusCode.OK)
 					return BadRequest("Failed to send URL to device.");
