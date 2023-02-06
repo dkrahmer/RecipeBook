@@ -24,7 +24,29 @@ namespace RecipeBookApi.Services
 
 		public virtual async Task<Recipe> Import(string recipeUrl)
 		{
-			string apiUrl = _options.BaseRecipeScraperApiUrl.Replace(@"{RecipeUrl}", HttpUtility.UrlEncode(recipeUrl));
+			if (_options.BaseRecipeScraperApiUrls == null)
+				return null;
+
+			foreach (string baseRecipeScraperApiUrl in _options.BaseRecipeScraperApiUrls)
+			{
+				try
+				{
+					var recipe = await Import(recipeUrl, baseRecipeScraperApiUrl);
+					if (!string.IsNullOrWhiteSpace(recipe?.Name))
+						return recipe;
+				}
+				catch //(Exception ex)
+				{
+					continue;
+				}
+			}
+
+			return null;
+		}
+
+		protected async Task<Recipe> Import(string recipeUrl, string baseRecipeScraperApiUrl)
+		{
+			string apiUrl = baseRecipeScraperApiUrl.Replace(@"{RecipeUrl}", HttpUtility.UrlEncode(recipeUrl));
 			HttpWebRequest request = (HttpWebRequest) WebRequest.Create(apiUrl);
 			request.ContentType = "application/json";
 			try
@@ -36,28 +58,34 @@ namespace RecipeBookApi.Services
 					string json = reader.ReadToEnd();
 					var recipe = JsonConvert.DeserializeObject<Recipe>(json);
 
+					if (string.IsNullOrWhiteSpace(recipe.Name))
+						return null;
+
 					if (recipe.Tags != null)
 						recipe.Tags.Clear(); // We don't want random tags to muck up our tag list
 
-					string ingredients = recipe.Ingredients;
-					bool ingredientsUpdated = false;
-					foreach (var ingredient in recipe.IngredientsList)
+					if (!string.IsNullOrWhiteSpace(recipe.Ingredients))
 					{
-						string name = Regex.Replace(ingredient.Name, $"\\-?{Ingredient.AMOUNT_REGEX_PARTIAL}", "<$0>");
-						if (name != ingredient.Name)
+						string ingredients = recipe.Ingredients;
+						bool ingredientsUpdated = false;
+						foreach (var ingredient in recipe.IngredientsList)
 						{
-							ingredients = ingredients.Replace(ingredient.Name, name);
-							ingredientsUpdated = true;
+							string name = Regex.Replace(ingredient.Name, $"\\-?{Ingredient.AMOUNT_REGEX_PARTIAL}", "<$0>");
+							if (name != ingredient.Name)
+							{
+								ingredients = ingredients.Replace(ingredient.Name, name);
+								ingredientsUpdated = true;
+							}
 						}
-					}
 
-					if (ingredientsUpdated)
-						recipe.Ingredients = ingredients; // Apply to the source ingredients string. This will cause the array to recalculate as needed.
+						if (ingredientsUpdated)
+							recipe.Ingredients = ingredients; // Apply to the source ingredients string. This will cause the array to recalculate as needed.
+					}
 
 					return recipe;
 				}
 			}
-			catch (Exception ex)
+			catch //(Exception ex)
 			{
 				throw;
 			}
