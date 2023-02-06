@@ -11,10 +11,11 @@ async function recipeScraperApi() {
 		const recipeUrl = req.query.url;
 
 		try {
-			console.log(`Recipe URL: ${recipeUrl}`);
+			console.log(`Getting recipe from: ${recipeUrl}`);
 
 			// https://www.npmjs.com/package/recipe-data-scraper
 			const scrapedRecipe = await recipeDataScraper(recipeUrl);
+			console.debug(`Scraped recipe: ${JSON.stringify(scrapedRecipe)}`);
 
 			let notes = `Based on: ${recipeUrl}`
 
@@ -28,12 +29,12 @@ async function recipeScraperApi() {
 				notes = `Total time: ${scrapedRecipe.totalTime}\n` + notes;
 
 			if (scrapedRecipe.recipeYield)
-				notes = `Yield: ${scrapedRecipe.recipeYield.replace(/([0-9]+)/g, "<$1>")}\n` + notes;
+				notes = `Yield: ${scrapedRecipe.recipeYield?.replace(/([0-9]+)/g, "<$1>")}\n` + notes;
 
 			const recipe = {
 				"Name": scrapedRecipe.name,
-				"Ingredients": decode(scrapedRecipe.recipeIngredients.join("\n")),
-				"Instructions": decode(scrapedRecipe.recipeInstructions.join("\n")),
+				"Ingredients": decode(scrapedRecipe.recipeIngredients?.join("\n")),
+				"Instructions": decode(scrapedRecipe.recipeInstructions?.join("\n")),
 				"Tags": scrapedRecipe.recipeCategories,
 				"Notes": notes,
 				"ImageUrls": [ scrapedRecipe.image ]
@@ -41,7 +42,7 @@ async function recipeScraperApi() {
 
 			res.json(recipe);
 		} catch (ex) {
-			console.log(`GET error: ${ex.message}`);
+			console.error(`GET error: ${ex.message}`);
 			res.status(500).json({ message: ex.message });
 		}
 	});
