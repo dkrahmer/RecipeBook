@@ -23,14 +23,14 @@ namespace RecipeBookApi.Services
 
 		public override async Task<IEnumerable<RecipeSummary>> Find(string nameSearch, IEnumerable<string> tags)
 		{
-			bool noNameSearch = string.IsNullOrWhiteSpace(nameSearch) || nameSearch == "*" || nameSearch == ".";
+			bool filterByName = !(string.IsNullOrWhiteSpace(nameSearch) || nameSearch == "*" || nameSearch == ".");
 			bool filterByTags = !(tags == null || !tags.Any());
-			var searchTerms = noNameSearch ? new string[0] : _extractSearchTermsRegex.Matches(nameSearch).Cast<Match>().Select(m => m.Value).ToArray();
+			var searchTerms = filterByName ? _extractSearchTermsRegex.Matches(nameSearch).Cast<Match>().Select(m => m.Value).ToArray() : new string[0];
 
 			using (var db = new MySqlDbContext(_options.MySqlConnectionString))
 			{
-				var foundRecipes = db.Recipes
-					.Where(r => noNameSearch || searchTerms.All(st => r.Name.Contains(st, StringComparison.InvariantCultureIgnoreCase)));
+				// start with all recipes
+				var foundRecipes = db.Recipes.Select(r => r);
 
 				if (filterByTags)
 				{
@@ -47,6 +47,11 @@ namespace RecipeBookApi.Services
 								.Select(rt => rt.RecipeId)
 								.Contains(r.RecipeId));
 					}
+				}
+
+				if (filterByName)
+				{
+					foundRecipes = foundRecipes.Where(r => searchTerms.All(st => r.Name.Contains(st, StringComparison.InvariantCultureIgnoreCase)));
 				}
 
 				return await foundRecipes
